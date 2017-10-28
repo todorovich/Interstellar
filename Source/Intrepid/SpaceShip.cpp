@@ -3,6 +3,7 @@
 #include "SpaceShip.h"
 //#include "Engine.h"
 #include "Intrepid.h"
+#include "ShieldSystemComponent.h"
 #include "UnrealType.h"
 #include "Runtime/Engine/Classes/Components/PrimitiveComponent.h"
 
@@ -11,8 +12,23 @@ ASpaceShip::ASpaceShip()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	
+	shields = CreateDefaultSubobject<UShieldSystemComponent>(TEXT("Shields"));
 
+	//CompClass can be a BP
+	//shields = NewObject<UShieldSystemComponent>(this, TEXT("ShieldSystem"));
+	//
+	//if (!shields)
+	//{
+	//	return;
+	//}	
+	//FAttachmentTransformRules rule = FAttachmentTransformRules(EAttachmentRule::KeepRelative, true);
+	//
+	//shields->RegisterComponent();        //You must ConstructObject with a valid Outer that has world, see above	 
+	//shields->AttachToComponent(GetRootComponent(), rule);
+	////could use different than Root Comp
 }
+
 
 // Called when the game starts or when spawned
 void ASpaceShip::BeginPlay()
@@ -25,27 +41,8 @@ void ASpaceShip::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	shield_system.Tick(DeltaTime);
+	//shield_system.Tick(DeltaTime);
 }
-
-//void ASpaceShip::CreateComponent(UClass* CompClass, const FVector& Location, const FRotator& Rotation, const FName& AttachSocket = NAME_None)
-//{
-//	FName YourObjectName("Hiiii");
-//
-//	//CompClass can be a BP
-//	UPrimitiveComponent* NewComp = NewObject<UPrimitiveComponent>(this, CompClass);
-//	if (!NewComp)
-//	{
-//		return;
-//	}
-//	//~~~~~~~~~~~~~
-//
-//	FAttachmentTransformRules rule = FAttachmentTransformRules(EAttachmentRule::KeepRelative, true);
-//
-//	NewComp->RegisterComponent();        //You must ConstructObject with a valid Outer that has world, see above	 
-//	NewComp->AttachToComponent(GetRootComponent(), rule);
-//	//could use different than Root Comp
-//}
 
 void ASpaceShip::PostEditChangeProperty(FPropertyChangedEvent & PropertyChangedEvent)
 {
@@ -93,12 +90,12 @@ void ASpaceShip::PostEditChangeProperty(FPropertyChangedEvent & PropertyChangedE
 
 }
 
-inline void FShieldSystem::Tick(float DeltaTime)
-{
-	current_shield_points += recharge_points * DeltaTime;
-
-	if (current_shield_points > max_shield_points)
-	{
-		current_shield_points = max_shield_points;
-	}
-}
+//inline void FShieldSystem::Tick(float DeltaTime)
+//{
+//	current_shield_points += recharge_points * DeltaTime;
+//
+//	if (current_shield_points > max_shield_points)
+//	{
+//		current_shield_points = max_shield_points;
+//	}
+//}
