@@ -3,3 +3,9 @@
 ################################################################################
 
 /.vs/Intrepid
+/Binaries/Win64
+/Intermediate
+/Intrepid.sln
+/Intrepid.sdf
+/Saved
+/.gitattributes
