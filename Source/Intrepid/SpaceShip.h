@@ -7,7 +7,7 @@
 #include "GameFramework/Actor.h"
 #include "SpaceShip.generated.h"
 
-UCLASS()
+UCLASS(BlueprintType, ClassGroup = (SpaceShip), meta = (BlueprintSpawnableComponent))
 class INTREPID_API ASpaceShip : public AActor
 {
 	GENERATED_BODY()
@@ -18,12 +18,13 @@ protected:
 
 public:	
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int max_structure_points = 0;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int current_structure_points = 0;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UShieldSystemComponent* shields;
 
 	// Sets default values for this actor's properties

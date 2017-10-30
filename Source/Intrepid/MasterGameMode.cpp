@@ -10,7 +10,7 @@
 void AMasterGameMode::FinishDestroy()
 {
 
-	virtual_world->DestroyWorld(false);
+	//virtual_world->DestroyWorld(false);
 	Super::FinishDestroy();
 	//virtual_world->DestroyWorld
 
@@ -20,9 +20,9 @@ void AMasterGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
-	const bool InformEngine = false;
+	//const bool InformEngine = false;
 
-	virtual_world = UWorld::CreateWorld(EWorldType::Game, InformEngine, FName("VirtualWorld"), nullptr, true, ERHIFeatureLevel::ES3_1);
+	//virtual_world = UWorld::CreateWorld(EWorldType::Game, InformEngine, FName("VirtualWorld"), nullptr, true, ERHIFeatureLevel::ES3_1);
 
 	//UGameViewportClient* viewport = new UGameViewportClient();
 
@@ -34,15 +34,15 @@ void AMasterGameMode::BeginPlay()
 
 	//viewport->Init(*context, instance);
 	
-	if (virtual_world->GetGameViewport())
-	{
-		UE_LOG(DebugLog, Log, TEXT("Viewport Exists"));
-	}
-	else
-	{
-		UE_LOG(DebugLog, Log, TEXT("Viewport Does Not Exist"));
+	//if (virtual_world->GetGameViewport())
+	//{
+	//	UE_LOG(DebugLog, Log, TEXT("Viewport Exists"));
+	//}
+	//else
+	//{
+	//	UE_LOG(DebugLog, Log, TEXT("Viewport Does Not Exist"));
 
-	}
+	//}
 	
 	//UGameplayStatics::OpenLevel(virtual_world, "MainMenu");
 

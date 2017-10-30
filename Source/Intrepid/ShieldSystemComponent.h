@@ -6,35 +6,27 @@
 #include "SpaceShipComponent.h"
 #include "ShieldSystemComponent.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FShieldsChanged, int32, Number, FString, String);
+
 /**
  *	Component Representing a Shield System
  */
-UCLASS()
+UCLASS(BlueprintType, ClassGroup = (SpaceShipComponents), meta = (BlueprintSpawnableComponent))
 class INTREPID_API UShieldSystemComponent : public USpaceShipComponent
 {
 	GENERATED_BODY()
 	
 public:
 
-	//UShieldSystemComponent(int	MaxShieldPointsIn = 10, int CurrentShieldPointsIn = 10, int RechargePointsIn = 1, int HardnessIn = 1,
-	//	int MaximumStructurePointsIn = 4, int CurrentStructurePointsIn = 4, int SystemDisabledThresholdIn = 1)
-	//	: USpaceShipComponent(MaximumStructurePointsIn, CurrentStructurePointsIn, SystemDisabledThresholdIn)
-	//	, MaxShieldPoints(MaxShieldPointsIn)
-	//	, CurrentShieldPoints(CurrentShieldPointsIn)
-	//	, RechargePoints(RechargePointsIn)
-	//	, Hardness(HardnessIn)
-	//{
-	//};
-
 	UShieldSystemComponent();
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float	MaxShieldPoints;
 	
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float	CurrentShieldPoints;
 	
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float	RechargePoints;
 
 	UPROPERTY(EditAnywhere)
@@ -45,6 +37,9 @@ public:
 	
 	// Returns Amount of Damage not Taken
 	virtual float TakeDamage(float DamageAmount, int DamageType = 0);
+
+	UPROPERTY(BlueprintAssignable, Category = "Shields")
+	FShieldsChanged  OnShieldsChanged;
 
 protected:
 

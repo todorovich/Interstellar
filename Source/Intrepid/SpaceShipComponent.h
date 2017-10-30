@@ -7,7 +7,7 @@
 #include "SpaceShipComponent.generated.h"
 
 
-UCLASS( ClassGroup=(SpaceShipComponents), meta=(BlueprintSpawnableComponent) )
+UCLASS(BlueprintType, ClassGroup=(SpaceShipComponents), meta=(BlueprintSpawnableComponent) )
 class INTREPID_API USpaceShipComponent : public USceneComponent
 {
 	GENERATED_BODY()
@@ -20,13 +20,13 @@ public:
 
 	USpaceShipComponent();
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int MaximumStructurePoints = 0;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int CurrentStructurePoints = 0;
 	
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int SystemDisabledThreshold = 0;
 
 protected:

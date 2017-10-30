@@ -59,4 +59,4 @@ float UShieldSystemComponent::TakeDamage(float DamageAmount, int DamageType)
 	}
 
 	return RemainingDamage;
-};
+}
