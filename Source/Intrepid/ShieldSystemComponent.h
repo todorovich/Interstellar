@@ -6,7 +6,9 @@
 #include "SpaceShipComponent.h"
 #include "ShieldSystemComponent.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FShieldsChanged, int32, Number, FString, String);
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE(FShieldsChanged)
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FShieldsChanged);
 
 /**
  *	Component Representing a Shield System
@@ -17,6 +19,10 @@ class INTREPID_API UShieldSystemComponent : public USpaceShipComponent
 	GENERATED_BODY()
 	
 public:
+
+	/** Broadcasts whenever the layer changes */
+	//DECLARE_EVENT(UShieldSystemComponent, FShieldsChanged)
+	//FShieldsChanged& OnShieldsChanged() { return _OnShieldsChanged; }
 
 	UShieldSystemComponent();
 
@@ -38,9 +44,14 @@ public:
 	// Returns Amount of Damage not Taken
 	virtual float TakeDamage(float DamageAmount, int DamageType = 0);
 
-	UPROPERTY(BlueprintAssignable, Category = "Shields")
-	FShieldsChanged  OnShieldsChanged;
-
+	UPROPERTY(BlueprintAssignable, Category = "Test")
+	FShieldsChanged OnShieldsChanged;
+	
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
 protected:
 
+
+	//UPROPERTY()
+	//FShieldsChanged  OnShieldsChanged;
 };

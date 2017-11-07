@@ -4,7 +4,7 @@
 
 UShieldSystemComponent::UShieldSystemComponent()
 {
-
+	PrimaryComponentTick.bCanEverTick = true;
 }
 
 
@@ -18,6 +18,8 @@ void UShieldSystemComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	{
 		CurrentShieldPoints = MaxShieldPoints;
 	}
+
+	OnShieldsChanged.Broadcast();
 };
 
 float UShieldSystemComponent::TakeDamage(float DamageAmount, int DamageType)
@@ -59,4 +61,10 @@ float UShieldSystemComponent::TakeDamage(float DamageAmount, int DamageType)
 	}
 
 	return RemainingDamage;
+}
+
+void UShieldSystemComponent::BeginPlay()
+{
+	SetComponentTickEnabled(true);
+	RegisterComponent();
 }

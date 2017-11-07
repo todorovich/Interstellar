@@ -17,7 +17,7 @@
 
 USpaceShipComponent::USpaceShipComponent()
 {
-
+	PrimaryComponentTick.bCanEverTick = true;
 }
 
 

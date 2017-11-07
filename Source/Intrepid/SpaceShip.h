@@ -28,13 +28,15 @@ public:
 	class UShieldSystemComponent* shields;
 
 	// Sets default values for this actor's properties
-	ASpaceShip();
+	ASpaceShip(const FObjectInitializer& ObjectInitializer);
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+#if WITH_EDITOR
 	virtual void PostEditChangeProperty(FPropertyChangedEvent & PropertyChangedEvent) override;
-	
+#endif
+
 	UFUNCTION(BlueprintImplementableEvent)
 	void CreateGrid();
 
