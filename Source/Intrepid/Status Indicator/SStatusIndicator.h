@@ -27,7 +27,7 @@ public:
 	SLATE_BEGIN_ARGS(SStatusIndicator)
 		: _Style(&FCoreStyle::Get().GetWidgetStyle<FStatusIndicatorStyle>("StatusIndicator"))
 		, _Percent(TOptional<float>())
-		, _FillColorAndOpacity(FLinearColor::White)
+		/*, _FillColorAndOpacity(FLinearColor::White)*/
 		, _BorderPadding(FVector2D(1, 0))
 		, _BackgroundImage(nullptr)
 		, _FillImage(nullptr)
@@ -40,8 +40,8 @@ public:
 		/** Used to determine the fill position of the progress bar ranging 0..1 */
 		SLATE_ATTRIBUTE(TOptional<float>, Percent)
 	
-		/** Fill Color and Opacity */
-		SLATE_ATTRIBUTE(FSlateColor, FillColorAndOpacity)
+		///** Fill Color and Opacity */
+		//SLATE_ATTRIBUTE(FSlateColor, FillColorAndOpacity)
 
 		/** Border Padding around fill bar */
 		SLATE_ATTRIBUTE(FVector2D, BorderPadding)
@@ -70,8 +70,8 @@ public:
 	/** See attribute Style */
 	void SetStyle(const FStatusIndicatorStyle* InStyle);
 
-	/** See attribute SetFillColorAndOpacity */
-	void SetFillColorAndOpacity(TAttribute< FSlateColor > InFillColorAndOpacity);
+	///** See attribute SetFillColorAndOpacity */
+	//void SetFillColorAndOpacity(TAttribute< FSlateColor > InFillColorAndOpacity);
 
 	/** See attribute BorderPadding */
 	void SetBorderPadding(TAttribute< FVector2D > InBorderPadding);
@@ -109,8 +109,8 @@ private:
 	/** Foreground image to use for the progress bar */
 	const FSlateBrush* FillImage;
 
-	/** Fill Color and Opacity */
-	TAttribute<FSlateColor> FillColorAndOpacity;
+	///** Fill Color and Opacity */
+	//TAttribute<FSlateColor> FillColorAndOpacity;
 
 	/** Border Padding */
 	TAttribute<FVector2D> BorderPadding;

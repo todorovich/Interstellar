@@ -18,7 +18,7 @@ void SStatusIndicator::Construct(const FArguments& InArgs)
 	BackgroundImage = InArgs._BackgroundImage;
 	FillImage = InArgs._FillImage;
 
-	FillColorAndOpacity = InArgs._FillColorAndOpacity;
+	//FillColorAndOpacity = InArgs._FillColorAndOpacity;
 	BorderPadding = InArgs._BorderPadding;
 
 	CurrentTickRate = 0.0f;
@@ -51,11 +51,11 @@ void SStatusIndicator::SetStyle(const FStatusIndicatorStyle* InStyle)
 	Invalidate(EInvalidateWidget::Layout);
 }
 
-void SStatusIndicator::SetFillColorAndOpacity(TAttribute< FSlateColor > InFillColorAndOpacity)
-{
-	FillColorAndOpacity = InFillColorAndOpacity;
-	Invalidate(EInvalidateWidget::Layout);
-}
+//void SStatusIndicator::SetFillColorAndOpacity(TAttribute< FSlateColor > InFillColorAndOpacity)
+//{
+//	//FillColorAndOpacity = InFillColorAndOpacity;
+//	Invalidate(EInvalidateWidget::Layout);
+//}
 
 void SStatusIndicator::SetBorderPadding(TAttribute< FVector2D > InBorderPadding)
 {
@@ -109,10 +109,10 @@ int32 SStatusIndicator::OnPaint(const FPaintArgs& Args, const FGeometry& Allotte
 	const ESlateDrawEffect DrawEffects = bEnabled ? ESlateDrawEffect::None : ESlateDrawEffect::DisabledEffect;
 
 	//const FLinearColor FillColor(InWidgetStyle.GetColorAndOpacityTint() * FillColorAndOpacity.Get().GetColor(InWidgetStyle) * CurrentFillImage->GetTint(InWidgetStyle));
-	const FLinearColor FillColor(FillColorAndOpacity.Get().GetColor(InWidgetStyle));
+	//const FLinearColor FillColor(FillColorAndOpacity.Get().GetColor(InWidgetStyle));
 	
-	//const FLinearColor BorderColor = InWidgetStyle.GetColorAndOpacityTint();
 	const FLinearColor BorderColor(GetBackgroundImage()->GetTint(InWidgetStyle));
+	const FLinearColor FillColor(GetFillImage()->GetTint(InWidgetStyle));
 	
 	TOptional<float> ProgressFraction = Percent.Get();
 	FVector2D BorderPaddingRef = BorderPadding.Get();

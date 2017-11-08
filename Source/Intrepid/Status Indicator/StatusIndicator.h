@@ -29,7 +29,7 @@ public:
 
 	/** The progress bar style */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Style", meta = (DisplayName = "Style"))
-		FStatusIndicatorStyle WidgetStyle;
+		FStatusIndicatorStyle Style;
 
 	/** Used to determine the fill position of the progress bar ranging 0..1 */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Progress, meta = (UIMin = "0", UIMax = "1"))
@@ -42,13 +42,13 @@ public:
 	UPROPERTY()
 		FGetFloat PercentDelegate;
 
-	/** Fill Color and Opacity */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Style)
-		FLinearColor FillColorAndOpacity;
+	///** Fill Color and Opacity */
+	//UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Style)
+	//	FLinearColor FillColorAndOpacity;
 
-	/** */
-	UPROPERTY()
-		FGetLinearColor FillColorAndOpacityDelegate;
+	///** */
+	//UPROPERTY()
+	//	FGetLinearColor FillColorAndOpacityDelegate;
 
 public:
 
@@ -56,9 +56,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Progress")
 		void SetPercent(float InPercent);
 
-	/** Sets the fill color of the progress bar. */
-	UFUNCTION(BlueprintCallable, Category = "Progress")
-		void SetFillColorAndOpacity(FLinearColor InColor);
+	///** Sets the fill color of the progress bar. */
+	//UFUNCTION(BlueprintCallable, Category = "Progress")
+	//	void SetFillColorAndOpacity(FLinearColor InColor);
 
 public:
 
@@ -89,7 +89,7 @@ protected:
 	virtual TSharedRef<SWidget> RebuildWidget() override;
 	//~ End UWidget Interface
 
-	PROPERTY_BINDING_IMPLEMENTATION(FSlateColor, FillColorAndOpacity);
+	//PROPERTY_BINDING_IMPLEMENTATION(FSlateColor, FillColorAndOpacity);
 
 public:
 	UMaterialInstanceDynamic* GetDynamicMaterial();

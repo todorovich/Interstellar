@@ -37,7 +37,6 @@ struct INTREPID_API FStatusIndicatorStyle : public FSlateWidgetStyle
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Appearance)
 	FSlateBrush FillImage;
 	FStatusIndicatorStyle& SetFillImage(const FSlateBrush& InFillImage) { FillImage = InFillImage; return *this; }
-
 };
 
 /**
@@ -50,10 +49,10 @@ class UStatusIndicatorWidgetStyle : public USlateWidgetStyleContainerBase
 public:
 	/** The actual data describing the widget appearance. */
 	UPROPERTY(Category=Appearance, EditAnywhere, meta=(ShowOnlyInnerProperties))
-	FStatusIndicatorStyle WidgetStyle;
+	FStatusIndicatorStyle Style;
 
 	virtual const struct FSlateWidgetStyle* const GetStyle() const override
 	{
-		return static_cast< const struct FSlateWidgetStyle* >( &WidgetStyle );
+		return static_cast< const struct FSlateWidgetStyle* >( &Style );
 	}
 };

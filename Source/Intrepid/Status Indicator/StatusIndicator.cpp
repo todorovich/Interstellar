@@ -4,20 +4,38 @@
 #include "Slate/SlateBrushAsset.h"
 
 #include "Runtime/Engine/Classes/Materials/MaterialInstanceDynamic.h"
-
+#include "Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h"
+#include "Runtime/Engine/Classes/Engine/Texture2D.h"
 
 #define LOCTEXT_NAMESPACE "StatusIndicator"
+
 
 UStatusIndicator::UStatusIndicator(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+	static ConstructorHelpers::FObjectFinder<UMaterial> Material(TEXT("Material'/Game/Materials/M_CircleSwipe.M_CircleSwipe'"));
+
+	static ConstructorHelpers::FObjectFinder<UTexture2D> Texture(TEXT("Texture2D'/Game/Textures/shield_status_icon.shield_status_icon'"));
+
 	SStatusIndicator::FArguments SlateDefaults;
 	
-	WidgetStyle = *SlateDefaults._Style;	
-	WidgetStyle.FillImage.TintColor = FLinearColor::White;
+	Style = *SlateDefaults._Style;	
 
-	Percent = 0;
-	FillColorAndOpacity = FLinearColor::White;
+	Style.BackgroundImage.TintColor = FLinearColor::White;
+	Style.FillImage.TintColor = FLinearColor::Green;
+
+	if (Texture.Object)
+	{
+		Style.BackgroundImage.SetResourceObject(Texture.Object);
+	}
+
+	if (Material.Object)
+	{
+		Style.FillImage.SetResourceObject(Material.Object);
+	}
+
+	Percent = .99;
+	/*FillColorAndOpacity = FLinearColor::White;*/
 	BorderPadding = FVector2D(0, 0);
 }
 
@@ -25,7 +43,7 @@ UMaterialInstanceDynamic* UStatusIndicator::GetDynamicMaterial()
 {
 	UMaterialInterface* Material = NULL;
 
-	UObject* Resource = WidgetStyle.FillImage.GetResourceObject();
+	UObject* Resource = Style.FillImage.GetResourceObject();
 	Material = Cast<UMaterialInterface>(Resource);
 
 	if (Material)
@@ -35,11 +53,11 @@ UMaterialInstanceDynamic* UStatusIndicator::GetDynamicMaterial()
 		if (!DynamicMaterial)
 		{
 			DynamicMaterial = UMaterialInstanceDynamic::Create(Material, this);
-			WidgetStyle.FillImage.SetResourceObject(DynamicMaterial);
+			Style.FillImage.SetResourceObject(DynamicMaterial);
 
 			if (MyStatusIndicator.IsValid())
 			{
-				MyStatusIndicator->SetFillImage(&WidgetStyle.FillImage);
+				MyStatusIndicator->SetFillImage(&Style.FillImage);
 			}
 		}
 
@@ -68,26 +86,26 @@ void UStatusIndicator::SynchronizeProperties()
 	Super::SynchronizeProperties();
 
 	TAttribute< TOptional<float> > PercentBinding = OPTIONAL_BINDING_CONVERT(float, Percent, TOptional<float>, ConvertFloatToOptionalFloat);
-	TAttribute<FSlateColor> FillColorAndOpacityBinding = PROPERTY_BINDING(FSlateColor, FillColorAndOpacity);
+	//TAttribute<FSlateColor> FillColorAndOpacityBinding = PROPERTY_BINDING(FSlateColor, FillColorAndOpacity);
 
-	MyStatusIndicator->SetStyle(&WidgetStyle);
+	MyStatusIndicator->SetStyle(&Style);
 	GetDynamicMaterial();
 
-	MyStatusIndicator->SetFillColorAndOpacity(FillColorAndOpacityBinding);
+	//MyStatusIndicator->SetFillColorAndOpacity(FillColorAndOpacityBinding);
 	MyStatusIndicator->SetBorderPadding(BorderPadding);
 
 	MyStatusIndicator->SetPercent(Percent);
 }
 
 
-void UStatusIndicator::SetFillColorAndOpacity(FLinearColor Color)
-{
-	FillColorAndOpacity = Color;
-	if (MyStatusIndicator.IsValid())
-	{
-		MyStatusIndicator->SetFillColorAndOpacity(FillColorAndOpacity);
-	}
-}
+//void ustatusindicator::setfillcolorandopacity(flinearcolor color)
+//{
+//	fillcolorandopacity = color;
+//	if (mystatusindicator.isvalid())
+//	{
+//		mystatusindicator->setfillcolorandopacity(fillcolorandopacity);
+//	}
+//}
 
 void UStatusIndicator::SetPercent(float InPercent)
 {
@@ -112,7 +130,7 @@ const FText UStatusIndicator::GetPaletteCategory()
 
 void UStatusIndicator::OnCreationFromPalette()
 {
-	FillColorAndOpacity = FLinearColor(0, 0.5f, 1.0f);
+	/*FillColorAndOpacity = FLinearColor(0, 0.5f, 1.0f);*/
 }
 
 #endif

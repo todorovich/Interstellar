@@ -1,25 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "StatusIndicatorWidgetStyle.h"
-#include "Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h"
-#include "Runtime/Engine/Classes/Materials/Material.h"
-#include "Runtime/Engine/Classes/Engine/Texture2D.h"
+
 
 FStatusIndicatorStyle::FStatusIndicatorStyle()
 {
-	static ConstructorHelpers::FObjectFinder<UMaterial> Material(TEXT("Material'/Game/Materials/M_CircleSwipe.M_CircleSwipe'"));
-	
-	static ConstructorHelpers::FObjectFinder<UTexture2D> Texture(TEXT("Texture2D'/Game/Textures/shield_status_icon.shield_status_icon'"));
-
-	if (Texture.Object)
-	{
-		BackgroundImage.SetResourceObject(Texture.Object);
-	}
-
-	if (Material.Object)
-	{
-		FillImage.SetResourceObject(Material.Object);
-	}
+	//FStreamableManager& Streamable = UGameGlobals::Get().StreamableManager;
 }
 
 FStatusIndicatorStyle::~FStatusIndicatorStyle()
