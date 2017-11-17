@@ -28,15 +28,23 @@ struct INTREPID_API FStatusIndicatorStyle : public FSlateWidgetStyle
 	virtual const FName GetTypeName() const override { return TypeName; };
 	static const FStatusIndicatorStyle& GetDefault();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Appearance)
+	FSlateBrush SwipeMaterial;
+	FStatusIndicatorStyle& SetSwipeMaterial(const FSlateBrush& InSwipeMaterial) { SwipeMaterial = InSwipeMaterial; return *this; }
+
 	/** Background image to use for the progress bar */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Appearance)
-	FSlateBrush BackgroundImage;
-	FStatusIndicatorStyle& SetBackgroundImage(const FSlateBrush& InBackgroundImage) { BackgroundImage = InBackgroundImage; return *this; }
+	FSlateBrush BorderImage;
+	FStatusIndicatorStyle& SetBorderImage(const FSlateBrush& InBorderImage) { BorderImage = InBorderImage; return *this; }
 
 	/** Foreground image to use for the progress bar */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Appearance)
 	FSlateBrush FillImage;
 	FStatusIndicatorStyle& SetFillImage(const FSlateBrush& InFillImage) { FillImage = InFillImage; return *this; }
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Progress)
+	FVector2D BorderPadding;
+	FStatusIndicatorStyle& SetBorderPadding(const FVector2D& InBorderPadding) { BorderPadding = InBorderPadding; return *this; }
 };
 
 /**

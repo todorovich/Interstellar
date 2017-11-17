@@ -23,44 +23,31 @@ class INTREPID_API UStatusIndicator : public UWidget
 {
 	GENERATED_UCLASS_BODY()
 
-public:
+protected:
+	/** Native Slate Widget */
+	TSharedPtr<SStatusIndicator> MyStatusIndicator;
 
-	//UStatusIndicator(const FObjectInitializer& ObjectInitializer);
+	//~ Begin UWidget Interface
+	virtual TSharedRef<SWidget> RebuildWidget() override;
+	//~ End UWidget Interface
+
+public:
 
 	/** The progress bar style */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Style", meta = (DisplayName = "Style"))
-		FStatusIndicatorStyle Style;
+	FStatusIndicatorStyle Style;
 
 	/** Used to determine the fill position of the progress bar ranging 0..1 */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Progress, meta = (UIMin = "0", UIMax = "1"))
-		float Percent;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Progress)
-		FVector2D BorderPadding;
+	float Percent;
 
 	/** A bindable delegate to allow logic to drive the text of the widget */
 	UPROPERTY()
-		FGetFloat PercentDelegate;
-
-	///** Fill Color and Opacity */
-	//UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Style)
-	//	FLinearColor FillColorAndOpacity;
-
-	///** */
-	//UPROPERTY()
-	//	FGetLinearColor FillColorAndOpacityDelegate;
-
-public:
+	FGetFloat PercentDelegate;
 
 	/** Sets the current value of the ProgressBar. */
 	UFUNCTION(BlueprintCallable, Category = "Progress")
-		void SetPercent(float InPercent);
-
-	///** Sets the fill color of the progress bar. */
-	//UFUNCTION(BlueprintCallable, Category = "Progress")
-	//	void SetFillColorAndOpacity(FLinearColor InColor);
-
-public:
+	void SetPercent(float InPercent);
 
 	//~ Begin UWidget Interface
 	virtual void SynchronizeProperties() override;
@@ -81,19 +68,7 @@ public:
 	//~ End UWidget Interface
 #endif
 
-protected:
-	/** Native Slate Widget */
-	TSharedPtr<SStatusIndicator> MyStatusIndicator;
 
-	//~ Begin UWidget Interface
-	virtual TSharedRef<SWidget> RebuildWidget() override;
-	//~ End UWidget Interface
 
-	//PROPERTY_BINDING_IMPLEMENTATION(FSlateColor, FillColorAndOpacity);
 
-public:
-	UMaterialInstanceDynamic* GetDynamicMaterial();
-
-private:
-	UMaterialInstanceDynamic* _material;
 };

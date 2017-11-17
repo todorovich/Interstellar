@@ -6,6 +6,8 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "DataSingleton.generated.h"
 
+class IAssetRegistry;
+
 /**
  * 
  */
@@ -15,11 +17,14 @@ class INTREPID_API UDataSingleton : public UObject
 	GENERATED_BODY()
 
 public:
-	UDataSingleton(const FObjectInitializer& ObjectInitializer);
+	//UDataSingleton(const FObjectInitializer& ObjectInitializer);
 
 	UFUNCTION()
-	static UDataSingleton* const Instance();
+	static UDataSingleton* Instance();
+
+	static IAssetRegistry* GetAssetRegistry();
 
 private:
 	static UDataSingleton* _instance;
+	IAssetRegistry* _assetRegistry;
 };

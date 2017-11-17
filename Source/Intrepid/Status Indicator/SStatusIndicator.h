@@ -27,11 +27,9 @@ public:
 	SLATE_BEGIN_ARGS(SStatusIndicator)
 		: _Style(&FCoreStyle::Get().GetWidgetStyle<FStatusIndicatorStyle>("StatusIndicator"))
 		, _Percent(TOptional<float>())
-		/*, _FillColorAndOpacity(FLinearColor::White)*/
-		, _BorderPadding(FVector2D(1, 0))
-		, _BackgroundImage(nullptr)
-		, _FillImage(nullptr)
-		, _RefreshRate(2.0f)
+		//, _BorderImage(nullptr)
+		//, _FillImage(nullptr)
+		//, _SwipeMaterial(nullptr)
 	{}
 
 		/** Style used for the progress bar */
@@ -39,21 +37,15 @@ public:
 
 		/** Used to determine the fill position of the progress bar ranging 0..1 */
 		SLATE_ATTRIBUTE(TOptional<float>, Percent)
-	
-		///** Fill Color and Opacity */
-		//SLATE_ATTRIBUTE(FSlateColor, FillColorAndOpacity)
 
-		/** Border Padding around fill bar */
-		SLATE_ATTRIBUTE(FVector2D, BorderPadding)
+		///** The brush to use as the background of the progress bar */
+		//SLATE_ARGUMENT(const FSlateBrush*, BorderImage)
 
-		/** The brush to use as the background of the progress bar */
-		SLATE_ARGUMENT(const FSlateBrush*, BackgroundImage)
-	
-		/** The brush to use as the fill image */
-		SLATE_ARGUMENT(const FSlateBrush*, FillImage)
-		
-		/** Rate at which this widget is ticked when sleeping in seconds */			
-		SLATE_ARGUMENT(float, RefreshRate)
+		///** The brush to use as the fill image */
+		//SLATE_ARGUMENT(const FSlateBrush*, FillImage)
+
+		///** The brush to use as the fill image */
+		//SLATE_ARGUMENT(const FSlateBrush*, SwipeMaterial)
 
 	SLATE_END_ARGS()
 
@@ -70,61 +62,22 @@ public:
 	/** See attribute Style */
 	void SetStyle(const FStatusIndicatorStyle* InStyle);
 
-	///** See attribute SetFillColorAndOpacity */
-	//void SetFillColorAndOpacity(TAttribute< FSlateColor > InFillColorAndOpacity);
+	///** See attribute BackgroundImage */
+	//void SetBorderImage(const FSlateBrush* InBackgroundImage);
 
-	/** See attribute BorderPadding */
-	void SetBorderPadding(TAttribute< FVector2D > InBorderPadding);
+	///** See attribute FillImage */
+	//void SetFillImage(const FSlateBrush* InFillImage);
 
-	/** See attribute BackgroundImage */
-	void SetBackgroundImage(const FSlateBrush* InBackgroundImage);
-
-	/** See attribute FillImage */
-	void SetFillImage(const FSlateBrush* InFillImage);
+	///** See attribute FillImage */
+	//void SetSwipeMaterial(const FSlateBrush* InFillImage);
 
 private:
 
-	/** Controls the speed at which the widget is ticked when in slate sleep mode */
-	void SetActiveTimerTickRate(float TickRate);
-
-	/** Widgets active tick */
-	EActiveTimerReturnType ActiveTick(double InCurrentTime, float InDeltaTime);
-
-	/** Gets the current background image. */
-	const FSlateBrush* GetBackgroundImage() const;
-	/** Gets the current fill image */
-	const FSlateBrush* GetFillImage() const;
-
-private:
-
-	/** The style of the progress bar */
+	/** The style of the indicator */
 	const FStatusIndicatorStyle* Style;
 
-	/** The text displayed over the progress bar */
+	/** How full the indicator is */
 	TAttribute< TOptional<float> > Percent;
 
-	/** Background image to use for the progress bar */
-	const FSlateBrush* BackgroundImage;
-
-	/** Foreground image to use for the progress bar */
-	const FSlateBrush* FillImage;
-
-	///** Fill Color and Opacity */
-	//TAttribute<FSlateColor> FillColorAndOpacity;
-
-	/** Border Padding */
-	TAttribute<FVector2D> BorderPadding;
-
-	/** Value to drive progress bar animation */
-	float MarqueeOffset;
-
-	/** Reference to the widgets current active timer */
-	TWeakPtr<FActiveTimerHandle> ActiveTimerHandle;
-
-	/** Rate at which the widget is currently ticked when slate sleep mode is active */
-	float CurrentTickRate;
-
-	/** The slowest that this widget can tick when in slate sleep mode */
-	float MinimumTickRate;
-
+	FSlateBrush DynamicSwipeMaterial;
 };

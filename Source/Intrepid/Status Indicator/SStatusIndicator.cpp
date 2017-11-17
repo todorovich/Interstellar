@@ -9,22 +9,9 @@
 //BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 void SStatusIndicator::Construct(const FArguments& InArgs)
 {
-	check(InArgs._Style);
-
-	Style = InArgs._Style;
+	SetStyle(InArgs._Style);
 
 	SetPercent(InArgs._Percent);
-
-	BackgroundImage = InArgs._BackgroundImage;
-	FillImage = InArgs._FillImage;
-
-	//FillColorAndOpacity = InArgs._FillColorAndOpacity;
-	BorderPadding = InArgs._BorderPadding;
-
-	CurrentTickRate = 0.0f;
-	MinimumTickRate = InArgs._RefreshRate;
-
-	ActiveTimerHandle = RegisterActiveTimer(CurrentTickRate, FWidgetActiveTimerDelegate::CreateSP(this, &SStatusIndicator::ActiveTick));
 }
 
 void SStatusIndicator::SetPercent(TAttribute< TOptional<float> > InPercent)
@@ -32,12 +19,16 @@ void SStatusIndicator::SetPercent(TAttribute< TOptional<float> > InPercent)
 	if (!Percent.IdenticalTo(InPercent))
 	{
 		Percent = InPercent;
+
+		
+
 		Invalidate(EInvalidateWidget::LayoutAndVolatility);
 	}
 }
 
 void SStatusIndicator::SetStyle(const FStatusIndicatorStyle* InStyle)
 {
+
 	Style = InStyle;
 
 	if (Style == nullptr)
@@ -48,42 +39,11 @@ void SStatusIndicator::SetStyle(const FStatusIndicatorStyle* InStyle)
 
 	check(Style);
 
+	DynamicSwipeMaterial.SetResourceObject(UMaterialInstanceDynamic::Create(static_cast<UMaterialInterface*>(Style->SwipeMaterial.GetResourceObject()), nullptr, FName("DynamicFillMaterial")));
+
 	Invalidate(EInvalidateWidget::Layout);
 }
 
-//void SStatusIndicator::SetFillColorAndOpacity(TAttribute< FSlateColor > InFillColorAndOpacity)
-//{
-//	//FillColorAndOpacity = InFillColorAndOpacity;
-//	Invalidate(EInvalidateWidget::Layout);
-//}
-
-void SStatusIndicator::SetBorderPadding(TAttribute< FVector2D > InBorderPadding)
-{
-	BorderPadding = InBorderPadding;
-	Invalidate(EInvalidateWidget::Layout);
-}
-
-void SStatusIndicator::SetBackgroundImage(const FSlateBrush* InBackgroundImage)
-{
-	BackgroundImage = InBackgroundImage;
-	Invalidate(EInvalidateWidget::Layout);
-}
-
-void SStatusIndicator::SetFillImage(const FSlateBrush* InFillImage)
-{
-	FillImage = InFillImage;
-	Invalidate(EInvalidateWidget::Layout);
-}
-
-const FSlateBrush* SStatusIndicator::GetBackgroundImage() const
-{
-	return BackgroundImage ? BackgroundImage : &Style->BackgroundImage;
-}
-
-const FSlateBrush* SStatusIndicator::GetFillImage() const
-{
-	return FillImage ? FillImage : &Style->FillImage;
-}
 
 void PushTransformedClip(FSlateWindowElementList& OutDrawElements, const FGeometry& AllottedGeometry, FVector2D InsetPadding, FVector2D ProgressOrigin, FSlateRect Progress)
 {
@@ -99,99 +59,59 @@ void PushTransformedClip(FSlateWindowElementList& OutDrawElements, const FGeomet
 	));
 }
 
+// Return Value is the largest LayerId used.
 int32 SStatusIndicator::OnPaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry, const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements, int32 LayerId, const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const
 {
-
 	// Used to track the layer ID we will return.
 	int32 RetLayerId = LayerId;
 
 	bool bEnabled = ShouldBeEnabled(bParentEnabled);
-	const ESlateDrawEffect DrawEffects = bEnabled ? ESlateDrawEffect::None : ESlateDrawEffect::DisabledEffect;
 
-	//const FLinearColor FillColor(InWidgetStyle.GetColorAndOpacityTint() * FillColorAndOpacity.Get().GetColor(InWidgetStyle) * CurrentFillImage->GetTint(InWidgetStyle));
-	//const FLinearColor FillColor(FillColorAndOpacity.Get().GetColor(InWidgetStyle));
-	
-	const FLinearColor BorderColor(GetBackgroundImage()->GetTint(InWidgetStyle));
-	const FLinearColor FillColor(GetFillImage()->GetTint(InWidgetStyle));
-	
-	TOptional<float> ProgressFraction = Percent.Get();
-	FVector2D BorderPaddingRef = BorderPadding.Get();
-
-	FSlateDrawElement::MakeBox(
-		OutDrawElements,
-		RetLayerId++,
-		AllottedGeometry.ToPaintGeometry(),
-		GetBackgroundImage(),
-		DrawEffects,
-		BorderColor
-	);
-
-	if (ProgressFraction.IsSet())
+	if (bEnabled)
 	{
-		auto FillMaterial = static_cast<UMaterialInstanceDynamic*>(GetFillImage()->GetResourceObject());
+		const ESlateDrawEffect DrawEffects = bEnabled ? ESlateDrawEffect::None : ESlateDrawEffect::DisabledEffect;
 
-		if (FillMaterial)
+		const FLinearColor BorderColor(Style->BorderImage.GetTint(InWidgetStyle));
+		const FLinearColor FillColor(Style->FillImage.GetTint(InWidgetStyle));
+
+
+		if (DynamicSwipeMaterial.GetResourceObject())
 		{
-			FillMaterial->SetScalarParameterValue(FName("Percent"), ProgressFraction.GetValue());
+			static_cast<UMaterialInstanceDynamic*>(DynamicSwipeMaterial.GetResourceObject())->SetScalarParameterValue(FName("Percent"), Percent.Get().GetValue());
+			
+			FSlateDrawElement::MakeBox(
+				OutDrawElements,
+				RetLayerId++,
+				AllottedGeometry.ToPaintGeometry(),
+				&DynamicSwipeMaterial,
+				DrawEffects,
+				BorderColor
+			);
 		}
-	}
 
-	FSlateDrawElement::MakeBox(
-		OutDrawElements,
-		RetLayerId++,
-		AllottedGeometry.ToPaintGeometry(
-			FVector2D::ZeroVector,
-			FVector2D(AllottedGeometry.GetLocalSize().X, AllottedGeometry.GetLocalSize().Y)),
-		GetFillImage(),
-		DrawEffects,
-		FillColor
-	);
+		FSlateDrawElement::MakeBox(
+			OutDrawElements,
+			RetLayerId++,
+			AllottedGeometry.ToPaintGeometry(
+				FVector2D::ZeroVector,
+				FVector2D(AllottedGeometry.GetLocalSize().X, AllottedGeometry.GetLocalSize().Y)),
+			&Style->BorderImage,
+			DrawEffects,
+			FillColor
+		);
+	}
 
 	return RetLayerId - 1;
 }
 
 FVector2D SStatusIndicator::ComputeDesiredSize(float) const
 {
-	return GetBackgroundImage()->ImageSize;
+	return FVector2D(64.0, 64.0);
 }
 
 bool SStatusIndicator::ComputeVolatility() const
 {
 	return SLeafWidget::ComputeVolatility() || Percent.IsBound();
 }
-
-void SStatusIndicator::SetActiveTimerTickRate(float TickRate)
-{
-	if (CurrentTickRate != TickRate || !ActiveTimerHandle.IsValid())
-	{
-		CurrentTickRate = TickRate;
-
-		TSharedPtr<FActiveTimerHandle> SharedActiveTimerHandle = ActiveTimerHandle.Pin();
-		if (SharedActiveTimerHandle.IsValid())
-		{
-			UnRegisterActiveTimer(SharedActiveTimerHandle.ToSharedRef());
-		}
-
-		ActiveTimerHandle = RegisterActiveTimer(TickRate, FWidgetActiveTimerDelegate::CreateSP(this, &SStatusIndicator::ActiveTick));
-	}
-}
-
-EActiveTimerReturnType SStatusIndicator::ActiveTick(double InCurrentTime, float InDeltaTime)
-{
-	MarqueeOffset = InCurrentTime - FMath::FloorToDouble(InCurrentTime);
-
-	TOptional<float> PrecentFracton = Percent.Get();
-	if (PrecentFracton.IsSet())
-	{
-		SetActiveTimerTickRate(MinimumTickRate);
-	}
-	else
-	{
-		SetActiveTimerTickRate(0.0f);
-	}
-
-	return EActiveTimerReturnType::Continue;
-}
-
 
 //END_SLATE_FUNCTION_BUILD_OPTIMIZATION
