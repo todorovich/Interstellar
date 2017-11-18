@@ -30,27 +30,67 @@ UStatusIndicator::UStatusIndicator(const FObjectInitializer& ObjectInitializer)
 	Style = *SlateDefaults._Style;	
 	Percent = SlateDefaults._Percent.Get();
 
-	if (BorderTexture.Object)
+	FARFilter filter;
+	filter.PackagePaths.Add("/Game/Materials");
+	filter.ClassNames.Add(UMaterial::StaticClass()->GetFName());
+	filter.bRecursiveClasses = true;
+	TArray<FAssetData> assetArray;
+
+	auto assetRegistry = UDataSingleton::GetAssetRegistry();
+
+	assetRegistry->GetAssets(filter, assetArray);
+
+	//UE_LOG(DebugLog, Log, TEXT("Results found: %d"), assetArray.Num());
+
+	for (auto& assetData : assetArray)
 	{
-		Style.BorderImage.SetResourceObject(BorderTexture.Object);
-		Style.BorderImage.ImageSize = FVector2D(BorderTexture.Object->GetSizeX(), BorderTexture.Object->GetSizeX());
-		Style.BorderImage.TintColor = FLinearColor::White;
+		//UE_LOG(DebugLog,
+		//	Log,
+		//	TEXT("AssetName: %s\n\tAssetClass: %s\n\tObjectPath: %s\n\tPackagePath: %s\n\tPackageName: %s\n\tNumber of TagsAndValues: %d"),
+		//	*assetData.AssetName.ToString(),
+		//	*assetData.AssetClass.ToString(),
+		//	*assetData.ObjectPath.ToString(),
+		//	*assetData.PackagePath.ToString(),
+		//	*assetData.PackageName.ToString(),
+		//	assetData.TagsAndValues.Num());
+		if (assetData.AssetName == FName("M_ClockwiseRadialFill"))
+		{
+			UE_LOG(DebugLog, Log, TEXT("Found M_ClockwiseRadialFill"));
+			auto  asset = assetData.GetAsset();
+			Style.SwipeMaterial.SetResourceObject(asset);
+			Style.SwipeMaterial.TintColor = FLinearColor::White;
+		}
 	}
 
-	if (FillTexture.Object)
-	{
-		Style.FillImage.SetResourceObject(FillTexture.Object);
-		Style.FillImage.ImageSize = FVector2D(FillTexture.Object->GetSizeX(), FillTexture.Object->GetSizeX());
-		Style.FillImage.TintColor = FLinearColor::White;
-	}
-	
-	if (Material.Object)
-	{
-		Style.SwipeMaterial.SetResourceObject(Material.Object);
+	filter.Clear();
 
-		// Setting this on a material makes it think you are not defaulted in the editor, wtf?
-		//Style.SwipeMaterial.ImageSize.Set(64.0, 64.0);
-		Style.SwipeMaterial.TintColor = FLinearColor::White;
+	filter.PackagePaths.Add("/Game/Textures");
+	filter.ClassNames.Add(UTexture2D::StaticClass()->GetFName());
+	filter.bRecursiveClasses = true;
+
+	assetRegistry->GetAssets(filter, assetArray);
+
+	//UE_LOG(DebugLog, Log, TEXT("Results found: %d"), assetArray.Num());
+
+	for (auto& assetData : assetArray)
+	{
+		if (assetData.AssetName == FName("T_Shield_Status_Icon"))
+		{
+			UE_LOG(DebugLog, Log, TEXT("Found shield_status_icon"));
+			auto object = assetData.GetAsset();
+			auto texture = Cast<UTexture2D>(object);
+			Style.BorderImage.SetResourceObject(object);
+			Style.BorderImage.ImageSize = FVector2D(texture->GetSizeX(), texture->GetSizeX());
+			Style.BorderImage.TintColor = FLinearColor::White;
+		}
+		else if (assetData.AssetName == FName("T_Shield_Status_Icon_Fill"))
+		{
+			auto object = assetData.GetAsset();
+			auto texture = Cast<UTexture2D>(object);
+			Style.FillImage.SetResourceObject(object);
+			Style.FillImage.ImageSize = FVector2D(texture->GetSizeX(), texture->GetSizeX());
+			Style.FillImage.TintColor = FLinearColor::White;
+		}
 	}
 
 	Style.BorderPadding = FVector2D(0, 0);
