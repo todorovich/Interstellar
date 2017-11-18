@@ -18,7 +18,7 @@ UStatusIndicator::UStatusIndicator(const FObjectInitializer& ObjectInitializer)
 {
 
 	// TODO: Switch this to use asset registry
-	static ConstructorHelpers::FObjectFinder<UMaterial> Material(TEXT("Material'/Game/Materials/M_CircleSwipe.M_CircleSwipe'"));
+	static ConstructorHelpers::FObjectFinder<UMaterial> Material(TEXT("Material'/Game/Materials/M_ClockwiseRadialFill.M_ClockwiseRadialFill'"));
 
 	static ConstructorHelpers::FObjectFinder<UTexture2D> BorderTexture(TEXT("Texture2D'/Game/Textures/shield_status_icon.shield_status_icon'"));
 
