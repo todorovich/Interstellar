@@ -1,11 +1,11 @@
 // Copyright 2017 Micho Todorovich, all rights reserved.
 
 #include "Status Indicator/StatusIndicator.h"
-#include "Slate/SlateBrushAsset.h"
 #include "Intrepid.h"
-#include "Materials/MaterialInstanceDynamic.h"
+#include "Slate/SlateBrushAsset.h"
 #include "Materials/MaterialInstance.h"
-#include "Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h"
+//#include "Materials/MaterialInstanceDynamic.h"
+//#include "Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h"
 #include "Runtime/Engine/Classes/Engine/Texture2D.h"
 #include "AssetRegistryModule.h"
 #include "ARFilter.h"
@@ -16,32 +16,24 @@
 UStatusIndicator::UStatusIndicator(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-
-	// TODO: Switch this to use asset registry
-	static ConstructorHelpers::FObjectFinder<UMaterial> Material(TEXT("Material'/Game/Materials/M_ClockwiseRadialFill.M_ClockwiseRadialFill'"));
-
-	static ConstructorHelpers::FObjectFinder<UTexture2D> BorderTexture(TEXT("Texture2D'/Game/Textures/shield_status_icon.shield_status_icon'"));
-
-	static ConstructorHelpers::FObjectFinder<UTexture2D> FillTexture(TEXT("Texture2D'/Game/Textures/shield_status_icon_fill.shield_status_icon_fill'"));
-
 	SStatusIndicator::FArguments SlateDefaults;
-	
-	SlateDefaults._Percent;
 	Style = *SlateDefaults._Style;	
 	Percent = SlateDefaults._Percent.Get();
 
 	FARFilter filter;
+	TArray<FAssetData> assetArray;
+	auto assetRegistry = UDataSingleton::GetAssetRegistry();
+
+	// Set up filter to find materials
 	filter.PackagePaths.Add("/Game/Materials");
 	filter.ClassNames.Add(UMaterial::StaticClass()->GetFName());
 	filter.bRecursiveClasses = true;
-	TArray<FAssetData> assetArray;
-
-	auto assetRegistry = UDataSingleton::GetAssetRegistry();
 
 	assetRegistry->GetAssets(filter, assetArray);
 
 	//UE_LOG(DebugLog, Log, TEXT("Results found: %d"), assetArray.Num());
 
+	// Iterate over the materials until the one we want is found.
 	for (auto& assetData : assetArray)
 	{
 		//UE_LOG(DebugLog,
@@ -64,6 +56,7 @@ UStatusIndicator::UStatusIndicator(const FObjectInitializer& ObjectInitializer)
 
 	filter.Clear();
 
+	// Set up filter to find textures 
 	filter.PackagePaths.Add("/Game/Textures");
 	filter.ClassNames.Add(UTexture2D::StaticClass()->GetFName());
 	filter.bRecursiveClasses = true;
@@ -72,6 +65,7 @@ UStatusIndicator::UStatusIndicator(const FObjectInitializer& ObjectInitializer)
 
 	//UE_LOG(DebugLog, Log, TEXT("Results found: %d"), assetArray.Num());
 
+	// Iterate over the texutres and find the ones we are looking for
 	for (auto& assetData : assetArray)
 	{
 		if (assetData.AssetName == FName("T_Shield_Status_Icon"))
@@ -95,7 +89,7 @@ UStatusIndicator::UStatusIndicator(const FObjectInitializer& ObjectInitializer)
 
 	Style.BorderPadding = FVector2D(0, 0);
 
-	SynchronizeProperties();
+	//SynchronizeProperties();
 }
 
 //UStatusIndicator::~UStatusIndicator(){}
