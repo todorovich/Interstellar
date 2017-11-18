@@ -27,7 +27,6 @@ IAssetRegistry* UDataSingleton::GetAssetRegistry()
 {
 	auto& asset_registry = Instance()->_assetRegistry;
 
-
 	if (asset_registry == nullptr)
 	{
 		asset_registry = &FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry").Get();

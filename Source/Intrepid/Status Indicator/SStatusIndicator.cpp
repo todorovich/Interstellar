@@ -3,6 +3,7 @@
 #include "SStatusIndicator.h"
 #include "SlateOptMacros.h"
 #include "Rendering/DrawElements.h"
+#include "Intrepid.h"
 
 #include "Runtime/Engine/Classes/Materials/MaterialInstanceDynamic.h"
 
@@ -20,15 +21,12 @@ void SStatusIndicator::SetPercent(TAttribute< TOptional<float> > InPercent)
 	{
 		Percent = InPercent;
 
-		
-
 		Invalidate(EInvalidateWidget::LayoutAndVolatility);
 	}
 }
 
 void SStatusIndicator::SetStyle(const FStatusIndicatorStyle* InStyle)
 {
-
 	Style = InStyle;
 
 	if (Style == nullptr)
@@ -74,6 +72,7 @@ int32 SStatusIndicator::OnPaint(const FPaintArgs& Args, const FGeometry& Allotte
 		const FLinearColor BorderColor(Style->BorderImage.GetTint(InWidgetStyle));
 		const FLinearColor FillColor(Style->FillImage.GetTint(InWidgetStyle));
 
+		//UE_LOG(DebugLog, Log, TEXT("%s"), *FillColor.ToString());
 
 		if (DynamicSwipeMaterial.GetResourceObject())
 		{
@@ -85,7 +84,7 @@ int32 SStatusIndicator::OnPaint(const FPaintArgs& Args, const FGeometry& Allotte
 				AllottedGeometry.ToPaintGeometry(),
 				&DynamicSwipeMaterial,
 				DrawEffects,
-				BorderColor
+				FillColor
 			);
 		}
 
@@ -97,7 +96,7 @@ int32 SStatusIndicator::OnPaint(const FPaintArgs& Args, const FGeometry& Allotte
 				FVector2D(AllottedGeometry.GetLocalSize().X, AllottedGeometry.GetLocalSize().Y)),
 			&Style->BorderImage,
 			DrawEffects,
-			FillColor
+			BorderColor
 		);
 	}
 

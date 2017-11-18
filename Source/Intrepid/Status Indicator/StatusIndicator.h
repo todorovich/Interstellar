@@ -14,9 +14,7 @@
 class USlateBrushAsset;
 
 /**
-* The progress bar widget is a simple bar that fills up that can be restyled to fit any number of uses.
-*
-* * No Children
+* 
 */
 UCLASS()
 class INTREPID_API UStatusIndicator : public UWidget
@@ -67,8 +65,4 @@ public:
 	virtual void OnCreationFromPalette() override;
 	//~ End UWidget Interface
 #endif
-
-
-
-
 };

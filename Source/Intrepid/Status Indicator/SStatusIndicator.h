@@ -27,9 +27,6 @@ public:
 	SLATE_BEGIN_ARGS(SStatusIndicator)
 		: _Style(&FCoreStyle::Get().GetWidgetStyle<FStatusIndicatorStyle>("StatusIndicator"))
 		, _Percent(TOptional<float>())
-		//, _BorderImage(nullptr)
-		//, _FillImage(nullptr)
-		//, _SwipeMaterial(nullptr)
 	{}
 
 		/** Style used for the progress bar */
@@ -37,15 +34,6 @@ public:
 
 		/** Used to determine the fill position of the progress bar ranging 0..1 */
 		SLATE_ATTRIBUTE(TOptional<float>, Percent)
-
-		///** The brush to use as the background of the progress bar */
-		//SLATE_ARGUMENT(const FSlateBrush*, BorderImage)
-
-		///** The brush to use as the fill image */
-		//SLATE_ARGUMENT(const FSlateBrush*, FillImage)
-
-		///** The brush to use as the fill image */
-		//SLATE_ARGUMENT(const FSlateBrush*, SwipeMaterial)
 
 	SLATE_END_ARGS()
 
@@ -61,15 +49,6 @@ public:
 
 	/** See attribute Style */
 	void SetStyle(const FStatusIndicatorStyle* InStyle);
-
-	///** See attribute BackgroundImage */
-	//void SetBorderImage(const FSlateBrush* InBackgroundImage);
-
-	///** See attribute FillImage */
-	//void SetFillImage(const FSlateBrush* InFillImage);
-
-	///** See attribute FillImage */
-	//void SetSwipeMaterial(const FSlateBrush* InFillImage);
 
 private:
 

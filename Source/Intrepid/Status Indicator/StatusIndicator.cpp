@@ -11,14 +11,13 @@
 #include "ARFilter.h"
 #include "DataSingleton.h"
 
-
-
 #define LOCTEXT_NAMESPACE "StatusIndicator"
-
 
 UStatusIndicator::UStatusIndicator(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+
+	// Switch this to use asset registry
 	static ConstructorHelpers::FObjectFinder<UMaterial> Material(TEXT("Material'/Game/Materials/M_CircleSwipe.M_CircleSwipe'"));
 
 	static ConstructorHelpers::FObjectFinder<UTexture2D> BorderTexture(TEXT("Texture2D'/Game/Textures/shield_status_icon.shield_status_icon'"));

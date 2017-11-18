@@ -32,12 +32,10 @@ struct INTREPID_API FStatusIndicatorStyle : public FSlateWidgetStyle
 	FSlateBrush SwipeMaterial;
 	FStatusIndicatorStyle& SetSwipeMaterial(const FSlateBrush& InSwipeMaterial) { SwipeMaterial = InSwipeMaterial; return *this; }
 
-	/** Background image to use for the progress bar */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Appearance)
 	FSlateBrush BorderImage;
 	FStatusIndicatorStyle& SetBorderImage(const FSlateBrush& InBorderImage) { BorderImage = InBorderImage; return *this; }
 
-	/** Foreground image to use for the progress bar */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Appearance)
 	FSlateBrush FillImage;
 	FStatusIndicatorStyle& SetFillImage(const FSlateBrush& InFillImage) { FillImage = InFillImage; return *this; }
