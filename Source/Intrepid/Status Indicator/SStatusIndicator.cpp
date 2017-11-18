@@ -37,7 +37,7 @@ void SStatusIndicator::SetStyle(const FStatusIndicatorStyle* InStyle)
 
 	check(Style.Get());
 
-	DynamicSwipeMaterial.SetResourceObject(UMaterialInstanceDynamic::Create(static_cast<UMaterialInterface*>(Style.Get()->SwipeMaterial.GetResourceObject()), nullptr, FName("DynamicFillMaterial")));
+	DynamicSwipeMaterial.SetResourceObject(UMaterialInstanceDynamic::Create(static_cast<UMaterialInterface*>(Style.Get()->SwipeMaterial.GetResourceObject()), nullptr));
 
 	Invalidate(EInvalidateWidget::Layout);
 }
