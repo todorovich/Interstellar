@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright 2017 Micho Todorovich, all rights reserved.
 
 #include "StatusIndicatorWidgetStyle.h"
 #include "Status Indicator/StatusIndicator.h"

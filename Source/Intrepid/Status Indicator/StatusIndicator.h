@@ -1,4 +1,4 @@
-// Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
+// Copyright 2017 Micho Todorovich, all rights reserved.
 
 #pragma once
 
