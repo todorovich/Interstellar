@@ -15,13 +15,6 @@
 
 const FName FStatusIndicatorStyle::TypeName(TEXT("FStatusIndicatorStyle"));
 
-FStatusIndicatorStyle::FStatusIndicatorStyle()
-{
-
-}
-
-FStatusIndicatorStyle::~FStatusIndicatorStyle() {}
-
 const FStatusIndicatorStyle& FStatusIndicatorStyle::GetDefault()
 {
 	static FStatusIndicatorStyle Default;

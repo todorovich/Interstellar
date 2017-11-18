@@ -12,34 +12,40 @@
 class UMaterialInstanceDynamic;
 
 /**
- * 
+ *	The Slate Widget Style for the Status Indicator
  */
 USTRUCT(BlueprintType)
 struct INTREPID_API FStatusIndicatorStyle : public FSlateWidgetStyle
 {
 	GENERATED_USTRUCT_BODY()
 
-	FStatusIndicatorStyle();
-	virtual ~FStatusIndicatorStyle();
+	FStatusIndicatorStyle() = default;
+	virtual ~FStatusIndicatorStyle() = default;
 
-	// FSlateWidgetStyle
-	virtual void GetResources(TArray<const FSlateBrush*>& OutBrushes) const override;
-	static const FName TypeName;
-	virtual const FName GetTypeName() const override { return TypeName; };
 	static const FStatusIndicatorStyle& GetDefault();
-
+	
+	static const FName TypeName;
+	
+	virtual const FName GetTypeName() const override { return TypeName; };
+	
+	virtual void GetResources(TArray<const FSlateBrush*>& OutBrushes) const override;
+	
+	// The Material used to selectively modify the opacity Fill Image.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Appearance)
 	FSlateBrush SwipeMaterial;
 	FStatusIndicatorStyle& SetSwipeMaterial(const FSlateBrush& InSwipeMaterial) { SwipeMaterial = InSwipeMaterial; return *this; }
 
+	// The texture used as a container for the fill image.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Appearance)
 	FSlateBrush BorderImage;
 	FStatusIndicatorStyle& SetBorderImage(const FSlateBrush& InBorderImage) { BorderImage = InBorderImage; return *this; }
 
+	// The texture used to fill the border.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Appearance)
 	FSlateBrush FillImage;
 	FStatusIndicatorStyle& SetFillImage(const FSlateBrush& InFillImage) { FillImage = InFillImage; return *this; }
 
+	// The amount of padding that should be used.
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Progress)
 	FVector2D BorderPadding;
 	FStatusIndicatorStyle& SetBorderPadding(const FVector2D& InBorderPadding) { BorderPadding = InBorderPadding; return *this; }

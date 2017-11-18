@@ -7,7 +7,7 @@
 
 #include "Runtime/Engine/Classes/Materials/MaterialInstanceDynamic.h"
 
-//BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
+BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 void SStatusIndicator::Construct(const FArguments& InArgs)
 {
 	SetStyle(InArgs._Style);
@@ -15,7 +15,7 @@ void SStatusIndicator::Construct(const FArguments& InArgs)
 	SetPercent(InArgs._Percent);
 }
 
-void SStatusIndicator::SetPercent(TAttribute< TOptional<float> > InPercent)
+void SStatusIndicator::SetPercent(TAttribute<float> InPercent)
 {
 	if (!Percent.IdenticalTo(InPercent))
 	{
@@ -27,17 +27,17 @@ void SStatusIndicator::SetPercent(TAttribute< TOptional<float> > InPercent)
 
 void SStatusIndicator::SetStyle(const FStatusIndicatorStyle* InStyle)
 {
-	Style = InStyle;
+	Style.Set(InStyle);
 
-	if (Style == nullptr)
+	if (Style.Get() == nullptr)
 	{
 		FArguments Defaults;
 		Style = Defaults._Style;
 	}
 
-	check(Style);
+	check(Style.Get());
 
-	DynamicSwipeMaterial.SetResourceObject(UMaterialInstanceDynamic::Create(static_cast<UMaterialInterface*>(Style->SwipeMaterial.GetResourceObject()), nullptr, FName("DynamicFillMaterial")));
+	DynamicSwipeMaterial.SetResourceObject(UMaterialInstanceDynamic::Create(static_cast<UMaterialInterface*>(Style.Get()->SwipeMaterial.GetResourceObject()), nullptr, FName("DynamicFillMaterial")));
 
 	Invalidate(EInvalidateWidget::Layout);
 }
@@ -69,14 +69,14 @@ int32 SStatusIndicator::OnPaint(const FPaintArgs& Args, const FGeometry& Allotte
 	{
 		const ESlateDrawEffect DrawEffects = bEnabled ? ESlateDrawEffect::None : ESlateDrawEffect::DisabledEffect;
 
-		const FLinearColor BorderColor(Style->BorderImage.GetTint(InWidgetStyle));
-		const FLinearColor FillColor(Style->FillImage.GetTint(InWidgetStyle));
+		const FLinearColor BorderColor(Style.Get()->BorderImage.GetTint(InWidgetStyle));
+		const FLinearColor FillColor(Style.Get()->FillImage.GetTint(InWidgetStyle));
 
 		//UE_LOG(DebugLog, Log, TEXT("%s"), *FillColor.ToString());
 
 		if (DynamicSwipeMaterial.GetResourceObject())
 		{
-			static_cast<UMaterialInstanceDynamic*>(DynamicSwipeMaterial.GetResourceObject())->SetScalarParameterValue(FName("Percent"), Percent.Get().GetValue());
+			static_cast<UMaterialInstanceDynamic*>(DynamicSwipeMaterial.GetResourceObject())->SetScalarParameterValue(FName("Percent"), Percent.Get());
 			
 			FSlateDrawElement::MakeBox(
 				OutDrawElements,
@@ -86,7 +86,7 @@ int32 SStatusIndicator::OnPaint(const FPaintArgs& Args, const FGeometry& Allotte
 				DrawEffects,
 				FillColor
 			);
-		}
+		}// Maybe add an else to try to create the dynamic material
 
 		FSlateDrawElement::MakeBox(
 			OutDrawElements,
@@ -94,7 +94,7 @@ int32 SStatusIndicator::OnPaint(const FPaintArgs& Args, const FGeometry& Allotte
 			AllottedGeometry.ToPaintGeometry(
 				FVector2D::ZeroVector,
 				FVector2D(AllottedGeometry.GetLocalSize().X, AllottedGeometry.GetLocalSize().Y)),
-			&Style->BorderImage,
+			&Style.Get()->BorderImage,
 			DrawEffects,
 			BorderColor
 		);
@@ -113,4 +113,4 @@ bool SStatusIndicator::ComputeVolatility() const
 	return SLeafWidget::ComputeVolatility() || Percent.IsBound();
 }
 
-//END_SLATE_FUNCTION_BUILD_OPTIMIZATION
+END_SLATE_FUNCTION_BUILD_OPTIMIZATION

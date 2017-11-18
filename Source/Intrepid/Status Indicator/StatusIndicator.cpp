@@ -17,7 +17,7 @@ UStatusIndicator::UStatusIndicator(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 
-	// Switch this to use asset registry
+	// TODO: Switch this to use asset registry
 	static ConstructorHelpers::FObjectFinder<UMaterial> Material(TEXT("Material'/Game/Materials/M_CircleSwipe.M_CircleSwipe'"));
 
 	static ConstructorHelpers::FObjectFinder<UTexture2D> BorderTexture(TEXT("Texture2D'/Game/Textures/shield_status_icon.shield_status_icon'"));
@@ -26,8 +26,10 @@ UStatusIndicator::UStatusIndicator(const FObjectInitializer& ObjectInitializer)
 
 	SStatusIndicator::FArguments SlateDefaults;
 	
+	SlateDefaults._Percent;
 	Style = *SlateDefaults._Style;	
-	
+	Percent = SlateDefaults._Percent.Get();
+
 	if (BorderTexture.Object)
 	{
 		Style.BorderImage.SetResourceObject(BorderTexture.Object);
@@ -53,11 +55,10 @@ UStatusIndicator::UStatusIndicator(const FObjectInitializer& ObjectInitializer)
 
 	Style.BorderPadding = FVector2D(0, 0);
 
-	Percent = .95;
-
 	SynchronizeProperties();
 }
 
+//UStatusIndicator::~UStatusIndicator(){}
 
 void UStatusIndicator::ReleaseSlateResources(bool bReleaseChildren)
 {
@@ -78,8 +79,6 @@ TSharedRef<SWidget> UStatusIndicator::RebuildWidget()
 void UStatusIndicator::SynchronizeProperties()
 {
 	Super::SynchronizeProperties();
-
-	TAttribute< TOptional<float> > PercentBinding = OPTIONAL_BINDING_CONVERT(float, Percent, TOptional<float>, ConvertFloatToOptionalFloat);
 	
 	if (MyStatusIndicator.IsValid())
 	{
@@ -109,12 +108,8 @@ const FText UStatusIndicator::GetPaletteCategory()
 	return LOCTEXT("Common", "Common");
 }
 
-void UStatusIndicator::OnCreationFromPalette()
-{
-}
+void UStatusIndicator::OnCreationFromPalette() {}
 
 #endif
-
-/////////////////////////////////////////////////////
 
 #undef LOCTEXT_NAMESPACE

@@ -14,7 +14,7 @@
 class USlateBrushAsset;
 
 /**
-* 
+*  The Status Indicator UMG Widget
 */
 UCLASS()
 class INTREPID_API UStatusIndicator : public UWidget
@@ -22,47 +22,45 @@ class INTREPID_API UStatusIndicator : public UWidget
 	GENERATED_UCLASS_BODY()
 
 protected:
-	/** Native Slate Widget */
+	// Native Slate Widget
 	TSharedPtr<SStatusIndicator> MyStatusIndicator;
 
-	//~ Begin UWidget Interface
+	// Overridden from UWidget
 	virtual TSharedRef<SWidget> RebuildWidget() override;
-	//~ End UWidget Interface
 
 public:
 
-	/** The progress bar style */
+	// Says it's already defined or declared somwhere else? Thinking it's included in the generated uclass body.
+	// UStatusIndicator(const FObjectInitializer& ObjectInitializer);
+
+	virtual ~UStatusIndicator() = default;
+
+	// The style of the Status Indicator
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Style", meta = (DisplayName = "Style"))
 	FStatusIndicatorStyle Style;
 
-	/** Used to determine the fill position of the progress bar ranging 0..1 */
+	// The fill amount of the progress bar as a float with a range of 0..1
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Progress, meta = (UIMin = "0", UIMax = "1"))
 	float Percent;
 
-	/** A bindable delegate to allow logic to drive the text of the widget */
-	UPROPERTY()
-	FGetFloat PercentDelegate;
-
-	/** Sets the current value of the ProgressBar. */
+	// Sets the current value of the Status Indicator.
 	UFUNCTION(BlueprintCallable, Category = "Progress")
 	void SetPercent(float InPercent);
 
-	//~ Begin UWidget Interface
+	// Overridden from UWidget
 	virtual void SynchronizeProperties() override;
-	//~ End UWidget Interface
 
-	//~ Begin UVisual Interface
+	// Overridden from UVisual
 	virtual void ReleaseSlateResources(bool bReleaseChildren) override;
-	//~ End UVisual Interface
 
-	//~ Begin UObject Interface
+	// Overridden form UObject
 	virtual void PostLoad() override;
-	//~ End UObject Interface
 
 #if WITH_EDITOR
-	//~ Begin UWidget Interface
+	// Overridden from UWidget
 	virtual const FText GetPaletteCategory() override;
+	
+	// Overridden from UWidget
 	virtual void OnCreationFromPalette() override;
-	//~ End UWidget Interface
 #endif
 };
