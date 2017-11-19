@@ -11,6 +11,8 @@
 
 class UMaterialInstanceDynamic;
 
+
+
 /**
  *	The Slate Widget Style for the Status Indicator
  */
