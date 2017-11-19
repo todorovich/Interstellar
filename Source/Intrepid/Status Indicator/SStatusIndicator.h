@@ -17,6 +17,8 @@ class FActiveTimerHandle;
 class FPaintArgs;
 class FSlateWindowElementList;
 
+
+
 /**
  *  The Status Indicator Slate Widget
  */
@@ -36,6 +38,7 @@ public:
 		SLATE_ATTRIBUTE(float, Percent)
 
 	SLATE_END_ARGS()
+
 
 	// Constructs this widget from FArguments
 	void Construct(const FArguments& InArgs);
