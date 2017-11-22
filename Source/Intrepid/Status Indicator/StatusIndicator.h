@@ -17,6 +17,10 @@ UENUM(BlueprintType)
 enum class FillStyle : uint8
 {
 	LeftToRight UMETA(DisplayName = "Left to Right"),
+	RightToLeft UMETA(DisplayName = "Right to Left"),
+	BottomToTop UMETA(DisplayName = "Bottom to Top"),
+	TopToBottom UMETA(DisplayName = "Top to Bottom"),
+	RadialCW	UMETA(DisplayName = "Radial Clockwise"),
 	RadialCCW	UMETA(DisplayName = "Radial Counter-Clockwise"),
 	Custom		UMETA(DisplayName = "Custom"),
 };
@@ -34,8 +38,16 @@ class INTREPID_API UStatusIndicator : public UWidget
 
 	inline void UseRadialCCWFillType();
 
-	inline void UseLeftToRightFillType();
+	inline void UseRadialCWFillType();
 
+	inline void UseRightToLeftFillType();
+
+	inline void UseLeftToRightFillType();
+	
+	inline void UseBottomToTopFillType();
+	
+	inline void UseTopToBottomFillType();
+	
 	inline void FindAndSetDefaultAssets();
 
 	inline void FindAndSetDefaultTextures();

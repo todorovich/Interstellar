@@ -8,6 +8,15 @@
 #include "Runtime/Engine/Classes/Materials/MaterialInstanceDynamic.h"
 
 BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
+
+SStatusIndicator::~SStatusIndicator()
+{
+	if (auto dsm = DynamicSwipeMaterial.GetResourceObject())
+	{
+		dsm->RemoveFromRoot();
+	}
+}
+
 void SStatusIndicator::Construct(const FArguments& InArgs)
 {
 	SetStyle(InArgs._Style);
@@ -40,6 +49,8 @@ void SStatusIndicator::SetStyle(const FStatusIndicatorStyle* InStyle)
 	UE_LOG(DebugLog, Log, TEXT("Creating Dynamic Material"));
 
 	DynamicSwipeMaterial.SetResourceObject(UMaterialInstanceDynamic::Create(static_cast<UMaterialInterface*>(Style.Get()->SwipeMaterial.GetResourceObject()), nullptr));
+
+	DynamicSwipeMaterial.GetResourceObject()->AddToRoot();
 
 	Invalidate(EInvalidateWidget::Layout);
 }
@@ -80,17 +91,20 @@ int32 SStatusIndicator::OnPaint(const FPaintArgs& Args, const FGeometry& Allotte
 		{
 			auto mat = static_cast<UMaterialInstanceDynamic*>(DynamicSwipeMaterial.GetResourceObject());
 			
-			mat->SetTextureParameterValue(FName("Texture"), Cast<UTexture>(Style.Get()->FillImage.GetResourceObject()));
-			mat->SetScalarParameterValue(FName("Percent"), Percent.Get());
+			if (mat->IsValidLowLevel())
+			{
+				mat->SetTextureParameterValue(FName("Texture"), Cast<UTexture>(Style.Get()->FillImage.GetResourceObject()));
+				mat->SetScalarParameterValue(FName("Percent"), Percent.Get());
 
-			FSlateDrawElement::MakeBox(
-				OutDrawElements,
-				RetLayerId++,
-				AllottedGeometry.ToPaintGeometry(),
-				&DynamicSwipeMaterial,
-				DrawEffects,
-				FillColor
-			);
+				FSlateDrawElement::MakeBox(
+					OutDrawElements,
+					RetLayerId++,
+					AllottedGeometry.ToPaintGeometry(),
+					&DynamicSwipeMaterial,
+					DrawEffects,
+					FillColor
+				);
+			}
 		}// Maybe add an else to try to create the dynamic material
 
 		FSlateDrawElement::MakeBox(

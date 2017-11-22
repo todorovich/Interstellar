@@ -39,6 +39,7 @@ public:
 
 	SLATE_END_ARGS()
 
+	virtual ~SStatusIndicator();
 
 	// Constructs this widget from FArguments
 	void Construct(const FArguments& InArgs);
