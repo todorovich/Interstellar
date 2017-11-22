@@ -20,6 +20,22 @@ UStatusIndicator::UStatusIndicator(const FObjectInitializer& ObjectInitializer)
 	Style = *SlateDefaults._Style;	
 	Percent = SlateDefaults._Percent.Get();
 
+	FindAndSetDefaultAssets();
+
+	Style.BorderPadding = FVector2D(0, 0);
+
+	//SynchronizeProperties();
+}
+
+void UStatusIndicator::ReleaseSlateResources(bool bReleaseChildren)
+{
+	Super::ReleaseSlateResources(bReleaseChildren);
+
+	MyStatusIndicator.Reset();
+}
+
+inline void UStatusIndicator::UseRadialCCWFillType()
+{
 	FARFilter filter;
 	TArray<FAssetData> assetArray;
 	auto assetRegistry = UDataSingleton::GetAssetRegistry();
@@ -36,27 +52,54 @@ UStatusIndicator::UStatusIndicator(const FObjectInitializer& ObjectInitializer)
 	// Iterate over the materials until the one we want is found.
 	for (auto& assetData : assetArray)
 	{
-		//UE_LOG(DebugLog,
-		//	Log,
-		//	TEXT("AssetName: %s\n\tAssetClass: %s\n\tObjectPath: %s\n\tPackagePath: %s\n\tPackageName: %s\n\tNumber of TagsAndValues: %d"),
-		//	*assetData.AssetName.ToString(),
-		//	*assetData.AssetClass.ToString(),
-		//	*assetData.ObjectPath.ToString(),
-		//	*assetData.PackagePath.ToString(),
-		//	*assetData.PackageName.ToString(),
-		//	assetData.TagsAndValues.Num());
-		if (assetData.AssetName == FName("M_ClockwiseRadialFill"))
+		if (assetData.AssetName == FName("M_CounterClockwiseRadialFill"))
 		{
-			UE_LOG(DebugLog, Log, TEXT("Found M_ClockwiseRadialFill"));
+			UE_LOG(DebugLog, Log, TEXT("Found M_CounterClockwiseRadialFill"));
 			auto  asset = assetData.GetAsset();
 			Style.SwipeMaterial.SetResourceObject(asset);
 			Style.SwipeMaterial.TintColor = FLinearColor::White;
 		}
 	}
 
-	filter.Clear();
+	currentFillStyle = FillStyle::RadialCCW;
+}
 
-	// Set up filter to find textures 
+inline void UStatusIndicator::UseLeftToRightFillType()
+{
+	FARFilter filter;
+	TArray<FAssetData> assetArray;
+	auto assetRegistry = UDataSingleton::GetAssetRegistry();
+
+	// Set up filter to find materials
+	filter.PackagePaths.Add("/Game/Materials");
+	filter.ClassNames.Add(UMaterial::StaticClass()->GetFName());
+	filter.bRecursiveClasses = true;
+
+	assetRegistry->GetAssets(filter, assetArray);
+
+	//UE_LOG(DebugLog, Log, TEXT("Results found: %d"), assetArray.Num());
+
+	// Iterate over the materials until the one we want is found.
+	for (auto& assetData : assetArray)
+	{
+		if (assetData.AssetName == FName("M_LeftToRightFill"))
+		{
+			UE_LOG(DebugLog, Log, TEXT("Found M_LeftToRightFill"));
+			auto  asset = assetData.GetAsset();
+			Style.SwipeMaterial.SetResourceObject(asset);
+			Style.SwipeMaterial.TintColor = FLinearColor::White;
+		}
+	}
+
+	currentFillStyle = FillStyle::LeftToRight;
+}
+
+inline void UStatusIndicator::FindAndSetDefaultTextures()
+{
+	FARFilter filter;
+	TArray<FAssetData> assetArray;
+	auto assetRegistry = UDataSingleton::GetAssetRegistry();
+
 	filter.PackagePaths.Add("/Game/Textures");
 	filter.ClassNames.Add(UTexture2D::StaticClass()->GetFName());
 	filter.bRecursiveClasses = true;
@@ -79,6 +122,7 @@ UStatusIndicator::UStatusIndicator(const FObjectInitializer& ObjectInitializer)
 		}
 		else if (assetData.AssetName == FName("T_Shield_Status_Icon_Fill"))
 		{
+			UE_LOG(DebugLog, Log, TEXT("Found shield_status_icon_fill"));
 			auto object = assetData.GetAsset();
 			auto texture = Cast<UTexture2D>(object);
 			Style.FillImage.SetResourceObject(object);
@@ -86,19 +130,14 @@ UStatusIndicator::UStatusIndicator(const FObjectInitializer& ObjectInitializer)
 			Style.FillImage.TintColor = FLinearColor::White;
 		}
 	}
-
-	Style.BorderPadding = FVector2D(0, 0);
-
-	//SynchronizeProperties();
 }
 
-//UStatusIndicator::~UStatusIndicator(){}
-
-void UStatusIndicator::ReleaseSlateResources(bool bReleaseChildren)
+inline void UStatusIndicator::FindAndSetDefaultAssets()
 {
-	Super::ReleaseSlateResources(bReleaseChildren);
+	FindAndSetDefaultTextures();	
 
-	MyStatusIndicator.Reset();
+	UseRadialCCWFillType();
+	//UseLeftToRightFillType();
 }
 
 TSharedRef<SWidget> UStatusIndicator::RebuildWidget()
@@ -114,6 +153,49 @@ void UStatusIndicator::SynchronizeProperties()
 {
 	Super::SynchronizeProperties();
 	
+	switch (fillStyleSelected)
+	{
+		case FillStyle::Custom:
+			currentFillStyle = FillStyle::Custom;
+			break;
+
+		case FillStyle::RadialCCW:
+			// Confirm we havent been switched from
+			if (currentFillStyle == FillStyle::RadialCCW)
+			{
+				//UE_LOG(DebugLog, Log, TEXT("%s"), *Style.SwipeMaterial.GetResourceName().ToString());
+				if (Style.SwipeMaterial.GetResourceName() != FName("M_CounterClockwiseRadialFill"))
+				{
+					fillStyleSelected = FillStyle::Custom;
+					currentFillStyle = FillStyle::Custom;
+				}
+			}
+			// Switch to 
+			else
+			{
+				UseRadialCCWFillType();
+			}
+			break;
+
+		case FillStyle::LeftToRight:
+			// Confirm we havent been switched from
+			if (currentFillStyle == FillStyle::LeftToRight)
+			{
+				if (Style.SwipeMaterial.GetResourceName() != FName("M_LeftToRightFill"))
+				{
+					fillStyleSelected = FillStyle::Custom;
+					currentFillStyle = FillStyle::Custom;
+				}
+			}
+			// Switch to 
+			else
+			{
+				UseLeftToRightFillType();
+			}
+			break;
+	}
+	
+
 	if (MyStatusIndicator.IsValid())
 	{
 		MyStatusIndicator->SetStyle(&Style);

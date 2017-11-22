@@ -37,6 +37,8 @@ void SStatusIndicator::SetStyle(const FStatusIndicatorStyle* InStyle)
 
 	check(Style.Get());
 
+	UE_LOG(DebugLog, Log, TEXT("Creating Dynamic Material"));
+
 	DynamicSwipeMaterial.SetResourceObject(UMaterialInstanceDynamic::Create(static_cast<UMaterialInterface*>(Style.Get()->SwipeMaterial.GetResourceObject()), nullptr));
 
 	Invalidate(EInvalidateWidget::Layout);
@@ -76,8 +78,11 @@ int32 SStatusIndicator::OnPaint(const FPaintArgs& Args, const FGeometry& Allotte
 
 		if (DynamicSwipeMaterial.GetResourceObject())
 		{
-			static_cast<UMaterialInstanceDynamic*>(DynamicSwipeMaterial.GetResourceObject())->SetScalarParameterValue(FName("Percent"), Percent.Get());
+			auto mat = static_cast<UMaterialInstanceDynamic*>(DynamicSwipeMaterial.GetResourceObject());
 			
+			mat->SetTextureParameterValue(FName("Texture"), Cast<UTexture>(Style.Get()->FillImage.GetResourceObject()));
+			mat->SetScalarParameterValue(FName("Percent"), Percent.Get());
+
 			FSlateDrawElement::MakeBox(
 				OutDrawElements,
 				RetLayerId++,

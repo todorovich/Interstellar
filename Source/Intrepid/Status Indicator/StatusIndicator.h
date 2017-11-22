@@ -13,13 +13,32 @@
 
 class USlateBrushAsset;
 
+UENUM(BlueprintType)
+enum class FillStyle : uint8
+{
+	LeftToRight UMETA(DisplayName = "Left to Right"),
+	RadialCCW	UMETA(DisplayName = "Radial Counter-Clockwise"),
+	Custom		UMETA(DisplayName = "Custom"),
+};
+
+
 /**
 *  The Status Indicator UMG Widget
 */
-UCLASS()
+UCLASS(BlueprintType)
 class INTREPID_API UStatusIndicator : public UWidget
 {
 	GENERATED_UCLASS_BODY()
+
+	FillStyle currentFillStyle = FillStyle::RadialCCW;
+
+	inline void UseRadialCCWFillType();
+
+	inline void UseLeftToRightFillType();
+
+	inline void FindAndSetDefaultAssets();
+
+	inline void FindAndSetDefaultTextures();
 
 protected:
 	// Native Slate Widget
@@ -31,14 +50,17 @@ protected:
 public:
 
 	// Says it's already defined or declared somwhere else? Thinking it's included in the generated uclass body.
-	// UStatusIndicator(const FObjectInitializer& ObjectInitializer);
+	//UStatusIndicator(const FObjectInitializer& ObjectInitializer);
 
 	virtual ~UStatusIndicator() = default;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Style", meta = (DisplayName = "Fill Style"))
+	FillStyle fillStyleSelected = FillStyle::RadialCCW;
 
 	// The style of the Status Indicator
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Style", meta = (DisplayName = "Style"))
 	FStatusIndicatorStyle Style;
-
+	 
 	// The fill amount of the progress bar as a float with a range of 0..1
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Progress, meta = (UIMin = "0", UIMax = "1"))
 	float Percent;
