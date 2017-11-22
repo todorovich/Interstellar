@@ -24,7 +24,17 @@ UStatusIndicator::UStatusIndicator(const FObjectInitializer& ObjectInitializer)
 
 	Style.BorderPadding = FVector2D(0, 0);
 
-	//SynchronizeProperties();
+	FillStyleMap.Add(FillStyle::BottomToTop,			[this]() { this->BottomToTopSyncFunction(); });
+	FillStyleMap.Add(FillStyle::TopToBottom,			[this]() { this->TopToBottomSyncFunction(); });
+	FillStyleMap.Add(FillStyle::RightToLeft,			[this]() { this->RightToLeftSyncFunction(); });
+	FillStyleMap.Add(FillStyle::LeftToRight,			[this]() { this->LeftToRightSyncFunction(); });
+	FillStyleMap.Add(FillStyle::RadialCW,				[this]() { this->RadialCWSyncFunction();    });
+	FillStyleMap.Add(FillStyle::RadialCCW,				[this]() { this->RadialCCWSyncFunction();   });
+	FillStyleMap.Add(FillStyle::BottomLeftToTopRight,	[this]() { this->BottomLeftToTopRightSyncFunction();    });
+	FillStyleMap.Add(FillStyle::BottomRightToTopLeft,	[this]() { this->BottomRightToTopLeftSyncFunction();   });
+	FillStyleMap.Add(FillStyle::TopLeftToBottomRight,	[this]() { this->TopLeftToBottomRightSyncFunction();    });
+	FillStyleMap.Add(FillStyle::TopRightToBottomLeft,	[this]() { this->TopRightToBottomLeftSyncFunction();   });
+	FillStyleMap.Add(FillStyle::Custom,					[this]() { this->CustomFillSyncFunction();  });
 }
 
 void UStatusIndicator::ReleaseSlateResources(bool bReleaseChildren)
@@ -34,187 +44,438 @@ void UStatusIndicator::ReleaseSlateResources(bool bReleaseChildren)
 	MyStatusIndicator.Reset();
 }
 
-inline void UStatusIndicator::UseRadialCCWFillType()
+void UStatusIndicator::RadialCCWSyncFunction()
 {
-	FARFilter filter;
-	TArray<FAssetData> assetArray;
-	auto assetRegistry = UDataSingleton::GetAssetRegistry();
-
-	// Set up filter to find materials
-	filter.PackagePaths.Add("/Game/Materials");
-	filter.ClassNames.Add(UMaterial::StaticClass()->GetFName());
-	filter.bRecursiveClasses = true;
-
-	assetRegistry->GetAssets(filter, assetArray);
-
-	//UE_LOG(DebugLog, Log, TEXT("Results found: %d"), assetArray.Num());
-
-	// Iterate over the materials until the one we want is found.
-	for (auto& assetData : assetArray)
+	// Confirm we havent been switched from
+	if (currentFillStyle == FillStyle::RadialCCW)
 	{
-		if (assetData.AssetName == FName("M_CounterClockwiseRadialFill"))
+		//UE_LOG(DebugLog, Log, TEXT("%s"), *Style.SwipeMaterial.GetResourceName().ToString());
+		if (Style.SwipeMaterial.GetResourceName() != FName("M_CounterClockwiseRadialFill"))
 		{
-			UE_LOG(DebugLog, Log, TEXT("Found M_CounterClockwiseRadialFill"));
-			auto  asset = assetData.GetAsset();
-			Style.SwipeMaterial.SetResourceObject(asset);
-			Style.SwipeMaterial.TintColor = FLinearColor::White;
+			fillStyleSelected = FillStyle::Custom;
+			currentFillStyle = FillStyle::Custom;
 		}
 	}
+	// Switch to 
+	else
+	{
+		FARFilter filter;
+		TArray<FAssetData> assetArray;
+		auto assetRegistry = UDataSingleton::GetAssetRegistry();
 
-	currentFillStyle = FillStyle::RadialCCW;
+		// Set up filter to find materials
+		filter.PackagePaths.Add("/Game/Materials");
+		filter.ClassNames.Add(UMaterial::StaticClass()->GetFName());
+		filter.bRecursiveClasses = true;
+
+		assetRegistry->GetAssets(filter, assetArray);
+
+		//UE_LOG(DebugLog, Log, TEXT("Results found: %d"), assetArray.Num());
+
+		// Iterate over the materials until the one we want is found.
+		for (auto& assetData : assetArray)
+		{
+			if (assetData.AssetName == FName("M_CounterClockwiseRadialFill"))
+			{
+				UE_LOG(DebugLog, Log, TEXT("Found M_CounterClockwiseRadialFill"));
+				auto  asset = assetData.GetAsset();
+				Style.SwipeMaterial.SetResourceObject(asset);
+			}
+		}
+
+		currentFillStyle = FillStyle::RadialCCW;
+	}
 }
 
-inline void UStatusIndicator::UseRadialCWFillType()
+void UStatusIndicator::RadialCWSyncFunction()
 {
-	FARFilter filter;
-	TArray<FAssetData> assetArray;
-	auto assetRegistry = UDataSingleton::GetAssetRegistry();
-
-	// Set up filter to find materials
-	filter.PackagePaths.Add("/Game/Materials");
-	filter.ClassNames.Add(UMaterial::StaticClass()->GetFName());
-	filter.bRecursiveClasses = true;
-
-	assetRegistry->GetAssets(filter, assetArray);
-
-	//UE_LOG(DebugLog, Log, TEXT("Results found: %d"), assetArray.Num());
-
-	// Iterate over the materials until the one we want is found.
-	for (auto& assetData : assetArray)
+	// Confirm we havent been switched from
+	if (currentFillStyle == FillStyle::RadialCW)
 	{
-		if (assetData.AssetName == FName("M_ClockwiseRadialFill"))
+		//UE_LOG(DebugLog, Log, TEXT("%s"), *Style.SwipeMaterial.GetResourceName().ToString());
+		if (Style.SwipeMaterial.GetResourceName() != FName("M_ClockwiseRadialFill"))
 		{
-			UE_LOG(DebugLog, Log, TEXT("Found M_CounterClockwiseRadialFill"));
-			auto  asset = assetData.GetAsset();
-			Style.SwipeMaterial.SetResourceObject(asset);
-			Style.SwipeMaterial.TintColor = FLinearColor::White;
+			fillStyleSelected = FillStyle::Custom;
+			currentFillStyle = FillStyle::Custom;
 		}
 	}
+	// Switch to 
+	else
+	{
+		FARFilter filter;
+		TArray<FAssetData> assetArray;
+		auto assetRegistry = UDataSingleton::GetAssetRegistry();
 
-	currentFillStyle = FillStyle::RadialCW;
+		// Set up filter to find materials
+		filter.PackagePaths.Add("/Game/Materials");
+		filter.ClassNames.Add(UMaterial::StaticClass()->GetFName());
+		filter.bRecursiveClasses = true;
+
+		assetRegistry->GetAssets(filter, assetArray);
+
+		//UE_LOG(DebugLog, Log, TEXT("Results found: %d"), assetArray.Num());
+
+		// Iterate over the materials until the one we want is found.
+		for (auto& assetData : assetArray)
+		{
+			if (assetData.AssetName == FName("M_ClockwiseRadialFill"))
+			{
+				UE_LOG(DebugLog, Log, TEXT("Found M_CounterClockwiseRadialFill"));
+				auto  asset = assetData.GetAsset();
+				Style.SwipeMaterial.SetResourceObject(asset);
+				Style.SwipeMaterial.TintColor = FLinearColor::White;
+			}
+		}
+		
+		currentFillStyle = FillStyle::RadialCW;
+	}
 }
 
-inline void UStatusIndicator::UseLeftToRightFillType()
+void UStatusIndicator::LeftToRightSyncFunction()
 {
-	FARFilter filter;
-	TArray<FAssetData> assetArray;
-	auto assetRegistry = UDataSingleton::GetAssetRegistry();
-
-	// Set up filter to find materials
-	filter.PackagePaths.Add("/Game/Materials");
-	filter.ClassNames.Add(UMaterial::StaticClass()->GetFName());
-	filter.bRecursiveClasses = true;
-
-	assetRegistry->GetAssets(filter, assetArray);
-
-	//UE_LOG(DebugLog, Log, TEXT("Results found: %d"), assetArray.Num());
-
-	// Iterate over the materials until the one we want is found.
-	for (auto& assetData : assetArray)
+	// Confirm we havent been switched from
+	if (currentFillStyle == FillStyle::LeftToRight)
 	{
-		if (assetData.AssetName == FName("M_LeftToRightFill"))
+		if (Style.SwipeMaterial.GetResourceName() != FName("M_LeftToRightFill"))
 		{
-			UE_LOG(DebugLog, Log, TEXT("Found M_LeftToRightFill"));
-			auto  asset = assetData.GetAsset();
-			Style.SwipeMaterial.SetResourceObject(asset);
-			Style.SwipeMaterial.TintColor = FLinearColor::White;
+			fillStyleSelected = FillStyle::Custom;
+			currentFillStyle = FillStyle::Custom;
 		}
 	}
+	// Switch to 
+	else
+	{
+		FARFilter filter;
+		TArray<FAssetData> assetArray;
+		auto assetRegistry = UDataSingleton::GetAssetRegistry();
 
-	currentFillStyle = FillStyle::LeftToRight;
+		// Set up filter to find materials
+		filter.PackagePaths.Add("/Game/Materials");
+		filter.ClassNames.Add(UMaterial::StaticClass()->GetFName());
+		filter.bRecursiveClasses = true;
+
+		assetRegistry->GetAssets(filter, assetArray);
+
+		//UE_LOG(DebugLog, Log, TEXT("Results found: %d"), assetArray.Num());
+
+		// Iterate over the materials until the one we want is found.
+		for (auto& assetData : assetArray)
+		{
+			if (assetData.AssetName == FName("M_LeftToRightFill"))
+			{
+				UE_LOG(DebugLog, Log, TEXT("Found M_LeftToRightFill"));
+				auto  asset = assetData.GetAsset();
+				Style.SwipeMaterial.SetResourceObject(asset);
+				Style.SwipeMaterial.TintColor = FLinearColor::White;
+			}
+		}
+
+		currentFillStyle = FillStyle::LeftToRight;
+	}
 }
 
-inline void UStatusIndicator::UseRightToLeftFillType()
+void UStatusIndicator::RightToLeftSyncFunction()
 {
-	FARFilter filter;
-	TArray<FAssetData> assetArray;
-	auto assetRegistry = UDataSingleton::GetAssetRegistry();
-
-	// Set up filter to find materials
-	filter.PackagePaths.Add("/Game/Materials");
-	filter.ClassNames.Add(UMaterial::StaticClass()->GetFName());
-	filter.bRecursiveClasses = true;
-
-	assetRegistry->GetAssets(filter, assetArray);
-
-	//UE_LOG(DebugLog, Log, TEXT("Results found: %d"), assetArray.Num());
-
-	// Iterate over the materials until the one we want is found.
-	for (auto& assetData : assetArray)
+	// Confirm we havent been switched from
+	if (currentFillStyle == FillStyle::RightToLeft)
 	{
-		if (assetData.AssetName == FName("M_RightToLeftFill"))
+		if (Style.SwipeMaterial.GetResourceName() != FName("M_RightToLeftFill"))
 		{
-			UE_LOG(DebugLog, Log, TEXT("Found M_RightToLeftFill"));
-			auto  asset = assetData.GetAsset();
-			Style.SwipeMaterial.SetResourceObject(asset);
-			Style.SwipeMaterial.TintColor = FLinearColor::White;
+			fillStyleSelected = FillStyle::Custom;
+			currentFillStyle = FillStyle::Custom;
 		}
 	}
+	// Switch to 
+	else
+	{
+		FARFilter filter;
+		TArray<FAssetData> assetArray;
+		auto assetRegistry = UDataSingleton::GetAssetRegistry();
 
-	currentFillStyle = FillStyle::RightToLeft;
+		// Set up filter to find materials
+		filter.PackagePaths.Add("/Game/Materials");
+		filter.ClassNames.Add(UMaterial::StaticClass()->GetFName());
+		filter.bRecursiveClasses = true;
+
+		assetRegistry->GetAssets(filter, assetArray);
+
+		//UE_LOG(DebugLog, Log, TEXT("Results found: %d"), assetArray.Num());
+
+		// Iterate over the materials until the one we want is found.
+		for (auto& assetData : assetArray)
+		{
+			if (assetData.AssetName == FName("M_RightToLeftFill"))
+			{
+				UE_LOG(DebugLog, Log, TEXT("Found M_RightToLeftFill"));
+				auto  asset = assetData.GetAsset();
+				Style.SwipeMaterial.SetResourceObject(asset);
+				Style.SwipeMaterial.TintColor = FLinearColor::White;
+			}
+		}
+
+		currentFillStyle = FillStyle::RightToLeft;
+	}
 }
 
-inline void UStatusIndicator::UseBottomToTopFillType()
+void UStatusIndicator::BottomToTopSyncFunction()
 {
-	FARFilter filter;
-	TArray<FAssetData> assetArray;
-	auto assetRegistry = UDataSingleton::GetAssetRegistry();
-
-	// Set up filter to find materials
-	filter.PackagePaths.Add("/Game/Materials");
-	filter.ClassNames.Add(UMaterial::StaticClass()->GetFName());
-	filter.bRecursiveClasses = true;
-
-	assetRegistry->GetAssets(filter, assetArray);
-
-	//UE_LOG(DebugLog, Log, TEXT("Results found: %d"), assetArray.Num());
-
-	// Iterate over the materials until the one we want is found.
-	for (auto& assetData : assetArray)
+	// Confirm we havent been switched from
+	if (currentFillStyle == FillStyle::BottomToTop)
 	{
-		if (assetData.AssetName == FName("M_BottomToTopFill"))
+		if (Style.SwipeMaterial.GetResourceName() != FName("M_BottomToTopFill"))
 		{
-			UE_LOG(DebugLog, Log, TEXT("Found M_BottomToTopFill"));
-			auto  asset = assetData.GetAsset();
-			Style.SwipeMaterial.SetResourceObject(asset);
-			Style.SwipeMaterial.TintColor = FLinearColor::White;
+			fillStyleSelected = FillStyle::Custom;
+			currentFillStyle = FillStyle::Custom;
 		}
 	}
+	// Switch to 
+	else
+	{
+		FARFilter filter;
+		TArray<FAssetData> assetArray;
+		auto assetRegistry = UDataSingleton::GetAssetRegistry();
 
-	currentFillStyle = FillStyle::BottomToTop;
+		// Set up filter to find materials
+		filter.PackagePaths.Add("/Game/Materials");
+		filter.ClassNames.Add(UMaterial::StaticClass()->GetFName());
+		filter.bRecursiveClasses = true;
+
+		assetRegistry->GetAssets(filter, assetArray);
+
+		//UE_LOG(DebugLog, Log, TEXT("Results found: %d"), assetArray.Num());
+
+		// Iterate over the materials until the one we want is found.
+		for (auto& assetData : assetArray)
+		{
+			if (assetData.AssetName == FName("M_BottomToTopFill"))
+			{
+				UE_LOG(DebugLog, Log, TEXT("Found M_BottomToTopFill"));
+				auto  asset = assetData.GetAsset();
+				Style.SwipeMaterial.SetResourceObject(asset);
+				Style.SwipeMaterial.TintColor = FLinearColor::White;
+			}
+		}
+
+		currentFillStyle = FillStyle::BottomToTop;
+	}
 }
 
-inline void UStatusIndicator::UseTopToBottomFillType()
+void UStatusIndicator::TopToBottomSyncFunction()
 {
-	FARFilter filter;
-	TArray<FAssetData> assetArray;
-	auto assetRegistry = UDataSingleton::GetAssetRegistry();
-
-	// Set up filter to find materials
-	filter.PackagePaths.Add("/Game/Materials");
-	filter.ClassNames.Add(UMaterial::StaticClass()->GetFName());
-	filter.bRecursiveClasses = true;
-
-	assetRegistry->GetAssets(filter, assetArray);
-
-	//UE_LOG(DebugLog, Log, TEXT("Results found: %d"), assetArray.Num());
-
-	// Iterate over the materials until the one we want is found.
-	for (auto& assetData : assetArray)
+	// Confirm we havent been switched from
+	if (currentFillStyle == FillStyle::TopToBottom)
 	{
-		if (assetData.AssetName == FName("M_TopToBottomFill"))
+		if (Style.SwipeMaterial.GetResourceName() != FName("M_TopToBottomFill"))
 		{
-			UE_LOG(DebugLog, Log, TEXT("Found M_TopToBottomFill"));
-			auto  asset = assetData.GetAsset();
-			Style.SwipeMaterial.SetResourceObject(asset);
-			Style.SwipeMaterial.TintColor = FLinearColor::White;
+			fillStyleSelected = FillStyle::Custom;
+			currentFillStyle = FillStyle::Custom;
 		}
 	}
+	else
+	{
+		FARFilter filter;
+		TArray<FAssetData> assetArray;
+		auto assetRegistry = UDataSingleton::GetAssetRegistry();
 
-	currentFillStyle = FillStyle::TopToBottom;
+		// Set up filter to find materials
+		filter.PackagePaths.Add("/Game/Materials");
+		filter.ClassNames.Add(UMaterial::StaticClass()->GetFName());
+		filter.bRecursiveClasses = true;
+
+		assetRegistry->GetAssets(filter, assetArray);
+
+		//UE_LOG(DebugLog, Log, TEXT("Results found: %d"), assetArray.Num());
+
+		// Iterate over the materials until the one we want is found.
+		for (auto& assetData : assetArray)
+		{
+			if (assetData.AssetName == FName("M_TopToBottomFill"))
+			{
+				UE_LOG(DebugLog, Log, TEXT("Found M_TopToBottomFill"));
+				auto  asset = assetData.GetAsset();
+				Style.SwipeMaterial.SetResourceObject(asset);
+				Style.SwipeMaterial.TintColor = FLinearColor::White;
+			}
+		}
+
+		currentFillStyle = FillStyle::TopToBottom;
+	}
 }
 
-inline void UStatusIndicator::FindAndSetDefaultTextures()
+void UStatusIndicator::BottomLeftToTopRightSyncFunction()
+{
+	// Confirm we havent been switched from
+	if (currentFillStyle == FillStyle::BottomLeftToTopRight)
+	{
+		if (Style.SwipeMaterial.GetResourceName() != FName("M_BottomLeftToTopRightFill"))
+		{
+			fillStyleSelected = FillStyle::Custom;
+			currentFillStyle = FillStyle::Custom;
+		}
+	}
+	else
+	{
+		FARFilter filter;
+		TArray<FAssetData> assetArray;
+		auto assetRegistry = UDataSingleton::GetAssetRegistry();
+
+		// Set up filter to find materials
+		filter.PackagePaths.Add("/Game/Materials");
+		filter.ClassNames.Add(UMaterial::StaticClass()->GetFName());
+		filter.bRecursiveClasses = true;
+
+		assetRegistry->GetAssets(filter, assetArray);
+
+		//UE_LOG(DebugLog, Log, TEXT("Results found: %d"), assetArray.Num());
+
+		// Iterate over the materials until the one we want is found.
+		for (auto& assetData : assetArray)
+		{
+			if (assetData.AssetName == FName("M_BottomLeftToTopRightFill"))
+			{
+				UE_LOG(DebugLog, Log, TEXT("Found M_BottomLeftToTopRightFill"));
+				auto  asset = assetData.GetAsset();
+				Style.SwipeMaterial.SetResourceObject(asset);
+				Style.SwipeMaterial.TintColor = FLinearColor::White;
+			}
+		}
+
+		currentFillStyle = FillStyle::BottomLeftToTopRight;
+	}
+}
+
+void UStatusIndicator::BottomRightToTopLeftSyncFunction()
+{	
+	// Confirm we havent been switched from
+	if (currentFillStyle == FillStyle::BottomRightToTopLeft)
+	{
+		if (Style.SwipeMaterial.GetResourceName() != FName("M_BottomRightToTopLeftFill"))
+		{
+			fillStyleSelected = FillStyle::Custom;
+			currentFillStyle = FillStyle::Custom;
+		}
+	}
+	else
+	{
+		FARFilter filter;
+		TArray<FAssetData> assetArray;
+		auto assetRegistry = UDataSingleton::GetAssetRegistry();
+
+		// Set up filter to find materials
+		filter.PackagePaths.Add("/Game/Materials");
+		filter.ClassNames.Add(UMaterial::StaticClass()->GetFName());
+		filter.bRecursiveClasses = true;
+
+		assetRegistry->GetAssets(filter, assetArray);
+
+		//UE_LOG(DebugLog, Log, TEXT("Results found: %d"), assetArray.Num());
+
+		// Iterate over the materials until the one we want is found.
+		for (auto& assetData : assetArray)
+		{
+			if (assetData.AssetName == FName("M_BottomRightToTopLeftFill"))
+			{
+				UE_LOG(DebugLog, Log, TEXT("Found M_BottomRightToTopLeftFill"));
+				auto  asset = assetData.GetAsset();
+				Style.SwipeMaterial.SetResourceObject(asset);
+				Style.SwipeMaterial.TintColor = FLinearColor::White;
+			}
+		}
+
+		currentFillStyle = FillStyle::BottomRightToTopLeft;
+	}
+}
+
+void UStatusIndicator::TopLeftToBottomRightSyncFunction()
+{
+	// Confirm we havent been switched from
+	if (currentFillStyle == FillStyle::TopLeftToBottomRight)
+	{
+		if (Style.SwipeMaterial.GetResourceName() != FName("M_TopLeftToBottomRightFill"))
+		{
+			fillStyleSelected = FillStyle::Custom;
+			currentFillStyle = FillStyle::Custom;
+		}
+	}
+	else
+	{
+		FARFilter filter;
+		TArray<FAssetData> assetArray;
+		auto assetRegistry = UDataSingleton::GetAssetRegistry();
+
+		// Set up filter to find materials
+		filter.PackagePaths.Add("/Game/Materials");
+		filter.ClassNames.Add(UMaterial::StaticClass()->GetFName());
+		filter.bRecursiveClasses = true;
+
+		assetRegistry->GetAssets(filter, assetArray);
+
+		//UE_LOG(DebugLog, Log, TEXT("Results found: %d"), assetArray.Num());
+
+		// Iterate over the materials until the one we want is found.
+		for (auto& assetData : assetArray)
+		{
+			if (assetData.AssetName == FName("M_TopLeftToBottomRightFill"))
+			{
+				UE_LOG(DebugLog, Log, TEXT("Found M_BottomRightToTopLeftFill"));
+				auto  asset = assetData.GetAsset();
+				Style.SwipeMaterial.SetResourceObject(asset);
+				Style.SwipeMaterial.TintColor = FLinearColor::White;
+			}
+		}
+
+		currentFillStyle = FillStyle::TopLeftToBottomRight;
+	}
+}
+
+void UStatusIndicator::TopRightToBottomLeftSyncFunction()
+{
+	// Confirm we havent been switched from
+	if (currentFillStyle == FillStyle::TopRightToBottomLeft)
+	{
+		if (Style.SwipeMaterial.GetResourceName() != FName("M_TopRightToBottomLeftFill"))
+		{
+			fillStyleSelected = FillStyle::Custom;
+			currentFillStyle = FillStyle::Custom;
+		}
+	}
+	else
+	{
+		FARFilter filter;
+		TArray<FAssetData> assetArray;
+		auto assetRegistry = UDataSingleton::GetAssetRegistry();
+
+		// Set up filter to find materials
+		filter.PackagePaths.Add("/Game/Materials");
+		filter.ClassNames.Add(UMaterial::StaticClass()->GetFName());
+		filter.bRecursiveClasses = true;
+
+		assetRegistry->GetAssets(filter, assetArray);
+
+		//UE_LOG(DebugLog, Log, TEXT("Results found: %d"), assetArray.Num());
+
+		// Iterate over the materials until the one we want is found.
+		for (auto& assetData : assetArray)
+		{
+			if (assetData.AssetName == FName("M_TopRightToBottomLeftFill"))
+			{
+				UE_LOG(DebugLog, Log, TEXT("Found M_TopRightToBottomLeftFill"));
+				auto  asset = assetData.GetAsset();
+				Style.SwipeMaterial.SetResourceObject(asset);
+				Style.SwipeMaterial.TintColor = FLinearColor::White;
+			}
+		}
+
+		currentFillStyle = FillStyle::TopRightToBottomLeft;
+	}
+}
+
+void UStatusIndicator::CustomFillSyncFunction()
+{
+	currentFillStyle = FillStyle::Custom;
+}
+
+void UStatusIndicator::FindAndSetDefaultTextures()
 {
 	FARFilter filter;
 	TArray<FAssetData> assetArray;
@@ -252,12 +513,12 @@ inline void UStatusIndicator::FindAndSetDefaultTextures()
 	}
 }
 
-inline void UStatusIndicator::FindAndSetDefaultAssets()
+void UStatusIndicator::FindAndSetDefaultAssets()
 {
 	FindAndSetDefaultTextures();	
 
-	UseRadialCCWFillType();
-	//UseLeftToRightFillType();
+	RadialCCWSyncFunction();
+	//LeftToRightSyncFunction();
 }
 
 TSharedRef<SWidget> UStatusIndicator::RebuildWidget()
@@ -273,117 +534,12 @@ void UStatusIndicator::SynchronizeProperties()
 {
 	Super::SynchronizeProperties();
 	
-	switch (fillStyleSelected)
+	auto FillStyleSyncFunction = FillStyleMap.Find(fillStyleSelected);
+
+	if (FillStyleSyncFunction != nullptr)
 	{
-		case FillStyle::Custom:
-			currentFillStyle = FillStyle::Custom;
-			break;
-
-		case FillStyle::RadialCW:
-			// Confirm we havent been switched from
-			if (currentFillStyle == FillStyle::RadialCW)
-			{
-				//UE_LOG(DebugLog, Log, TEXT("%s"), *Style.SwipeMaterial.GetResourceName().ToString());
-				if (Style.SwipeMaterial.GetResourceName() != FName("M_ClockwiseRadialFill"))
-				{
-					fillStyleSelected = FillStyle::Custom;
-					currentFillStyle = FillStyle::Custom;
-				}
-			}
-			// Switch to 
-			else
-			{
-				UseRadialCWFillType();
-			}
-			break;
-
-		case FillStyle::RadialCCW:
-			// Confirm we havent been switched from
-			if (currentFillStyle == FillStyle::RadialCCW)
-			{
-				//UE_LOG(DebugLog, Log, TEXT("%s"), *Style.SwipeMaterial.GetResourceName().ToString());
-				if (Style.SwipeMaterial.GetResourceName() != FName("M_CounterClockwiseRadialFill"))
-				{
-					fillStyleSelected = FillStyle::Custom;
-					currentFillStyle = FillStyle::Custom;
-				}
-			}
-			// Switch to 
-			else
-			{
-				UseRadialCCWFillType();
-			}
-			break;
-
-		case FillStyle::LeftToRight:
-			// Confirm we havent been switched from
-			if (currentFillStyle == FillStyle::LeftToRight)
-			{
-				if (Style.SwipeMaterial.GetResourceName() != FName("M_LeftToRightFill"))
-				{
-					fillStyleSelected = FillStyle::Custom;
-					currentFillStyle = FillStyle::Custom;
-				}
-			}
-			// Switch to 
-			else
-			{
-				UseLeftToRightFillType();
-			}
-			break;
-
-		case FillStyle::RightToLeft:
-			// Confirm we havent been switched from
-			if (currentFillStyle == FillStyle::RightToLeft)
-			{
-				if (Style.SwipeMaterial.GetResourceName() != FName("M_RightToLeftFill"))
-				{
-					fillStyleSelected = FillStyle::Custom;
-					currentFillStyle = FillStyle::Custom;
-				}
-			}
-			// Switch to 
-			else
-			{
-				UseRightToLeftFillType();
-			}
-			break;
-
-		case FillStyle::BottomToTop:
-			// Confirm we havent been switched from
-			if (currentFillStyle == FillStyle::BottomToTop)
-			{
-				if (Style.SwipeMaterial.GetResourceName() != FName("M_BottomToTopFill"))
-				{
-					fillStyleSelected = FillStyle::Custom;
-					currentFillStyle = FillStyle::Custom;
-				}
-			}
-			// Switch to 
-			else
-			{
-				UseBottomToTopFillType();
-			}
-			break;
-
-		case FillStyle::TopToBottom:
-			// Confirm we havent been switched from
-			if (currentFillStyle == FillStyle::TopToBottom)
-			{
-				if (Style.SwipeMaterial.GetResourceName() != FName("M_TopToBottomFill"))
-				{
-					fillStyleSelected = FillStyle::Custom;
-					currentFillStyle = FillStyle::Custom;
-				}
-			}
-			// Switch to 
-			else
-			{
-				UseTopToBottomFillType();
-			}
-			break;
+		(*FillStyleSyncFunction)();
 	}
-	
 
 	if (MyStatusIndicator.IsValid())
 	{

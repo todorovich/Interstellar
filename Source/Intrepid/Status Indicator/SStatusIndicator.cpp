@@ -55,7 +55,6 @@ void SStatusIndicator::SetStyle(const FStatusIndicatorStyle* InStyle)
 	Invalidate(EInvalidateWidget::Layout);
 }
 
-
 void PushTransformedClip(FSlateWindowElementList& OutDrawElements, const FGeometry& AllottedGeometry, FVector2D InsetPadding, FVector2D ProgressOrigin, FSlateRect Progress)
 {
 	const FSlateRenderTransform& Transform = AllottedGeometry.GetAccumulatedRenderTransform();
@@ -91,8 +90,8 @@ int32 SStatusIndicator::OnPaint(const FPaintArgs& Args, const FGeometry& Allotte
 		{
 			auto mat = static_cast<UMaterialInstanceDynamic*>(DynamicSwipeMaterial.GetResourceObject());
 			
-			if (mat->IsValidLowLevel())
-			{
+			//if (mat->IsValidLowLevel())
+			//{
 				mat->SetTextureParameterValue(FName("Texture"), Cast<UTexture>(Style.Get()->FillImage.GetResourceObject()));
 				mat->SetScalarParameterValue(FName("Percent"), Percent.Get());
 
@@ -104,7 +103,7 @@ int32 SStatusIndicator::OnPaint(const FPaintArgs& Args, const FGeometry& Allotte
 					DrawEffects,
 					FillColor
 				);
-			}
+			//}
 		}// Maybe add an else to try to create the dynamic material
 
 		FSlateDrawElement::MakeBox(

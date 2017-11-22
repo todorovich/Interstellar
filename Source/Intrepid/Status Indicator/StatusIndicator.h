@@ -16,13 +16,17 @@ class USlateBrushAsset;
 UENUM(BlueprintType)
 enum class FillStyle : uint8
 {
-	LeftToRight UMETA(DisplayName = "Left to Right"),
-	RightToLeft UMETA(DisplayName = "Right to Left"),
-	BottomToTop UMETA(DisplayName = "Bottom to Top"),
-	TopToBottom UMETA(DisplayName = "Top to Bottom"),
-	RadialCW	UMETA(DisplayName = "Radial Clockwise"),
-	RadialCCW	UMETA(DisplayName = "Radial Counter-Clockwise"),
-	Custom		UMETA(DisplayName = "Custom"),
+	LeftToRight				UMETA(DisplayName = "Left to Right"),
+	RightToLeft				UMETA(DisplayName = "Right to Left"),
+	BottomToTop				UMETA(DisplayName = "Bottom to Top"),
+	TopToBottom				UMETA(DisplayName = "Top to Bottom"),
+	BottomLeftToTopRight	UMETA(DisplayName = "Bottom-Left to Top-Right"),
+	BottomRightToTopLeft	UMETA(DisplayName = "Bottom-Right to Top-Left"),
+	TopLeftToBottomRight	UMETA(DisplayName = "Top-Left to Bottom-Right"),
+	TopRightToBottomLeft	UMETA(DisplayName = "Top-Right to Bottom-Left"),
+	RadialCW				UMETA(DisplayName = "Radial Clockwise"),
+	RadialCCW				UMETA(DisplayName = "Radial Counter-Clockwise"),
+	Custom					UMETA(DisplayName = "Custom"),
 };
 
 
@@ -34,23 +38,36 @@ class INTREPID_API UStatusIndicator : public UWidget
 {
 	GENERATED_UCLASS_BODY()
 
-	FillStyle currentFillStyle = FillStyle::RadialCCW;
+	FillStyle currentFillStyle = FillStyle::Custom;
 
-	inline void UseRadialCCWFillType();
+	TMap<FillStyle, TFunction<void()>> FillStyleMap;
 
-	inline void UseRadialCWFillType();
-
-	inline void UseRightToLeftFillType();
-
-	inline void UseLeftToRightFillType();
+public:
+	void RadialCCWSyncFunction();
 	
-	inline void UseBottomToTopFillType();
+	void RadialCWSyncFunction();
 	
-	inline void UseTopToBottomFillType();
+	void RightToLeftSyncFunction();
 	
-	inline void FindAndSetDefaultAssets();
+	void LeftToRightSyncFunction();
+	
+	void BottomToTopSyncFunction();
+	
+	void TopToBottomSyncFunction();
 
-	inline void FindAndSetDefaultTextures();
+	void BottomLeftToTopRightSyncFunction();
+
+	void BottomRightToTopLeftSyncFunction();
+
+	void TopLeftToBottomRightSyncFunction();
+
+	void TopRightToBottomLeftSyncFunction();
+
+	void CustomFillSyncFunction();
+	
+	void FindAndSetDefaultAssets();
+	
+	void FindAndSetDefaultTextures();
 
 protected:
 	// Native Slate Widget
