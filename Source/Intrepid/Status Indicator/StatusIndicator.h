@@ -85,18 +85,25 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Style", meta = (DisplayName = "Fill Style"))
 	FillStyle fillStyleSelected = FillStyle::RadialCCW;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Progress, meta = (UIMin = "0", UIMax = "1"))
+	float Rotation;
 
 	// The style of the Status Indicator
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Style", meta = (DisplayName = "Style"))
 	FStatusIndicatorStyle Style;
 	 
-	// The fill amount of the progress bar as a float with a range of 0..1
+	// The fill amount of the Status Indicator as a float with a range of 0..1
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Progress, meta = (UIMin = "0", UIMax = "1"))
 	float Percent;
 
 	// Sets the current value of the Status Indicator.
 	UFUNCTION(BlueprintCallable, Category = "Progress")
 	void SetPercent(float InPercent);
+
+	// Sets the current value of the Status Indicator.
+	UFUNCTION(BlueprintCallable, Category = "Style", meta= (DisplayName = "Rotation"))
+	void SetRotation(float InRotation);
 
 	// Overridden from UWidget
 	virtual void SynchronizeProperties() override;

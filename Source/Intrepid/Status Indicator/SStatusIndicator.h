@@ -29,6 +29,7 @@ public:
 	SLATE_BEGIN_ARGS(SStatusIndicator)
 		: _Style(&FStatusIndicatorStyle::GetDefault())
 		, _Percent(0.95f)
+		, _Rotation(0.0f)
 	{}
 
 		// The Status Indicator's style
@@ -36,6 +37,9 @@ public:
 
 		// The fill amount of the Status Indicator respresented as a range of 0..1 
 		SLATE_ATTRIBUTE(float, Percent)
+
+		// The the rotation of the Status Indicator normalized to the range of 0..1 
+		SLATE_ATTRIBUTE(float, Rotation)
 
 	SLATE_END_ARGS()
 
@@ -56,6 +60,9 @@ public:
 	// Set Percent attribute 
 	void SetPercent(TAttribute<float> InPercent);
 
+
+	void SetRotation(TAttribute<float> InRotation);
+
 	// Set Style attribute 
 	void SetStyle(const FStatusIndicatorStyle* InStyle);
 
@@ -64,8 +71,11 @@ private:
 	// The Status Indicator's style
 	TAttribute<const FStatusIndicatorStyle*> Style;
 
-	// The fill amount of the Status Indicator respresented as a range of 0..1 
+	// The fill amount of the Status Indicator normalized to the range of 0..1 
 	TAttribute<float> Percent;
+
+	// The the rotation of the Status Indicator normalized to the range of 0..1 
+	TAttribute<float> Rotation;
 
 	// The Dynamic Material created in order to display this indicator
 	FSlateBrush DynamicSwipeMaterial;

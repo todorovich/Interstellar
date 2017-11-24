@@ -34,6 +34,16 @@ void SStatusIndicator::SetPercent(TAttribute<float> InPercent)
 	}
 }
 
+void SStatusIndicator::SetRotation(TAttribute<float> InRotation)
+{
+	if (!Rotation.IdenticalTo(InRotation))
+	{
+		Rotation = InRotation;
+
+		Invalidate(EInvalidateWidget::LayoutAndVolatility);
+	}
+}
+
 void SStatusIndicator::SetStyle(const FStatusIndicatorStyle* InStyle)
 {
 	Style.Set(InStyle);
@@ -94,13 +104,14 @@ int32 SStatusIndicator::OnPaint(const FPaintArgs& Args, const FGeometry& Allotte
 			//{
 				mat->SetTextureParameterValue(FName("Texture"), Cast<UTexture>(Style.Get()->FillImage.GetResourceObject()));
 				mat->SetScalarParameterValue(FName("Percent"), Percent.Get());
-
+				mat->SetScalarParameterValue(FName("Rotation"), Rotation.Get());
+				
 				FSlateDrawElement::MakeBox(
 					OutDrawElements,
 					RetLayerId++,
-					AllottedGeometry.ToPaintGeometry(),
-					&DynamicSwipeMaterial,
-					DrawEffects,
+					AllottedGeometry.ToPaintGeometry(),    
+					&DynamicSwipeMaterial,				   
+					DrawEffects,						   
 					FillColor
 				);
 			//}

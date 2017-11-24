@@ -19,7 +19,7 @@ UStatusIndicator::UStatusIndicator(const FObjectInitializer& ObjectInitializer)
 	SStatusIndicator::FArguments SlateDefaults;
 	Style = *SlateDefaults._Style;	
 	Percent = SlateDefaults._Percent.Get();
-
+	Rotation = SlateDefaults._Rotation.Get();
 	FindAndSetDefaultAssets();
 
 	Style.BorderPadding = FVector2D(0, 0);
@@ -545,6 +545,7 @@ void UStatusIndicator::SynchronizeProperties()
 	{
 		MyStatusIndicator->SetStyle(&Style);
 		MyStatusIndicator->SetPercent(Percent);
+		MyStatusIndicator->SetRotation(Rotation);
 	}
 }
 
@@ -554,6 +555,15 @@ void UStatusIndicator::SetPercent(float InPercent)
 	if (MyStatusIndicator.IsValid())
 	{
 		MyStatusIndicator->SetPercent(InPercent);
+	}
+}
+
+void UStatusIndicator::SetRotation(float InRotation)
+{
+	Rotation = InRotation;
+	if (MyStatusIndicator.IsValid())
+	{
+		MyStatusIndicator->SetRotation(InRotation);
 	}
 }
 
