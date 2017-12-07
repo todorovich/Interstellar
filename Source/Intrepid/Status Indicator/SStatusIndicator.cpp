@@ -65,19 +65,19 @@ void SStatusIndicator::SetStyle(const FStatusIndicatorStyle* InStyle)
 	Invalidate(EInvalidateWidget::Layout);
 }
 
-void PushTransformedClip(FSlateWindowElementList& OutDrawElements, const FGeometry& AllottedGeometry, FVector2D InsetPadding, FVector2D ProgressOrigin, FSlateRect Progress)
-{
-	const FSlateRenderTransform& Transform = AllottedGeometry.GetAccumulatedRenderTransform();
-
-	const FVector2D MaxSize = AllottedGeometry.GetLocalSize() - (InsetPadding * 2.0f);
-
-	OutDrawElements.PushClip(FSlateClippingZone(
-		Transform.TransformPoint(InsetPadding + (ProgressOrigin - FVector2D(Progress.Left, Progress.Top)) * MaxSize),
-		Transform.TransformPoint(InsetPadding + FVector2D(ProgressOrigin.X + Progress.Right, ProgressOrigin.Y - Progress.Top) * MaxSize),
-		Transform.TransformPoint(InsetPadding + FVector2D(ProgressOrigin.X - Progress.Left, ProgressOrigin.Y + Progress.Bottom) * MaxSize),
-		Transform.TransformPoint(InsetPadding + (ProgressOrigin + FVector2D(Progress.Right, Progress.Bottom)) * MaxSize)
-	));
-}
+//void PushTransformedClip(FSlateWindowElementList& OutDrawElements, const FGeometry& AllottedGeometry, FVector2D InsetPadding, FVector2D ProgressOrigin, FSlateRect Progress)
+//{
+//	const FSlateRenderTransform& Transform = AllottedGeometry.GetAccumulatedRenderTransform();
+//
+//	const FVector2D MaxSize = AllottedGeometry.GetLocalSize() - (InsetPadding * 2.0f);
+//
+//	OutDrawElements.PushClip(FSlateClippingZone(
+//		Transform.TransformPoint(InsetPadding + (ProgressOrigin - FVector2D(Progress.Left, Progress.Top)) * MaxSize),
+//		Transform.TransformPoint(InsetPadding + FVector2D(ProgressOrigin.X + Progress.Right, ProgressOrigin.Y - Progress.Top) * MaxSize),
+//		Transform.TransformPoint(InsetPadding + FVector2D(ProgressOrigin.X - Progress.Left, ProgressOrigin.Y + Progress.Bottom) * MaxSize),
+//		Transform.TransformPoint(InsetPadding + (ProgressOrigin + FVector2D(Progress.Right, Progress.Bottom)) * MaxSize)
+//	));
+//}
 
 // Return Value is the largest LayerId used.
 int32 SStatusIndicator::OnPaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry, const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements, int32 LayerId, const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const
@@ -100,21 +100,31 @@ int32 SStatusIndicator::OnPaint(const FPaintArgs& Args, const FGeometry& Allotte
 		{
 			auto mat = static_cast<UMaterialInstanceDynamic*>(DynamicSwipeMaterial.GetResourceObject());
 			
-			//if (mat->IsValidLowLevel())
-			//{
-				mat->SetTextureParameterValue(FName("Texture"), Cast<UTexture>(Style.Get()->FillImage.GetResourceObject()));
-				mat->SetScalarParameterValue(FName("Percent"), Percent.Get());
-				mat->SetScalarParameterValue(FName("Rotation"), Rotation.Get());
-				
-				FSlateDrawElement::MakeBox(
-					OutDrawElements,
-					RetLayerId++,
-					AllottedGeometry.ToPaintGeometry(),    
-					&DynamicSwipeMaterial,				   
-					DrawEffects,						   
-					FillColor
-				);
-			//}
+			mat->SetTextureParameterValue(FName("Texture"), Cast<UTexture>(Style.Get()->FillImage.GetResourceObject()));
+			mat->SetScalarParameterValue(FName("Percent"), Percent.Get());
+			mat->SetScalarParameterValue(FName("Rotation"), Rotation.Get());
+			
+			FSlateDrawElement::MakeBox(
+				OutDrawElements,
+				RetLayerId++,
+				AllottedGeometry.ToPaintGeometry(
+					FVector2D::ZeroVector,
+					AllottedGeometry.GetLocalSize()),
+				&DynamicSwipeMaterial,				   
+				DrawEffects,						   
+				FillColor
+			);
+
+			FSlateDrawElement::MakeBox(
+				OutDrawElements,
+				RetLayerId++,
+				AllottedGeometry.ToPaintGeometry(
+					FVector2D::ZeroVector,
+					AllottedGeometry.GetLocalSize()),
+				&DynamicSwipeMaterial,
+				DrawEffects,
+				FillColor
+			);
 		}// Maybe add an else to try to create the dynamic material
 
 		FSlateDrawElement::MakeBox(
@@ -122,7 +132,7 @@ int32 SStatusIndicator::OnPaint(const FPaintArgs& Args, const FGeometry& Allotte
 			RetLayerId++,
 			AllottedGeometry.ToPaintGeometry(
 				FVector2D::ZeroVector,
-				FVector2D(AllottedGeometry.GetLocalSize().X, AllottedGeometry.GetLocalSize().Y)),
+				AllottedGeometry.GetLocalSize()),
 			&Style.Get()->BorderImage,
 			DrawEffects,
 			BorderColor

@@ -11,3 +11,5 @@
 /.gitattributes
 /WindowsNoEditor
 Content/Enum/NewUserDefinedEnum.uasset
+Source/Intrepid/Status Indicator Panel/StatusIndicatorPanel.cpp
+Source/Intrepid/Status Indicator Panel/StatusIndicatorPanel.h
