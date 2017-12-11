@@ -2,7 +2,8 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-
+#include "Engine.h"
+#include "Net/UnrealNetwork.h"
+#include "CoreOnline.h"
 //General Log
 DECLARE_LOG_CATEGORY_EXTERN(DebugLog, Log, All);

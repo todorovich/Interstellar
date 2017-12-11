@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
+#include "Engine/GameInstance.h"
 #include "IntrepidGameModeBase.generated.h"
 
 /**
@@ -16,10 +17,10 @@ class INTREPID_API AIntrepidGameModeBase : public AGameModeBase
 
 
 
-	//virtual void StartPlay() override
-	//{
-	//	
-	//}
+	virtual void StartPlay() override
+	{
+		//GetGameInstance()->
+	}
 	
 	
 };
