@@ -14,7 +14,4 @@ class INTREPID_API AIntrepidGameState : public AGameStateBase
 {
 	GENERATED_BODY()
 	
-	
-	
-	
 };
