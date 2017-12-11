@@ -36,13 +36,16 @@ enum class FillStyle : uint8
 UCLASS(BlueprintType)
 class INTREPID_API UStatusIndicator : public UWidget
 {
-	GENERATED_UCLASS_BODY()
+	GENERATED_BODY()
 
 	FillStyle currentFillStyle = FillStyle::Custom;
 
 	TMap<FillStyle, TFunction<void()>> FillStyleMap;
 
 public:
+
+	UStatusIndicator(const FObjectInitializer& ObjectInitializer);
+
 	void RadialCCWSyncFunction();
 	
 	void RadialCWSyncFunction();
