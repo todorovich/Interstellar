@@ -12,9 +12,8 @@
 UCLASS()
 class INTREPID_API UStatusIndicatorPanel : public UPanelWidget
 {
-	GENERATED_BODY()
-	
-	
-	
+	GENERATED_UCLASS_BODY()
+
+	virtual ~UStatusIndicatorPanel() = default;
 	
 };

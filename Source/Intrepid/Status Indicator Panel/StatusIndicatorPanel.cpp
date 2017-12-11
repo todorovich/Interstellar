@@ -2,6 +2,7 @@
 
 #include "StatusIndicatorPanel.h"
 
+UStatusIndicatorPanel::UStatusIndicatorPanel(const FObjectInitializer& ObjectInitializer)
+{
 
-
-
+}
