@@ -8,7 +8,14 @@ public class Intrepid : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "OnlineSubsystem", "OnlineSubsystemUtils" });
+		PublicDependencyModuleNames.AddRange(
+            new string[] { "Core"
+                         , "CoreUObject"
+                         , "Engine"
+                         , "EngineSettings"
+                         , "InputCore"
+                         , "OnlineSubsystem"
+                         , "OnlineSubsystemUtils" });
 
 		//PrivateDependencyModuleNames.AddRange(new string[] {  });
 

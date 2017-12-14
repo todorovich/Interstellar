@@ -13,8 +13,7 @@ UCLASS()
 class INTREPID_API AIntrepidGameSession : public AGameSession
 {
 	GENERATED_BODY()
-	
-	
-	
+
+	AIntrepidGameSession(const FObjectInitializer& ObjectInitializer);
 	
 };

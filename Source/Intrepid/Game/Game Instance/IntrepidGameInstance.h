@@ -13,8 +13,11 @@ UCLASS()
 class INTREPID_API UIntrepidGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
-	
-	
-	
+public:
+	virtual void StartGameInstance() override;
+
+	/* Called to actually start the game when doing Play/Simulate In Editor */
+	virtual FGameInstancePIEResult StartPlayInEditorGameInstance(ULocalPlayer* LocalPlayer, const FGameInstancePIEParameters& Params);
+
 	
 };

@@ -13,5 +13,7 @@ UCLASS()
 class INTREPID_API AIntrepidGameState : public AGameStateBase
 {
 	GENERATED_BODY()
-	
+
+public:
+	AIntrepidGameState(const FObjectInitializer& ObjectInitializer);
 };
