@@ -14,13 +14,15 @@ void UIntrepidGameInstance::StartGameInstance()
 	FURL DefaultURL;
 	DefaultURL.LoadURLConfig(TEXT("DefaultPlayer"), GGameIni);
 
-	//const UGameMapsSettings* GameMapsSettings = Cast<UGameMapsSettings>(UGameMapsSettings::StaticClass()->GetDefaultObject());
 	const UGameMapsSettings* GameMapsSettings = GetDefault<UGameMapsSettings>();
 	const FString& DefaultMap = UGameMapsSettings::GetGameDefaultMap();
 
-	const TCHAR* Tmp = FCommandLine::Get();
+	const TCHAR* commandLine= FCommandLine::Get();
+
+	LOG("Command Line: %s", commandLine);
+
 	FString PackageName;
-	if (!FParse::Token(Tmp, PackageName, false) || **PackageName == '-')
+	if (!FParse::Token(commandLine, PackageName, false) || **PackageName == '-')
 	{
 		PackageName = DefaultMap + GameMapsSettings->LocalMapOptions;
 	}

@@ -49,7 +49,7 @@ void UStatusIndicator::RadialCCWSyncFunction()
 	// Confirm we havent been switched from
 	if (currentFillStyle == FillStyle::RadialCCW)
 	{
-		//UE_LOG(DebugLog, Log, TEXT("%s"), *Style.SwipeMaterial.GetResourceName().ToString());
+		//UE_LOG(IntrepidLog, Log, TEXT("%s"), *Style.SwipeMaterial.GetResourceName().ToString());
 		if (Style.SwipeMaterial.GetResourceName() != FName("M_CounterClockwiseRadialFill"))
 		{
 			fillStyleSelected = FillStyle::Custom;
@@ -70,14 +70,14 @@ void UStatusIndicator::RadialCCWSyncFunction()
 
 		assetRegistry->GetAssets(filter, assetArray);
 
-		//UE_LOG(DebugLog, Log, TEXT("Results found: %d"), assetArray.Num());
+		//UE_LOG(IntrepidLog, Log, TEXT("Results found: %d"), assetArray.Num());
 
 		// Iterate over the materials until the one we want is found.
 		for (auto& assetData : assetArray)
 		{
 			if (assetData.AssetName == FName("M_CounterClockwiseRadialFill"))
 			{
-				UE_LOG(DebugLog, Log, TEXT("Found M_CounterClockwiseRadialFill"));
+				UE_LOG(IntrepidLog, Log, TEXT("Found M_CounterClockwiseRadialFill"));
 				auto  asset = assetData.GetAsset();
 				Style.SwipeMaterial.SetResourceObject(asset);
 			}
@@ -92,7 +92,7 @@ void UStatusIndicator::RadialCWSyncFunction()
 	// Confirm we havent been switched from
 	if (currentFillStyle == FillStyle::RadialCW)
 	{
-		//UE_LOG(DebugLog, Log, TEXT("%s"), *Style.SwipeMaterial.GetResourceName().ToString());
+		//UE_LOG(IntrepidLog, Log, TEXT("%s"), *Style.SwipeMaterial.GetResourceName().ToString());
 		if (Style.SwipeMaterial.GetResourceName() != FName("M_ClockwiseRadialFill"))
 		{
 			fillStyleSelected = FillStyle::Custom;
@@ -113,14 +113,14 @@ void UStatusIndicator::RadialCWSyncFunction()
 
 		assetRegistry->GetAssets(filter, assetArray);
 
-		//UE_LOG(DebugLog, Log, TEXT("Results found: %d"), assetArray.Num());
+		//UE_LOG(IntrepidLog, Log, TEXT("Results found: %d"), assetArray.Num());
 
 		// Iterate over the materials until the one we want is found.
 		for (auto& assetData : assetArray)
 		{
 			if (assetData.AssetName == FName("M_ClockwiseRadialFill"))
 			{
-				UE_LOG(DebugLog, Log, TEXT("Found M_CounterClockwiseRadialFill"));
+				UE_LOG(IntrepidLog, Log, TEXT("Found M_CounterClockwiseRadialFill"));
 				auto  asset = assetData.GetAsset();
 				Style.SwipeMaterial.SetResourceObject(asset);
 				Style.SwipeMaterial.TintColor = FLinearColor::White;
@@ -156,14 +156,14 @@ void UStatusIndicator::LeftToRightSyncFunction()
 
 		assetRegistry->GetAssets(filter, assetArray);
 
-		//UE_LOG(DebugLog, Log, TEXT("Results found: %d"), assetArray.Num());
+		//UE_LOG(IntrepidLog, Log, TEXT("Results found: %d"), assetArray.Num());
 
 		// Iterate over the materials until the one we want is found.
 		for (auto& assetData : assetArray)
 		{
 			if (assetData.AssetName == FName("M_LeftToRightFill"))
 			{
-				UE_LOG(DebugLog, Log, TEXT("Found M_LeftToRightFill"));
+				UE_LOG(IntrepidLog, Log, TEXT("Found M_LeftToRightFill"));
 				auto  asset = assetData.GetAsset();
 				Style.SwipeMaterial.SetResourceObject(asset);
 				Style.SwipeMaterial.TintColor = FLinearColor::White;
@@ -199,14 +199,14 @@ void UStatusIndicator::RightToLeftSyncFunction()
 
 		assetRegistry->GetAssets(filter, assetArray);
 
-		//UE_LOG(DebugLog, Log, TEXT("Results found: %d"), assetArray.Num());
+		//UE_LOG(IntrepidLog, Log, TEXT("Results found: %d"), assetArray.Num());
 
 		// Iterate over the materials until the one we want is found.
 		for (auto& assetData : assetArray)
 		{
 			if (assetData.AssetName == FName("M_RightToLeftFill"))
 			{
-				UE_LOG(DebugLog, Log, TEXT("Found M_RightToLeftFill"));
+				UE_LOG(IntrepidLog, Log, TEXT("Found M_RightToLeftFill"));
 				auto  asset = assetData.GetAsset();
 				Style.SwipeMaterial.SetResourceObject(asset);
 				Style.SwipeMaterial.TintColor = FLinearColor::White;
@@ -242,14 +242,14 @@ void UStatusIndicator::BottomToTopSyncFunction()
 
 		assetRegistry->GetAssets(filter, assetArray);
 
-		//UE_LOG(DebugLog, Log, TEXT("Results found: %d"), assetArray.Num());
+		//UE_LOG(IntrepidLog, Log, TEXT("Results found: %d"), assetArray.Num());
 
 		// Iterate over the materials until the one we want is found.
 		for (auto& assetData : assetArray)
 		{
 			if (assetData.AssetName == FName("M_BottomToTopFill"))
 			{
-				UE_LOG(DebugLog, Log, TEXT("Found M_BottomToTopFill"));
+				UE_LOG(IntrepidLog, Log, TEXT("Found M_BottomToTopFill"));
 				auto  asset = assetData.GetAsset();
 				Style.SwipeMaterial.SetResourceObject(asset);
 				Style.SwipeMaterial.TintColor = FLinearColor::White;
@@ -284,14 +284,14 @@ void UStatusIndicator::TopToBottomSyncFunction()
 
 		assetRegistry->GetAssets(filter, assetArray);
 
-		//UE_LOG(DebugLog, Log, TEXT("Results found: %d"), assetArray.Num());
+		//UE_LOG(IntrepidLog, Log, TEXT("Results found: %d"), assetArray.Num());
 
 		// Iterate over the materials until the one we want is found.
 		for (auto& assetData : assetArray)
 		{
 			if (assetData.AssetName == FName("M_TopToBottomFill"))
 			{
-				UE_LOG(DebugLog, Log, TEXT("Found M_TopToBottomFill"));
+				UE_LOG(IntrepidLog, Log, TEXT("Found M_TopToBottomFill"));
 				auto  asset = assetData.GetAsset();
 				Style.SwipeMaterial.SetResourceObject(asset);
 				Style.SwipeMaterial.TintColor = FLinearColor::White;
@@ -326,14 +326,14 @@ void UStatusIndicator::BottomLeftToTopRightSyncFunction()
 
 		assetRegistry->GetAssets(filter, assetArray);
 
-		//UE_LOG(DebugLog, Log, TEXT("Results found: %d"), assetArray.Num());
+		//UE_LOG(IntrepidLog, Log, TEXT("Results found: %d"), assetArray.Num());
 
 		// Iterate over the materials until the one we want is found.
 		for (auto& assetData : assetArray)
 		{
 			if (assetData.AssetName == FName("M_BottomLeftToTopRightFill"))
 			{
-				UE_LOG(DebugLog, Log, TEXT("Found M_BottomLeftToTopRightFill"));
+				UE_LOG(IntrepidLog, Log, TEXT("Found M_BottomLeftToTopRightFill"));
 				auto  asset = assetData.GetAsset();
 				Style.SwipeMaterial.SetResourceObject(asset);
 				Style.SwipeMaterial.TintColor = FLinearColor::White;
@@ -368,14 +368,14 @@ void UStatusIndicator::BottomRightToTopLeftSyncFunction()
 
 		assetRegistry->GetAssets(filter, assetArray);
 
-		//UE_LOG(DebugLog, Log, TEXT("Results found: %d"), assetArray.Num());
+		//UE_LOG(IntrepidLog, Log, TEXT("Results found: %d"), assetArray.Num());
 
 		// Iterate over the materials until the one we want is found.
 		for (auto& assetData : assetArray)
 		{
 			if (assetData.AssetName == FName("M_BottomRightToTopLeftFill"))
 			{
-				UE_LOG(DebugLog, Log, TEXT("Found M_BottomRightToTopLeftFill"));
+				UE_LOG(IntrepidLog, Log, TEXT("Found M_BottomRightToTopLeftFill"));
 				auto  asset = assetData.GetAsset();
 				Style.SwipeMaterial.SetResourceObject(asset);
 				Style.SwipeMaterial.TintColor = FLinearColor::White;
@@ -410,14 +410,14 @@ void UStatusIndicator::TopLeftToBottomRightSyncFunction()
 
 		assetRegistry->GetAssets(filter, assetArray);
 
-		//UE_LOG(DebugLog, Log, TEXT("Results found: %d"), assetArray.Num());
+		//UE_LOG(IntrepidLog, Log, TEXT("Results found: %d"), assetArray.Num());
 
 		// Iterate over the materials until the one we want is found.
 		for (auto& assetData : assetArray)
 		{
 			if (assetData.AssetName == FName("M_TopLeftToBottomRightFill"))
 			{
-				UE_LOG(DebugLog, Log, TEXT("Found M_BottomRightToTopLeftFill"));
+				UE_LOG(IntrepidLog, Log, TEXT("Found M_BottomRightToTopLeftFill"));
 				auto  asset = assetData.GetAsset();
 				Style.SwipeMaterial.SetResourceObject(asset);
 				Style.SwipeMaterial.TintColor = FLinearColor::White;
@@ -452,14 +452,14 @@ void UStatusIndicator::TopRightToBottomLeftSyncFunction()
 
 		assetRegistry->GetAssets(filter, assetArray);
 
-		//UE_LOG(DebugLog, Log, TEXT("Results found: %d"), assetArray.Num());
+		//UE_LOG(IntrepidLog, Log, TEXT("Results found: %d"), assetArray.Num());
 
 		// Iterate over the materials until the one we want is found.
 		for (auto& assetData : assetArray)
 		{
 			if (assetData.AssetName == FName("M_TopRightToBottomLeftFill"))
 			{
-				UE_LOG(DebugLog, Log, TEXT("Found M_TopRightToBottomLeftFill"));
+				UE_LOG(IntrepidLog, Log, TEXT("Found M_TopRightToBottomLeftFill"));
 				auto  asset = assetData.GetAsset();
 				Style.SwipeMaterial.SetResourceObject(asset);
 				Style.SwipeMaterial.TintColor = FLinearColor::White;
@@ -487,14 +487,14 @@ void UStatusIndicator::FindAndSetDefaultTextures()
 
 	assetRegistry->GetAssets(filter, assetArray);
 
-	//UE_LOG(DebugLog, Log, TEXT("Results found: %d"), assetArray.Num());
+	//UE_LOG(IntrepidLog, Log, TEXT("Results found: %d"), assetArray.Num());
 
 	// Iterate over the texutres and find the ones we are looking for
 	for (auto& assetData : assetArray)
 	{
 		if (assetData.AssetName == FName("T_Shield_Status_Icon"))
 		{
-			UE_LOG(DebugLog, Log, TEXT("Found shield_status_icon"));
+			UE_LOG(IntrepidLog, Log, TEXT("Found shield_status_icon"));
 			auto object = assetData.GetAsset();
 			auto texture = Cast<UTexture2D>(object);
 			Style.BorderImage.SetResourceObject(object);
@@ -503,7 +503,7 @@ void UStatusIndicator::FindAndSetDefaultTextures()
 		}
 		else if (assetData.AssetName == FName("T_Shield_Status_Icon_Fill"))
 		{
-			UE_LOG(DebugLog, Log, TEXT("Found shield_status_icon_fill"));
+			UE_LOG(IntrepidLog, Log, TEXT("Found shield_status_icon_fill"));
 			auto object = assetData.GetAsset();
 			auto texture = Cast<UTexture2D>(object);
 			Style.FillImage.SetResourceObject(object);

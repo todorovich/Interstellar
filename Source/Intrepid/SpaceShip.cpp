@@ -53,43 +53,43 @@ void ASpaceShip::PostEditChangeProperty(FPropertyChangedEvent & PropertyChangedE
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 
-	UE_LOG(DebugLog, Log, TEXT("Post Edit Property Change"));
+	UE_LOG(IntrepidLog, Log, TEXT("Post Edit Property Change"));
 
 	switch(PropertyChangedEvent.ChangeType)
 	{
 		case EPropertyChangeType::Unspecified:
-			UE_LOG(DebugLog, Log, TEXT("Unspecified"));
+			UE_LOG(IntrepidLog, Log, TEXT("Unspecified"));
 			break;
 
 		case EPropertyChangeType::ArrayAdd:
 
-			UE_LOG(DebugLog, Log, TEXT("ArrayAdd"));
+			UE_LOG(IntrepidLog, Log, TEXT("ArrayAdd"));
 			break;
 
 		case EPropertyChangeType::ValueSet:
 
-			UE_LOG(DebugLog, Log, TEXT("ValueSet"));
+			UE_LOG(IntrepidLog, Log, TEXT("ValueSet"));
 			break;
 
 		case EPropertyChangeType::Duplicate:
 
-			UE_LOG(DebugLog, Log, TEXT("Duplicate"));
+			UE_LOG(IntrepidLog, Log, TEXT("Duplicate"));
 			break;
 
 		case EPropertyChangeType::Interactive:
 
-			UE_LOG(DebugLog, Log, TEXT("Interactive"));
+			UE_LOG(IntrepidLog, Log, TEXT("Interactive"));
 			break;
 
 		case EPropertyChangeType::Redirected:
 
-			UE_LOG(DebugLog, Log, TEXT("Redirected"));
+			UE_LOG(IntrepidLog, Log, TEXT("Redirected"));
 			break;
 	}
 
 	//PropertyChangedEvent.Property->GetClass();
 
-	UE_LOG(DebugLog, Log, TEXT("String %s"), *PropertyChangedEvent.GetPropertyName().ToString());
+	UE_LOG(IntrepidLog, Log, TEXT("String %s"), *PropertyChangedEvent.GetPropertyName().ToString());
 
 	//UE_LOG(DebugLog, Log, TEXT("String %s"), PropertyChangedEvent.Property())
 

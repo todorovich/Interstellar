@@ -5,4 +5,4 @@
 
 IMPLEMENT_PRIMARY_GAME_MODULE( FDefaultGameModuleImpl, Intrepid, "Intrepid" );
 
-DEFINE_LOG_CATEGORY(DebugLog);
+DEFINE_LOG_CATEGORY(IntrepidLog);
