@@ -17,7 +17,7 @@ class UMaterialInstanceDynamic;
  *	The Slate Widget Style for the Status Indicator
  */
 USTRUCT(BlueprintType)
-struct INTREPID_API FStatusIndicatorStyle : public FSlateWidgetStyle
+struct INTERSTELLAR_API FStatusIndicatorStyle : public FSlateWidgetStyle
 {
 	GENERATED_USTRUCT_BODY()
 

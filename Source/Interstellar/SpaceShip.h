@@ -8,7 +8,7 @@
 #include "SpaceShip.generated.h"
 
 UCLASS(BlueprintType, ClassGroup = (SpaceShip), meta = (BlueprintSpawnableComponent))
-class INTREPID_API ASpaceShip : public AActor
+class INTERSTELLAR_API ASpaceShip : public AActor
 {
 	GENERATED_BODY()
 	

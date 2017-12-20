@@ -4,16 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/DefaultPawn.h"
-#include "IntrepidPawn.generated.h"
+#include "InterstellarPawn.generated.h"
 
 UCLASS()
-class INTREPID_API AIntrepidPawn : public ADefaultPawn
+class INTERSTELLAR_API AInterstellarPawn : public ADefaultPawn
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this pawn's properties
-	AIntrepidPawn();
+	AInterstellarPawn();
 
 protected:
 	// Called when the game starts or when spawned

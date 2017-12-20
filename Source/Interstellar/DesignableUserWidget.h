@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "Interstellar.h"
 #include "Blueprint/UserWidget.h"
 #include "DesignableUserWidget.generated.h"
 
@@ -10,7 +10,7 @@
  * 
  */
 UCLASS()
-class INTREPID_API UDesignableUserWidget : public UUserWidget
+class INTERSTELLAR_API UDesignableUserWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	

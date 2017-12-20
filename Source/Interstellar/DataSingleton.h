@@ -12,7 +12,7 @@ class IAssetRegistry;
  * 
  */
 UCLASS()
-class INTREPID_API UDataSingleton : public UObject
+class INTERSTELLAR_API UDataSingleton : public UObject
 {
 	GENERATED_BODY()
 

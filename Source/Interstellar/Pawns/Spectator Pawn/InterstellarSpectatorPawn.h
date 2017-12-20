@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/SpectatorPawn.h"
-#include "IntrepidSpectatorPawn.generated.h"
+#include "InterstellarSpectatorPawn.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class INTREPID_API AIntrepidSpectatorPawn : public ASpectatorPawn
+class INTERSTELLAR_API AInterstellarSpectatorPawn : public ASpectatorPawn
 {
 	GENERATED_BODY()
 	

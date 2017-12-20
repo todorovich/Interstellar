@@ -4,16 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameStateBase.h"
-#include "IntrepidGameState.generated.h"
+#include "InterstellarGameState.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class INTREPID_API AIntrepidGameState : public AGameStateBase
+class INTERSTELLAR_API AInterstellarGameState : public AGameStateBase
 {
 	GENERATED_BODY()
 
 public:
-	AIntrepidGameState(const FObjectInitializer& ObjectInitializer);
+	AInterstellarGameState(const FObjectInitializer& ObjectInitializer);
 };

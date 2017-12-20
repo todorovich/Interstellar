@@ -3,7 +3,7 @@
 #include "SStatusIndicator.h"
 #include "SlateOptMacros.h"
 #include "Rendering/DrawElements.h"
-#include "Intrepid.h"
+#include "Interstellar.h"
 
 #include "Runtime/Engine/Classes/Materials/MaterialInstanceDynamic.h"
 

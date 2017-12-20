@@ -22,7 +22,7 @@ class FSlateWindowElementList;
 /**
  *  The Status Indicator Slate Widget
  */
-class INTREPID_API SStatusIndicator : public SLeafWidget
+class INTERSTELLAR_API SStatusIndicator : public SLeafWidget
 {
 
 public:

@@ -1,7 +1,7 @@
 // Copyright 2017 Micho Todorovich, all rights reserved.
 
 #include "Status Indicator/StatusIndicator.h"
-#include "Intrepid.h"
+#include "Interstellar.h"
 #include "Slate/SlateBrushAsset.h"
 #include "Materials/MaterialInstance.h"
 //#include "Materials/MaterialInstanceDynamic.h"

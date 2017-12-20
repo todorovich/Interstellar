@@ -1,7 +1,7 @@
 // Copyright 2017 Micho Todorovich, all rights reserved.
 
 #include "StarBillboardComponent.h"
-#include "Intrepid.h"
+#include "Interstellar.h"
 #include "EngineGlobals.h"
 #include "RHI.h"
 #include "RenderResource.h"

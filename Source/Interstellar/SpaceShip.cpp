@@ -2,7 +2,7 @@
 
 #include "SpaceShip.h"
 //#include "Engine.h"
-#include "Intrepid.h"
+#include "Interstellar.h"
 #include "ShieldSystemComponent.h"
 #include "UnrealType.h"
 #include "Runtime/Engine/Classes/Components/PrimitiveComponent.h"

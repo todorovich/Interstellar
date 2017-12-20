@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Intrepid.h"
+#include "Interstellar.h"
 #include "UObject/ObjectMacros.h"
 #include "Components/PrimitiveComponent.h"
 #include "StarBillboardComponent.generated.h"
@@ -34,7 +34,7 @@ struct FStarSpriteParameters
  * 
  */
 UCLASS(ClassGroup = Rendering, collapsecategories, hidecategories = (Object, Activation, "Components|Activation", Physics, Collision, Lighting, Mesh, PhysicsVolume), editinlinenew, meta = (BlueprintSpawnableComponent))
-class INTREPID_API UStarBillboardComponent : public UPrimitiveComponent
+class INTERSTELLAR_API UStarBillboardComponent : public UPrimitiveComponent
 {
 	GENERATED_BODY()
 

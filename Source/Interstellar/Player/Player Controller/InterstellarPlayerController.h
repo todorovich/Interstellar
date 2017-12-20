@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
-#include "IntrepidPlayerController.generated.h"
+#include "InterstellarPlayerController.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class INTREPID_API AIntrepidPlayerController : public APlayerController
+class INTERSTELLAR_API AInterstellarPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 	

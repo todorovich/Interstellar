@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
-#include "IntrepidGameInstance.generated.h"
+#include "InterstellarGameInstance.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class INTREPID_API UIntrepidGameInstance : public UGameInstance
+class INTERSTELLAR_API UInterstellarGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
 public:

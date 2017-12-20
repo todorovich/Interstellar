@@ -34,7 +34,7 @@ enum class FillStyle : uint8
 *  The Status Indicator UMG Widget
 */
 UCLASS(BlueprintType)
-class INTREPID_API UStatusIndicator : public UWidget
+class INTERSTELLAR_API UStatusIndicator : public UWidget
 {
 	GENERATED_BODY()
 

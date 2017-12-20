@@ -1,9 +1,9 @@
 // Copyright 2017 Micho Todorovich, all rights reserved.
 
-#include "IntrepidGameInstance.h"
-#include "Intrepid.h"
+#include "InterstellarGameInstance.h"
+#include "Interstellar.h"
 
-void UIntrepidGameInstance::StartGameInstance() 
+void UInterstellarGameInstance::StartGameInstance()
 {
 	//Super::StartGameInstance();
 
@@ -79,7 +79,7 @@ void UIntrepidGameInstance::StartGameInstance()
 }
 
 #if WITH_EDITOR
-FGameInstancePIEResult UIntrepidGameInstance::StartPlayInEditorGameInstance(ULocalPlayer * LocalPlayer, const FGameInstancePIEParameters & Params)
+FGameInstancePIEResult UInterstellarGameInstance::StartPlayInEditorGameInstance(ULocalPlayer * LocalPlayer, const FGameInstancePIEParameters & Params)
 {
 	StartGameInstance();
 

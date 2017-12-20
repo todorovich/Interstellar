@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerState.h"
-#include "IntrepidPlayerState.generated.h"
+#include "InterstellarPlayerState.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class INTREPID_API AIntrepidPlayerState : public APlayerState
+class INTERSTELLAR_API AInterstellarPlayerState : public APlayerState
 {
 	GENERATED_BODY()
 	

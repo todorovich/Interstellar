@@ -8,7 +8,7 @@
 
 
 UCLASS(BlueprintType, ClassGroup=(SpaceShipComponents), meta=(BlueprintSpawnableComponent) )
-class INTREPID_API USpaceShipComponent : public USceneComponent
+class INTERSTELLAR_API USpaceShipComponent : public USceneComponent
 {
 	GENERATED_BODY()
 

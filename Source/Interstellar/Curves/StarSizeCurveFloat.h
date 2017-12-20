@@ -10,7 +10,7 @@
  * 
  */
 UCLASS()
-class INTREPID_API UStarSizeCurveFloat : public UCurveFloat
+class INTERSTELLAR_API UStarSizeCurveFloat : public UCurveFloat
 {
 	GENERATED_BODY()
 	

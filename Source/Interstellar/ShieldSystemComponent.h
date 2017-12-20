@@ -14,7 +14,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FShieldsChanged);
  *	Component Representing a Shield System
  */
 UCLASS(BlueprintType, ClassGroup = (SpaceShipComponents), meta = (BlueprintSpawnableComponent))
-class INTREPID_API UShieldSystemComponent : public USpaceShipComponent
+class INTERSTELLAR_API UShieldSystemComponent : public USpaceShipComponent
 {
 	GENERATED_BODY()
 	

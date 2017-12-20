@@ -5,18 +5,18 @@
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
 #include "GameFramework/GameMode.h"
-#include "IntrepidGameMode.generated.h"
+#include "InterstellarGameMode.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class INTREPID_API AIntrepidGameMode : public AGameModeBase
+class INTERSTELLAR_API AInterstellarGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 
 public:
-	AIntrepidGameMode(const FObjectInitializer& ObjectInitializer);
+	AInterstellarGameMode(const FObjectInitializer& ObjectInitializer);
 	
 	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
 

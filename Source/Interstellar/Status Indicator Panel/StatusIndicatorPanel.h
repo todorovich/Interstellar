@@ -10,7 +10,7 @@
  * 
  */
 UCLASS()
-class INTREPID_API UStatusIndicatorPanel : public UPanelWidget
+class INTERSTELLAR_API UStatusIndicatorPanel : public UPanelWidget
 {
 	GENERATED_UCLASS_BODY()
 

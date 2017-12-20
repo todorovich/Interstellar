@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class Intrepid : ModuleRules
+public class Interstellar : ModuleRules
 {
-	public Intrepid(ReadOnlyTargetRules Target) : base(Target)
+	public Interstellar(ReadOnlyTargetRules Target) : base(Target)
 	{
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
@@ -19,15 +19,12 @@ public class Intrepid : ModuleRules
                          , "RHI"
                          , "ShaderCore"
                          , "OnlineSubsystem"
-                         , "OnlineSubsystemUtils" });
+                         , "OnlineSubsystemUtils"
+                         , "UMG" });
 
-		//PrivateDependencyModuleNames.AddRange(new string[] {  });
-
-		// Uncomment if you are using Slate UI
-		PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
-
-        PrivateDependencyModuleNames.Add("OnlineSubsystem");
-
-        // To include OnlineSubsystemSteam, add it to the plugins section in your uproject file with the Enabled attribute set to true
+		PrivateDependencyModuleNames.AddRange(
+            new string[] { "Slate"
+                         , "SlateCore"
+                         , "OnlineSubsystem"});
     }
 }
