@@ -78,6 +78,7 @@ void UIntrepidGameInstance::StartGameInstance()
 	OnStart();
 }
 
+#if WITH_EDITOR
 FGameInstancePIEResult UIntrepidGameInstance::StartPlayInEditorGameInstance(ULocalPlayer * LocalPlayer, const FGameInstancePIEParameters & Params)
 {
 	StartGameInstance();
@@ -86,3 +87,4 @@ FGameInstancePIEResult UIntrepidGameInstance::StartPlayInEditorGameInstance(ULoc
 
 	return FGameInstancePIEResult::Success();
 }
+#endif

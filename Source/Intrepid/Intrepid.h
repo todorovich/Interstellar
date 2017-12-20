@@ -12,10 +12,10 @@ DECLARE_LOG_CATEGORY_EXTERN(IntrepidLog, Log, All);
 // This is not what the ternary operator is for, wtf.
 // Unfuck this.
 #define NETMODE_WORLD (((GEngine == nullptr) || (GetWorld() == nullptr)) ? TEXT("") \
-        : (GEngine->GetNetMode(GetWorld()) == NM_Client) ? TEXT("[Client] ") \
-        : (GEngine->GetNetMode(GetWorld()) == NM_ListenServer) ? TEXT("[ListenServer] ") \
-        : (GEngine->GetNetMode(GetWorld()) == NM_DedicatedServer) ? TEXT("[DedicatedServer] ") \
-        : TEXT("[Standalone] "))
+		: (GEngine->GetNetMode(GetWorld()) == NM_Client) ? TEXT("[Client] ") \
+		: (GEngine->GetNetMode(GetWorld()) == NM_ListenServer) ? TEXT("[ListenServer] ") \
+		: (GEngine->GetNetMode(GetWorld()) == NM_DedicatedServer) ? TEXT("[DedicatedServer] ") \
+		: TEXT("[Standalone] "))
 
 #if _MSC_VER
 #define FUNC_NAME		TEXT(__FUNCTION__)
@@ -29,8 +29,6 @@ DECLARE_LOG_CATEGORY_EXTERN(IntrepidLog, Log, All);
 {\
 	SET_WARN_COLOR(COLOR_CYAN);\
 	const FString message = FString::Printf(TEXT(Format), __VA_ARGS__); \
-	UE_LOG(IntrepidLog, Log, TEXT("[%s][Line: %d], %s()\n\t%s"), FILE, __LINE__, FUNC_NAME, *message);\
+	UE_LOG(IntrepidLog, Log, TEXT("%s():\t%s: Line: %d:\n\t%s"), FUNC_NAME, FILE, __LINE__,  *message);\
 	CLEAR_WARN_COLOR();\
-}\
-
-#define LOG2 UE_LOG(IntrepidLog, Log, TEXT("\"%s\"[Line: %d], %s()"), FILE, __LINE__, FUNC_NAME);
+};

@@ -6,7 +6,7 @@ public class Intrepid : ModuleRules
 {
 	public Intrepid(ReadOnlyTargetRules Target) : base(Target)
 	{
-		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+        PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
 		PublicDependencyModuleNames.AddRange(
             new string[] { "Core"
@@ -14,6 +14,10 @@ public class Intrepid : ModuleRules
                          , "Engine"
                          , "EngineSettings"
                          , "InputCore"
+                         , "RenderCore"
+                         , "Renderer"
+                         , "RHI"
+                         , "ShaderCore"
                          , "OnlineSubsystem"
                          , "OnlineSubsystemUtils" });
 

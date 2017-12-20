@@ -2,14 +2,10 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
-/.vs/Intrepid
-/Binaries/Win64
+/.vs
+/Binaries
 /Intermediate
-/Intrepid.sln
-/Intrepid.sdf
 /Saved
 /.gitattributes
-/WindowsNoEditor
-Content/Enum/NewUserDefinedEnum.uasset
-Source/Intrepid/Status Indicator Panel/StatusIndicatorPanel.cpp
-Source/Intrepid/Status Indicator Panel/StatusIndicatorPanel.h
+/Interstellar.sln
+

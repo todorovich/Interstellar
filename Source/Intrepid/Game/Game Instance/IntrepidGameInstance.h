@@ -16,7 +16,8 @@ class INTREPID_API UIntrepidGameInstance : public UGameInstance
 public:
 	virtual void StartGameInstance() override;
 
+#if WITH_EDITOR
 	/* Called to actually start the game when doing Play/Simulate In Editor */
 	virtual FGameInstancePIEResult StartPlayInEditorGameInstance(ULocalPlayer* LocalPlayer, const FGameInstancePIEParameters& Params);
-	
+#endif
 };
