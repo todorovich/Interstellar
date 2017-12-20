@@ -3,11 +3,11 @@
 using UnrealBuildTool;
 using System.Collections.Generic;
 
-public class IntrepidTarget : TargetRules
+public class InterstellarEditorTarget : TargetRules
 {
-	public IntrepidTarget(TargetInfo Target) : base(Target)
+	public InterstellarEditorTarget(TargetInfo Target) : base(Target)
 	{
-		Type = TargetType.Game;
+		Type = TargetType.Editor;
 
 		ExtraModuleNames.AddRange( new string[] { "Intrepid" } );
 	}
