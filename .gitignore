@@ -9,3 +9,5 @@
 /.gitattributes
 /Interstellar.sln
 
+*.sdf
+*.sln
