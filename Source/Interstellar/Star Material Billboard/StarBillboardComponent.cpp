@@ -21,24 +21,54 @@ namespace
 {
 	struct FStarSpriteVertex
 	{
-		FVector Position;
-		FPackedNormal TangentX;
-		FPackedNormal TangentZ;
-		FColor Color;
-		FVector2D TexCoords;
+		FVector			Position;
+		FPackedNormal	TangentX;
+		FPackedNormal	TangentZ;
+		FColor			Color;
+		FVector2D		TextureCoordinates;
 	};
 
+	// Vertex Buffer
 	class FStarSpriteVertexBuffer : public FVertexBuffer
 	{
 	public:
 
+		using FVertexBuffer::VertexBufferRHI;
+
+		TArray<FStarSpriteVertex> Vertices;
+
+		virtual void InitRHI() override
+		{
+			const int SizeInBytes = sizeof(FDynamicMeshVertex);// *Vertices.Num();
+			FRHIResourceCreateInfo CreateInfo;
+			VertexBufferRHI = RHICreateVertexBuffer(SizeInBytes, BUF_Static, CreateInfo);
+			
+			// Copy the vertex data into the vertex buffer.
+			//void* VertexBufferData = RHILockVertexBuffer(VertexBufferRHI, 0, SizeInBytes, RLM_WriteOnly);
+			//FMemory::Memcpy(VertexBufferData, Vertices.GetData(), SizeInBytes);
+			//RHIUnlockVertexBuffer(VertexBufferRHI);
+		}
+	};
+
+	// Index Buffer
+	class FStarSpriteIndexBuffer : public FIndexBuffer
+	{
+	public:
+		TArray<int32> Indices;
+
 		virtual void InitRHI() override
 		{
 			FRHIResourceCreateInfo CreateInfo;
-			VertexBufferRHI = RHICreateVertexBuffer(sizeof(FStarSpriteVertex), BUF_Static, CreateInfo);
+			IndexBufferRHI = RHICreateIndexBuffer(sizeof(int32), /*Indices.Num() * */sizeof(int32), BUF_Static, CreateInfo);
+			
+			// Write the indices to the index buffer.
+			//void* Buffer = RHILockIndexBuffer(IndexBufferRHI, 0, Indices.Num() * sizeof(int32), RLM_WriteOnly);
+			//FMemory::Memcpy(Buffer, Indices.GetData(), Indices.Num() * sizeof(int32));
+			//RHIUnlockIndexBuffer(IndexBufferRHI);
 		}
 	};
 	
+	// Vertex Factory
 	class FStarSpriteVertexFactory : public FLocalVertexFactory
 	{
 	public:
@@ -49,54 +79,14 @@ namespace
 			check(IsInRenderingThread())
 
 				FDataType NewData;
-				NewData.PositionComponent			= STRUCTMEMBER_VERTEXSTREAMCOMPONENT(VertexBuffer, FDynamicMeshVertex, Position, VET_Float3);
-				NewData.TangentBasisComponents[0]	= STRUCTMEMBER_VERTEXSTREAMCOMPONENT(VertexBuffer, FDynamicMeshVertex, TangentX, VET_PackedNormal);
-				NewData.TangentBasisComponents[1]	= STRUCTMEMBER_VERTEXSTREAMCOMPONENT(VertexBuffer, FDynamicMeshVertex, TangentZ, VET_PackedNormal);
-				NewData.ColorComponent				= STRUCTMEMBER_VERTEXSTREAMCOMPONENT(VertexBuffer, FDynamicMeshVertex, Color, VET_Color);
-				NewData.TextureCoordinates.Add(FVertexStreamComponent(VertexBuffer, STRUCT_OFFSET(FDynamicMeshVertex, TextureCoordinate), sizeof(FDynamicMeshVertex), VET_Float2)
-			);
-
-			SetData(NewData);
+				NewData.PositionComponent			= STRUCTMEMBER_VERTEXSTREAMCOMPONENT(VertexBuffer, FStarSpriteVertex, Position, VET_Float3);
+				NewData.TangentBasisComponents[0]	= STRUCTMEMBER_VERTEXSTREAMCOMPONENT(VertexBuffer, FStarSpriteVertex, TangentX, VET_PackedNormal);
+				NewData.TangentBasisComponents[1]	= STRUCTMEMBER_VERTEXSTREAMCOMPONENT(VertexBuffer, FStarSpriteVertex, TangentZ, VET_PackedNormal);
+				NewData.ColorComponent				= STRUCTMEMBER_VERTEXSTREAMCOMPONENT(VertexBuffer, FStarSpriteVertex, Color, VET_Color);
+				NewData.TextureCoordinates.Add(FVertexStreamComponent(VertexBuffer, STRUCT_OFFSET(FStarSpriteVertex, TextureCoordinates), sizeof(FStarSpriteVertex), VET_Float2));
+			
+				SetData(NewData);
 		}
-
-		/*FStarSpriteVertexFactory()
-		{
-			FLocalVertexFactory::FDataType VertexData;
-
-			VertexData.PositionComponent = FVertexStreamComponent(
-				&GDummyStarSpriteVertexBuffer,
-				STRUCT_OFFSET(FStarSpriteVertex, Position),
-				sizeof(FStarSpriteVertex),
-				VET_Float3
-			);
-			VertexData.TangentBasisComponents[0] = FVertexStreamComponent(
-				&GDummyStarSpriteVertexBuffer,
-				STRUCT_OFFSET(FStarSpriteVertex, TangentX),
-				sizeof(FStarSpriteVertex),
-				VET_PackedNormal
-			);
-			VertexData.TangentBasisComponents[1] = FVertexStreamComponent(
-				&GDummyStarSpriteVertexBuffer,
-				STRUCT_OFFSET(FStarSpriteVertex, TangentZ),
-				sizeof(FStarSpriteVertex),
-				VET_PackedNormal
-			);
-			VertexData.ColorComponent = FVertexStreamComponent(
-				&GDummyStarSpriteVertexBuffer,
-				STRUCT_OFFSET(FStarSpriteVertex, Color),
-				sizeof(FStarSpriteVertex),
-				VET_Color
-			);
-			VertexData.TextureCoordinates.Empty();
-			VertexData.TextureCoordinates.Add(FVertexStreamComponent(
-				&GDummyStarSpriteVertexBuffer,
-				STRUCT_OFFSET(FStarSpriteVertex, TexCoords),
-				sizeof(FStarSpriteVertex),
-				VET_Float2
-			));
-
-			SetData(VertexData);
-		}*/
 	};
 
 	class FMaterialSpriteVertexArray : public FOneFrameResource
@@ -142,7 +132,7 @@ namespace
 		~FStarSpriteSceneProxy()
 		{
 			VertexBuffer.ReleaseResource();
-			//IndexBuffer.ReleaseResource();
+			IndexBuffer.ReleaseResource();
 			VertexFactory.ReleaseResource();
 		}
 
@@ -153,7 +143,7 @@ namespace
 			VertexFactory.Init(&VertexBuffer);
 
 			VertexBuffer.InitResource();
-			//IndexBuffer.InitResource();
+			IndexBuffer.InitResource();
 			VertexFactory.InitResource();
 
 
@@ -232,13 +222,13 @@ namespace
 
 					// Set up the sprite vertex positions and texture coordinates.
 					VertexArray.Vertices[3].Position = -WorldSizeX * LocalCameraRight + +WorldSizeY * LocalCameraUp;
-					VertexArray.Vertices[3].TexCoords = FVector2D(0, 0);
+					VertexArray.Vertices[3].TextureCoordinates = FVector2D(0, 0);
 					VertexArray.Vertices[2].Position = +WorldSizeX * LocalCameraRight + +WorldSizeY * LocalCameraUp;
-					VertexArray.Vertices[2].TexCoords = FVector2D(0, 1);
+					VertexArray.Vertices[2].TextureCoordinates = FVector2D(0, 1);
 					VertexArray.Vertices[1].Position = -WorldSizeX * LocalCameraRight + -WorldSizeY * LocalCameraUp;
-					VertexArray.Vertices[1].TexCoords = FVector2D(1, 0);
+					VertexArray.Vertices[1].TextureCoordinates = FVector2D(1, 0);
 					VertexArray.Vertices[0].Position = +WorldSizeX * LocalCameraRight + -WorldSizeY * LocalCameraUp;
-					VertexArray.Vertices[0].TexCoords = FVector2D(1, 1);
+					VertexArray.Vertices[0].TextureCoordinates = FVector2D(1, 1);
 
 					// Set up the FMeshElement.
 					FMeshBatch& Mesh					= Collector.AllocateMesh();
@@ -294,10 +284,11 @@ namespace
 		uint32 GetAllocatedSize() const { return FPrimitiveSceneProxy::GetAllocatedSize(); }
 
 	private:
-		UMaterialInterface* Material;
-		FMaterialRelevance MaterialRelevance;
-		FStarSpriteVertexBuffer VertexBuffer;
-		FStarSpriteVertexFactory VertexFactory;
+		UMaterialInterface*			Material;
+		FMaterialRelevance			MaterialRelevance;
+		FStarSpriteVertexBuffer		VertexBuffer;
+		FStarSpriteIndexBuffer		IndexBuffer;
+		FStarSpriteVertexFactory	VertexFactory;
 		float Radius;
 	};
 }
@@ -320,6 +311,11 @@ void UStarBillboardComponent::SetMaterial(int32 ElementIndex, class UMaterialInt
 void UStarBillboardComponent::GetUsedMaterials(TArray<UMaterialInterface*>& OutMaterials, bool bGetDebugMaterials) const
 {
 	OutMaterials.AddUnique(StarSpriteParameters.Material);
+}
+
+int32 UStarBillboardComponent::GetNumMaterials() const
+{
+	return 1;
 }
 
 FPrimitiveSceneProxy* UStarBillboardComponent::CreateSceneProxy()
