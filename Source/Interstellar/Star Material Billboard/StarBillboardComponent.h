@@ -9,6 +9,7 @@
 
 class FPrimitiveSceneProxy;
 class UMaterialInterface;
+class UMaterialInstanceDynamic;
 
 USTRUCT(BlueprintType)
 struct FStarSpriteParameters
@@ -17,11 +18,15 @@ struct FStarSpriteParameters
 
 	FStarSpriteParameters()
 		: Material(nullptr)
+		, Color(1.0,1.0,1.0)
 		, BaseRadius(1.0f)
 	{}
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = StarSpriteElement)
 	class UMaterialInterface* Material;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = StarSpriteElement)
+	FLinearColor Color;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = StarSpriteElement)
 	float BaseRadius;

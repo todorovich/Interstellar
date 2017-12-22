@@ -101,8 +101,10 @@ namespace
 		/** Initialization constructor. */
 		FStarSpriteSceneProxy(const UStarBillboardComponent* InComponent)
 			: FPrimitiveSceneProxy(InComponent)
+			, DynamicMaterial(nullptr)
 		{
 			AActor* Owner = InComponent->GetOwner();
+
 			if (Owner)
 			{
 				// Level colorization
@@ -115,14 +117,30 @@ namespace
 				}
 			}
 
-			Material = InComponent->GetStarSpriteParameters().Material;
+			const auto Parameters = InComponent->GetStarSpriteParameters();
+
+			Material = Parameters.Material;
+			Color	= Parameters.Color;
+			Radius	= Parameters.BaseRadius;
 			
 			if (Material)
 			{
-				MaterialRelevance |= Material->GetRelevance(GetScene().GetFeatureLevel());
-			}
+				
+				DynamicMaterial = UMaterialInstanceDynamic::Create(Material, nullptr);
+				DynamicMaterial->AddToRoot();
+				
+				if (DynamicMaterial)
+				{
+					int i = 0;
+					DynamicMaterial->InitializeVectorParameterAndGetIndex(FName("StarColor"), Color, i);
+					MaterialRelevance |= DynamicMaterial->GetRelevance(GetScene().GetFeatureLevel());
+				}
+				else
+				{
+					MaterialRelevance |= Material->GetRelevance(GetScene().GetFeatureLevel());
+				}
 
-			Radius = InComponent->GetStarSpriteParameters().BaseRadius;
+			}
 
 			FColor NewPropertyColor;
 			GEngine->GetPropertyColorationColor((UObject*)InComponent, NewPropertyColor);
@@ -134,6 +152,10 @@ namespace
 			VertexBuffer.ReleaseResource();
 			IndexBuffer.ReleaseResource();
 			VertexFactory.ReleaseResource();
+			if (DynamicMaterial)
+			{
+				DynamicMaterial->RemoveFromRoot();
+			}
 		}
 
 		virtual void CreateRenderThreadResources() override
@@ -155,28 +177,35 @@ namespace
 
 			//QUICK_SCOPE_CYCLE_COUNTER(STAT_MaterialSpriteSceneProxy_GetDynamicMeshElements);
 
-			if (!Material)
+			UMaterialInterface* PreferredMaterial = Material;
+
+			if (DynamicMaterial)
+			{
+				PreferredMaterial = DynamicMaterial;
+			}
+
+			if (PreferredMaterial == nullptr)
 			{
 				return;
 			}
 
 			const bool bWireframe = AllowDebugViewmodes() && ViewFamily.EngineShowFlags.Wireframe;
 
-			auto WireframeMaterialInstance = new FColoredMaterialRenderProxy(
-				GEngine->WireframeMaterial ? GEngine->WireframeMaterial->GetRenderProxy(IsSelected()) : NULL,
-				FLinearColor(0, 0.5f, 1.f)
-			);
-
-			Collector.RegisterOneFrameMaterialProxy(WireframeMaterialInstance);
-
-			FMaterialRenderProxy* MaterialProxy = NULL;
+			FMaterialRenderProxy* MaterialProxy = nullptr;
 			if (bWireframe)
 			{
+				auto WireframeMaterialInstance = new FColoredMaterialRenderProxy(
+					GEngine->WireframeMaterial ? GEngine->WireframeMaterial->GetRenderProxy(IsSelected()) : NULL,
+					FLinearColor(0, 0.5f, 1.f)
+				);
+
+				Collector.RegisterOneFrameMaterialProxy(WireframeMaterialInstance);
+
 				MaterialProxy = WireframeMaterialInstance;
 			}
 			else
 			{
-				MaterialProxy = Material->GetRenderProxy(IsSelected());
+				MaterialProxy = PreferredMaterial->GetRenderProxy(IsSelected());
 			}
 
 			for (int32 ViewIndex = 0; ViewIndex < Views.Num(); ViewIndex++)
@@ -186,10 +215,12 @@ namespace
 					const FSceneView* View = Views[ViewIndex];
 
 					const bool bIsWireframe = View->Family->EngineShowFlags.Wireframe;
-					// Determine the position of the source
-					const FVector SourcePosition = GetLocalToWorld().GetOrigin();
-					const FVector CameraToSource = View->ViewMatrices.GetViewOrigin() - SourcePosition;
-					const float DistanceToSource = CameraToSource.Size();
+					
+					// Uprimitive's Location in World Space. 
+					const FVector UPrimitiveLocation_WS = GetLocalToWorld().GetOrigin(); 
+					// Vector from Camera to UPrimitiveLocation in World Space
+					const FVector CameraToUPrimitive = View->ViewMatrices.GetViewOrigin() - UPrimitiveLocation_WS;
+					const float DistanceFromCameraToUPrimitive = CameraToUPrimitive.Size();
 
 					const FVector CameraUp = -View->ViewMatrices.GetInvViewProjectionMatrix().TransformVector(FVector(1.0f, 0.0f, 0.0f));
 					const FVector CameraRight = -View->ViewMatrices.GetInvViewProjectionMatrix().TransformVector(FVector(0.0f, 1.0f, 0.0f));
@@ -200,13 +231,23 @@ namespace
 					const FVector LocalCameraForward = WorldToLocal.TransformVector(CameraForward);
 
 					// Convert the size into world-space.
-					const float W = View->ViewMatrices.GetViewProjectionMatrix().TransformPosition(SourcePosition).W;
+
+					const float AssumedHFOV = 1.5708; //Radians
+					const float SinTheta = (2 * Radius) / DistanceFromCameraToUPrimitive;
+					const float AngularSize = FMath::FastAsin(SinTheta);
+					const float Scale = AngularSize / AssumedHFOV;
+					// Bigger than a pixel to avoid twinkle
+					const float MinimumScale = AssumedHFOV / (View->UnconstrainedViewRect.Width() * .5f );
+					const float W = View->ViewMatrices.GetViewProjectionMatrix().TransformPosition(UPrimitiveLocation_WS).W;
 					const float AspectRatio = CameraRight.Size() / CameraUp.Size();
-					const float WorldSizeX = Radius * W;
-					const float WorldSizeY = Radius * AspectRatio * W;
+
+					//if (Scale < 1.0f)
+
+					const float WorldSizeX = ((Scale > MinimumScale) ? Scale : MinimumScale) * W;
+					const float WorldSizeY = ((Scale > MinimumScale) ? Scale : MinimumScale) * AspectRatio * W;
 
 					// Evaluate the color/opacity of the sprite.
-					FLinearColor Color = FLinearColor::White;
+					//Color = FLinearColor::White;
 
 					// Set up the sprite vertex attributes that are constant across the sprite.
 					FMaterialSpriteVertexArray& VertexArray = Collector.AllocateOneFrameResource<FMaterialSpriteVertexArray>();
@@ -236,7 +277,7 @@ namespace
 					Mesh.DynamicVertexData				= VertexArray.Vertices.GetData();
 					Mesh.DynamicVertexStride			= sizeof(FStarSpriteVertex);
 					Mesh.VertexFactory					= &VertexFactory;
-					Mesh.MaterialRenderProxy			= Material->GetRenderProxy((View->Family->EngineShowFlags.Selection) && IsSelected(), IsHovered());
+					Mesh.MaterialRenderProxy			= PreferredMaterial->GetRenderProxy((View->Family->EngineShowFlags.Selection) && IsSelected(), IsHovered());
 					Mesh.LCI							= NULL;
 					Mesh.ReverseCulling					= IsLocalToWorldDeterminantNegative() ? true : false;
 					Mesh.CastShadow						= false;
@@ -285,11 +326,13 @@ namespace
 
 	private:
 		UMaterialInterface*			Material;
+		UMaterialInstanceDynamic*   DynamicMaterial;
 		FMaterialRelevance			MaterialRelevance;
 		FStarSpriteVertexBuffer		VertexBuffer;
 		FStarSpriteIndexBuffer		IndexBuffer;
 		FStarSpriteVertexFactory	VertexFactory;
-		float Radius;
+		FLinearColor				Color;
+		float						Radius;
 	};
 }
 
