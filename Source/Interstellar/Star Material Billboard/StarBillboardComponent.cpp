@@ -120,7 +120,7 @@ namespace
 			const auto Parameters = InComponent->GetStarSpriteParameters();
 
 			Material = Parameters.Material;
-			Color	= Parameters.Color;
+			StarColor	= Parameters.StarColor;
 			Radius	= Parameters.BaseRadius;
 			
 			if (Material)
@@ -131,8 +131,7 @@ namespace
 				
 				if (DynamicMaterial)
 				{
-					int i = 0;
-					DynamicMaterial->InitializeVectorParameterAndGetIndex(FName("StarColor"), Color, i);
+					DynamicMaterial->InitializeVectorParameterAndGetIndex(FName("StarColor"), StarColor, StarColorIndex);
 					MaterialRelevance |= DynamicMaterial->GetRelevance(GetScene().GetFeatureLevel());
 				}
 				else
@@ -236,18 +235,31 @@ namespace
 					const float SinTheta = (2 * Radius) / DistanceFromCameraToUPrimitive;
 					const float AngularSize = FMath::FastAsin(SinTheta);
 					const float Scale = AngularSize / AssumedHFOV;
-					// Bigger than a pixel to avoid twinkle
+					// Bigger than a pixel to avoid twinkl55
 					const float MinimumScale = AssumedHFOV / (View->UnconstrainedViewRect.Width() * .5f );
 					const float W = View->ViewMatrices.GetViewProjectionMatrix().TransformPosition(UPrimitiveLocation_WS).W;
 					const float AspectRatio = CameraRight.Size() / CameraUp.Size();
 
 					//if (Scale < 1.0f)
 
-					const float WorldSizeX = ((Scale > MinimumScale) ? Scale : MinimumScale) * W;
-					const float WorldSizeY = ((Scale > MinimumScale) ? Scale : MinimumScale) * AspectRatio * W;
+					float WorldSizeX;
+					float WorldSizeY;
+					FLinearColor Color;
+					if (Scale > MinimumScale)
+					{
+						WorldSizeX = Scale * W;
+						WorldSizeY = Scale * AspectRatio * W;
+					}
+					else
+					{
+						WorldSizeX = MinimumScale * W;
+						WorldSizeY = MinimumScale * AspectRatio * W;
+						Color = FLinearColor(StarColor.R, StarColor.B, StarColor.G, Scale / MinimumScale);
+						DynamicMaterial->SetVectorParameterByIndex(StarColorIndex, Color);
+					}
 
 					// Evaluate the color/opacity of the sprite.
-					//Color = FLinearColor::White;
+					//StarColor = FLinearColor::White;
 
 					// Set up the sprite vertex attributes that are constant across the sprite.
 					FMaterialSpriteVertexArray& VertexArray = Collector.AllocateOneFrameResource<FMaterialSpriteVertexArray>();
@@ -331,8 +343,9 @@ namespace
 		FStarSpriteVertexBuffer		VertexBuffer;
 		FStarSpriteIndexBuffer		IndexBuffer;
 		FStarSpriteVertexFactory	VertexFactory;
-		FLinearColor				Color;
+		FLinearColor				StarColor;
 		float						Radius;
+		int							StarColorIndex;
 	};
 }
 

@@ -18,7 +18,7 @@ struct FStarSpriteParameters
 
 	FStarSpriteParameters()
 		: Material(nullptr)
-		, Color(1.0,1.0,1.0)
+		, StarColor(1.0,1.0,1.0)
 		, BaseRadius(1.0f)
 	{}
 
@@ -26,7 +26,7 @@ struct FStarSpriteParameters
 	class UMaterialInterface* Material;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = StarSpriteElement)
-	FLinearColor Color;
+	FLinearColor StarColor;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = StarSpriteElement)
 	float BaseRadius;
