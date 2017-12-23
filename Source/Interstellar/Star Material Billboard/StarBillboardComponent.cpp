@@ -119,10 +119,10 @@ namespace
 
 			const auto Parameters = InComponent->GetStarSpriteParameters();
 
-			Material = Parameters.Material;
-			StarColor	= Parameters.StarColor;
-			Radius	= Parameters.BaseRadius;
-			
+			Material			= Parameters.Material;
+			StarColor			= Parameters.StarColor;
+			Radius				= Parameters.BaseRadius;
+
 			if (Material)
 			{
 				
@@ -244,7 +244,8 @@ namespace
 
 					float WorldSizeX;
 					float WorldSizeY;
-					FLinearColor Color;
+					FLinearColor Color = FLinearColor(StarColor.R, StarColor.G, StarColor.B, 1.0f);
+
 					if (Scale > MinimumScale)
 					{
 						WorldSizeX = Scale * W;
@@ -254,9 +255,10 @@ namespace
 					{
 						WorldSizeX = MinimumScale * W;
 						WorldSizeY = MinimumScale * AspectRatio * W;
-						Color = FLinearColor(StarColor.R, StarColor.B, StarColor.G, Scale / MinimumScale);
-						DynamicMaterial->SetVectorParameterByIndex(StarColorIndex, Color);
+						Color.A = Scale / MinimumScale;
 					}
+
+					DynamicMaterial->SetVectorParameterByIndex(StarColorIndex, Color);
 
 					// Evaluate the color/opacity of the sprite.
 					//StarColor = FLinearColor::White;
@@ -407,6 +409,15 @@ void UStarBillboardComponent::PostEditChangeProperty(FPropertyChangedEvent & Pro
 	//	StarSpriteParameters.BaseRadius = 1.0f / 1080.0f;
 	//}
 	
+	if (PropertyChangedEvent.GetPropertyName() == FName("DontUseColorTemperature") ||
+		PropertyChangedEvent.GetPropertyName() == FName("ColorTemperature"))
+	{
+		if (!StarSpriteParameters.DontUseColorTemperature)
+		{
+			StarSpriteParameters.StarColor = FLinearColor::MakeFromColorTemperature(StarSpriteParameters.ColorTemperature);
+		}
+	}
+
 	MarkRenderStateDirty();
 }
 #endif
