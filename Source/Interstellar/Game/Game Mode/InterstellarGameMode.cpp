@@ -2,14 +2,14 @@
 
 #include "InterstellarGameMode.h"
 #include "Interstellar.h"
-#include "Interstellar/Game/Game Instance/InterstellarGameInstance.h"
-#include "Interstellar/Game/Game State/InterstellarGameState.h"
-#include "Interstellar/Game/Game Instance/InterstellarGameInstance.h"
-#include "Interstellar/Game/Game Session/InterstellarGameSession.h"
-#include "Interstellar/Player/Player Controller/InterstellarPlayerController.h"
-#include "Interstellar/Player/Player State/InterstellarPlayerState.h"
-#include "Interstellar/Pawns/Default Pawn/InterstellarPawn.h"
-#include "Interstellar/Pawns/Spectator Pawn/InterstellarSpectatorPawn.h"
+#include "Game/Game Instance/InterstellarGameInstance.h"
+#include "Game/Game State/InterstellarGameState.h"
+#include "Game/Game Instance/InterstellarGameInstance.h"
+#include "Game/Game Session/InterstellarGameSession.h"
+#include "Player/Player Controller/InterstellarPlayerController.h"
+#include "Player/Player State/InterstellarPlayerState.h"
+#include "Pawns/Default Pawn/InterstellarPawn.h"
+#include "Pawns/Spectator Pawn/InterstellarSpectatorPawn.h"
 
 
 AInterstellarGameMode::AInterstellarGameMode(const FObjectInitializer& ObjectInitializer)
