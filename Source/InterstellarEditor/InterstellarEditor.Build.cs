@@ -7,8 +7,14 @@ public class InterstellarEditor : ModuleRules
 	public InterstellarEditor(ReadOnlyTargetRules Target) : base(Target)
 	{
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
-	
-		PublicDependencyModuleNames.AddRange(
+
+        PublicIncludePaths.AddRange(
+            new string[] { "InterstellarEditor/Public" });
+
+        PrivateIncludePaths.AddRange(
+            new string[] { "InterstellarEditor/Private" });
+
+        PublicDependencyModuleNames.AddRange(
             new string[] { "Core"
                          , "CoreUObject"
                          , "Engine"

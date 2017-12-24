@@ -7,8 +7,14 @@ public class Interstellar : ModuleRules
 	public Interstellar(ReadOnlyTargetRules Target) : base(Target)
 	{
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
-	
-		PublicDependencyModuleNames.AddRange(
+
+        PublicIncludePaths.AddRange(
+            new string[] { "Interstellar/Public" });
+
+        PrivateIncludePaths.AddRange(
+            new string[] { "Interstellar/Private" });
+
+        PublicDependencyModuleNames.AddRange(
             new string[] { "Core"
                          , "CoreUObject"
                          , "Engine"
@@ -22,9 +28,20 @@ public class Interstellar : ModuleRules
                          , "OnlineSubsystemUtils"
                          , "UMG" });
 
-		PrivateDependencyModuleNames.AddRange(
+        PrivateDependencyModuleNames.AddRange(
             new string[] { "Slate"
                          , "SlateCore"
                          , "OnlineSubsystem"});
+
+
+        //PrivateIncludePathModuleNames.AddRange(
+        //    new string[]
+        //    {
+        //    });
+
+        //DynamicallyLoadedModuleNames.AddRange(
+        //    new string[]
+        //    {
+        //    });
     }
 }
