@@ -32,3 +32,10 @@ DECLARE_LOG_CATEGORY_EXTERN(InterstellarLog, Log, All);
 	UE_LOG(InterstellarLog, Log, TEXT("%s():\t%s: Line: %d:\n\t%s"), FUNC_NAME, FILE, __LINE__,  *message);\
 	CLEAR_WARN_COLOR();\
 };
+
+class FInterstellarModule : public IModuleInterface
+{
+public:
+	virtual void StartupModule() override;
+	virtual void ShutdownModule() override;
+};

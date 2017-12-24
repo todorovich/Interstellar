@@ -24,17 +24,16 @@ struct FStarSpriteParameters
 		, BaseRadius(1.0f)
 	{}
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "StarSpriteElement|Materials")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "StarSpriteElement")
 	UMaterialInterface* Material;
-
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadonly, Category = "StarSpriteElement|Materials")
+	UPROPERTY(VisibleAnywhere, BlueprintReadonly, Category = "StarSpriteElement")
 	UMaterialInstanceDynamic* DynamicMaterial;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "StarSpriteElement|Materials|Color", meta = (EditCondition = DontUseColorTemperature))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "StarSpriteElement|Color", meta = (EditCondition = DontUseColorTemperature))
 	FLinearColor StarColor;
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "StarSpriteElement|Materials|Color", meta = (EditCondition = DontUseColorTemperature))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "StarSpriteElement|Color")
 	int StarColorIndex;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "StarSpriteElement")
@@ -49,8 +48,6 @@ struct FStarSpriteParameters
 	friend FArchive& operator<<(FArchive& Ar, FStarSpriteParameters& LODElement);
 
 	UMaterialInstanceDynamic* const GetDynamicMaterialInstance() const;
-
-
 };
 
 

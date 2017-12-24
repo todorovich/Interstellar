@@ -348,11 +348,6 @@ UStarBillboardComponent::UStarBillboardComponent(const FObjectInitializer& Objec
 	: Super(ObjectInitializer)
 {
 	SetCollisionProfileName(UCollisionProfile::NoCollision_ProfileName);
-
-	//if (StarSpriteParameters.Material && !StarSpriteParameters.DynamicMaterial)
-	//{
-	//	StarSpriteParameters.DynamicMaterial = UMaterialInstanceDynamic::Create(StarSpriteParameters.Material, this);
-	//}
 }
 
 UStarBillboardComponent::~UStarBillboardComponent()
@@ -406,12 +401,7 @@ UMaterialInterface* UStarBillboardComponent::GetMaterial(int32 Index) const
 
 #if WITH_EDITOR
 void UStarBillboardComponent::PostEditChangeProperty(FPropertyChangedEvent & PropertyChangedEvent)
-{	
-	//if (StarSpriteParameters.Material)
-	//{		
-	//	StarSpriteParameters.BaseRadius = 1.0f / 1080.0f;
-	//}
-	
+{
 	if (PropertyChangedEvent.GetPropertyName() == FName("DontUseColorTemperature") ||
 		PropertyChangedEvent.GetPropertyName() == FName("ColorTemperature"))
 	{
