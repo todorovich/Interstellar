@@ -120,25 +120,22 @@ namespace
 			const auto Parameters = InComponent->GetStarSpriteParameters();
 
 			Material			= Parameters.Material;
+			DynamicMaterial     = Parameters.DynamicMaterial;
 			StarColor			= Parameters.StarColor;
+			StarColorIndex		= Parameters.StarColorIndex;
 			Radius				= Parameters.BaseRadius;
 
 			if (Material)
 			{
-				
-				DynamicMaterial = UMaterialInstanceDynamic::Create(Material, nullptr);
-				DynamicMaterial->AddToRoot();
-				
 				if (DynamicMaterial)
 				{
-					DynamicMaterial->InitializeVectorParameterAndGetIndex(FName("StarColor"), StarColor, StarColorIndex);
+					
 					MaterialRelevance |= DynamicMaterial->GetRelevance(GetScene().GetFeatureLevel());
 				}
 				else
 				{
 					MaterialRelevance |= Material->GetRelevance(GetScene().GetFeatureLevel());
 				}
-
 			}
 
 			FColor NewPropertyColor;
@@ -151,10 +148,6 @@ namespace
 			VertexBuffer.ReleaseResource();
 			IndexBuffer.ReleaseResource();
 			VertexFactory.ReleaseResource();
-			if (DynamicMaterial)
-			{
-				DynamicMaterial->RemoveFromRoot();
-			}
 		}
 
 		virtual void CreateRenderThreadResources() override
@@ -256,9 +249,8 @@ namespace
 						WorldSizeX = MinimumScale * W;
 						WorldSizeY = MinimumScale * AspectRatio * W;
 						Color.A = Scale / MinimumScale;
+						DynamicMaterial->SetVectorParameterByIndex(StarColorIndex, Color);
 					}
-
-					DynamicMaterial->SetVectorParameterByIndex(StarColorIndex, Color);
 
 					// Evaluate the color/opacity of the sprite.
 					//StarColor = FLinearColor::White;
@@ -351,10 +343,20 @@ namespace
 	};
 }
 
+
 UStarBillboardComponent::UStarBillboardComponent(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 	SetCollisionProfileName(UCollisionProfile::NoCollision_ProfileName);
+
+	//if (StarSpriteParameters.Material && !StarSpriteParameters.DynamicMaterial)
+	//{
+	//	StarSpriteParameters.DynamicMaterial = UMaterialInstanceDynamic::Create(StarSpriteParameters.Material, this);
+	//}
+}
+
+UStarBillboardComponent::~UStarBillboardComponent()
+{
 }
 
 void UStarBillboardComponent::SetMaterial(int32 ElementIndex, class UMaterialInterface* Material)
@@ -369,11 +371,12 @@ void UStarBillboardComponent::SetMaterial(int32 ElementIndex, class UMaterialInt
 void UStarBillboardComponent::GetUsedMaterials(TArray<UMaterialInterface*>& OutMaterials, bool bGetDebugMaterials) const
 {
 	OutMaterials.AddUnique(StarSpriteParameters.Material);
+	OutMaterials.AddUnique(StarSpriteParameters.GetDynamicMaterialInstance());
 }
 
 int32 UStarBillboardComponent::GetNumMaterials() const
 {
-	return 1;
+	return 2;
 }
 
 FPrimitiveSceneProxy* UStarBillboardComponent::CreateSceneProxy()
@@ -415,9 +418,26 @@ void UStarBillboardComponent::PostEditChangeProperty(FPropertyChangedEvent & Pro
 		if (!StarSpriteParameters.DontUseColorTemperature)
 		{
 			StarSpriteParameters.StarColor = FLinearColor::MakeFromColorTemperature(StarSpriteParameters.ColorTemperature);
+			StarSpriteParameters.DynamicMaterial->SetVectorParameterByIndex(StarSpriteParameters.StarColorIndex, StarSpriteParameters.StarColor);
+		}
+	}
+
+	if (PropertyChangedEvent.GetPropertyName() == FName("Material"))
+	{
+
+		if (StarSpriteParameters.Material && !StarSpriteParameters.DynamicMaterial)
+		{
+			StarSpriteParameters.DynamicMaterial = UMaterialInstanceDynamic::Create(StarSpriteParameters.Material, this);
+			StarSpriteParameters.DynamicMaterial->InitializeVectorParameterAndGetIndex(FName("StarColor"), StarSpriteParameters.StarColor, StarSpriteParameters.StarColorIndex);
 		}
 	}
 
 	MarkRenderStateDirty();
 }
 #endif
+
+inline UMaterialInstanceDynamic * const FStarSpriteParameters::GetDynamicMaterialInstance() const
+{
+
+	return DynamicMaterial;
+}

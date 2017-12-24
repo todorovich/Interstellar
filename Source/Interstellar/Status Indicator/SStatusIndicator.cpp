@@ -56,7 +56,7 @@ void SStatusIndicator::SetStyle(const FStatusIndicatorStyle* InStyle)
 
 	check(Style.Get());
 
-	UE_LOG(IntrepidLog, Log, TEXT("Creating Dynamic Material"));
+	UE_LOG(InterstellarLog, Log, TEXT("Creating Dynamic Material"));
 
 	DynamicSwipeMaterial.SetResourceObject(UMaterialInstanceDynamic::Create(static_cast<UMaterialInterface*>(Style.Get()->SwipeMaterial.GetResourceObject()), nullptr));
 

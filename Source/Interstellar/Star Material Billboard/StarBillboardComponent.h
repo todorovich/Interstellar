@@ -24,12 +24,19 @@ struct FStarSpriteParameters
 		, BaseRadius(1.0f)
 	{}
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "StarSpriteElement")
-	class UMaterialInterface* Material;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "StarSpriteElement|Materials")
+	UMaterialInterface* Material;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "StarSpriteElement", meta = (EditCondition = DontUseColorTemperature))
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadonly, Category = "StarSpriteElement|Materials")
+	UMaterialInstanceDynamic* DynamicMaterial;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "StarSpriteElement|Materials|Color", meta = (EditCondition = DontUseColorTemperature))
 	FLinearColor StarColor;
-
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "StarSpriteElement|Materials|Color", meta = (EditCondition = DontUseColorTemperature))
+	int StarColorIndex;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "StarSpriteElement")
 	float BaseRadius;
 
@@ -38,9 +45,12 @@ struct FStarSpriteParameters
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "StarSpriteElement|ColorTemperature", meta = (ClampMin = "1000", ClampMax = "10000", UIMin = "1000", UIMax = "10000"))
 	int ColorTemperature;
-
-
+	
 	friend FArchive& operator<<(FArchive& Ar, FStarSpriteParameters& LODElement);
+
+	UMaterialInstanceDynamic* const GetDynamicMaterialInstance() const;
+
+
 };
 
 
@@ -53,6 +63,7 @@ class INTERSTELLAR_API UStarBillboardComponent : public UPrimitiveComponent
 	GENERATED_BODY()
 public:
 	UStarBillboardComponent(const FObjectInitializer& ObjectInitializer);
+	~UStarBillboardComponent();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Star")
 	FStarSpriteParameters StarSpriteParameters;

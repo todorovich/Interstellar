@@ -5,4 +5,4 @@
 
 IMPLEMENT_PRIMARY_GAME_MODULE( FDefaultGameModuleImpl, Interstellar, "Interstellar" );
 
-DEFINE_LOG_CATEGORY(IntrepidLog);
+DEFINE_LOG_CATEGORY(InterstellarLog);
