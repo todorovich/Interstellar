@@ -27,10 +27,8 @@ DECLARE_LOG_CATEGORY_EXTERN(InterstellarLog, Log, All);
 
 #define LOG(Format, ...) \
 {\
-	SET_WARN_COLOR(COLOR_CYAN);\
 	const FString message = FString::Printf(TEXT(Format), __VA_ARGS__); \
 	UE_LOG(InterstellarLog, Log, TEXT("%s():\t%s: Line: %d:\n\t%s"), FUNC_NAME, FILE, __LINE__,  *message);\
-	CLEAR_WARN_COLOR();\
 };
 
 class FInterstellarModule : public IModuleInterface

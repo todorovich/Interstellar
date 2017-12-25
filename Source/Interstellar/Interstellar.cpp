@@ -9,10 +9,10 @@ DEFINE_LOG_CATEGORY(InterstellarLog);
 
 void FInterstellarModule::StartupModule()
 {
-	LOG("IntrepidEditor: Log Started");
+	LOG("Interstellar Module Started.");
 }
 
 void FInterstellarModule::ShutdownModule()
 {
-	LOG("IntrepidEditor: Log Ended");
+	LOG("Interstellar Module Shutdown.");
 }
