@@ -223,17 +223,15 @@ namespace
 					const FVector LocalCameraForward = WorldToLocal.TransformVector(CameraForward);
 
 					// Convert the size into world-space.
-
 					const float AssumedHFOV = 1.5708; //Radians
 					const float SinTheta = (2 * Radius) / DistanceFromCameraToUPrimitive;
 					const float AngularSize = FMath::FastAsin(SinTheta);
 					const float Scale = AngularSize / AssumedHFOV;
-					// Bigger than a pixel to avoid twinkl55
+
+					// Bigger than a pixel to avoid twinkle
 					const float MinimumScale = AssumedHFOV / (View->UnconstrainedViewRect.Width() * .5f );
 					const float W = View->ViewMatrices.GetViewProjectionMatrix().TransformPosition(UPrimitiveLocation_WS).W;
 					const float AspectRatio = CameraRight.Size() / CameraUp.Size();
-
-					//if (Scale < 1.0f)
 
 					float WorldSizeX;
 					float WorldSizeY;
