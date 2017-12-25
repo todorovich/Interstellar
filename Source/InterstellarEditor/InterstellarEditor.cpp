@@ -11,12 +11,12 @@ DEFINE_LOG_CATEGORY(InterstellarEditorLog);
 
 void FInterstellarEditorModule::StartupModule()
 {
-	UE_LOG(InterstellarEditorLog, Warning, TEXT("IntrepidEditor: Log Started"));
+	LOG("IntrepidEditor: Log Started");
 }
 
 void FInterstellarEditorModule::ShutdownModule()
 {
-	UE_LOG(InterstellarEditorLog, Warning, TEXT("IntrepidEditor: Log Ended"));
+	LOG("IntrepidEditor: Log Ended");
 }
 
 #undef LOCTEXT_NAMESPACE
