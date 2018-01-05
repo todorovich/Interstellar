@@ -27,7 +27,7 @@ struct FStarSpriteParameters
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "StarSpriteElement")
 	UMaterialInterface* Material;
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadonly, Category = "StarSpriteElement")
+	UPROPERTY(Transient, VisibleAnywhere, BlueprintReadonly, Category = "StarSpriteElement")
 	UMaterialInstanceDynamic* DynamicMaterial;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "StarSpriteElement|Color", meta = (EditCondition = DontUseColorTemperature))
@@ -58,6 +58,9 @@ UCLASS(ClassGroup = Rendering, collapsecategories, hidecategories = (Object, Act
 class INTERSTELLAR_API UStarBillboardComponent : public UPrimitiveComponent
 {
 	GENERATED_BODY()
+	
+	void CreateDynamicMaterial();
+
 public:
 	UStarBillboardComponent(const FObjectInitializer& ObjectInitializer);
 	~UStarBillboardComponent();
@@ -67,7 +70,7 @@ public:
 
 	/** Get this actor's image plates */
 	UFUNCTION(BlueprintCallable,  Category = "Game|Image Plate")
-	FStarSpriteParameters GetStarSpriteParameters() const
+	const FStarSpriteParameters& GetStarSpriteParameters() const
 	{
 		return StarSpriteParameters;
 	}
@@ -75,11 +78,14 @@ public:
 	virtual FPrimitiveSceneProxy* CreateSceneProxy() override;
 	virtual FBoxSphereBounds CalcBounds(const FTransform& LocalToWorld) const override;
 	virtual UMaterialInterface* GetMaterial(int32 Index) const override;
-	virtual void SetMaterial(int32 ElementIndex, class UMaterialInterface* Material) override;
+	virtual void SetMaterial(int32 ElementIndex, class UMaterialInterface* Material) override;	
 	virtual void GetUsedMaterials(TArray<UMaterialInterface*>& OutMaterials, bool bGetDebugMaterials = false) const override;
-	
 	virtual int32 GetNumMaterials() const override;
 
+	void SetSize(float NewSize);
+
+	void SetColorTemperature(int NewColorTemperature);
+	
 #if WITH_EDITOR
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 	//virtual void PostEditUndo() override;

@@ -15,6 +15,6 @@ class INTERSTELLAR_API UInterstellarEngine : public UEngine
 	
 	UInterstellarEngine(const FObjectInitializer& ObjectInitializer)
 	{
-		LOG("");
+		LOG("Interstellar Engine Started.");
 	}
 };
