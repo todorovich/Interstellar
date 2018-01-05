@@ -26,13 +26,12 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	virtual void OnConstruction(const FTransform & Transform) override;
+
 #if WITH_EDITOR
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
-	//virtual void PostEditUndo() override;
 #endif
-
-	//virtual void PostInitializeComponents() override;
-
+	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

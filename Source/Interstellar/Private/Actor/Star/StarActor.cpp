@@ -50,18 +50,18 @@ void AStarActor::Tick(float DeltaTime)
 
 }
 
+void AStarActor::OnConstruction(const FTransform & Transform)
+{
+	Super::OnConstruction(Transform);
+	StarBillboard->SetSize(SizeSolarRadii);
+	StarBillboard->SetColorTemperature(ColorTemperatureKelvin);
+}
+
 #if WITH_EDITOR
 void AStarActor::PostEditChangeProperty(FPropertyChangedEvent & PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 	StarBillboard->SetSize(SizeSolarRadii);
 	StarBillboard->SetColorTemperature(ColorTemperatureKelvin);
-	//MarkComponentsRenderStateDirty();
 }
 #endif
-
-//void AStarActor::PostInitializeComponents()
-//{
-//
-//}
-

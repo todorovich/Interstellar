@@ -358,7 +358,7 @@ void UStarBillboardComponent::SetMaterial(int32 ElementIndex, class UMaterialInt
 {
 	if (ElementIndex == 0)
 	{
-		StarSpriteParameters.Material = Material;
+		StarSpriteParameters.Material = Material; 
 
 		if (StarSpriteParameters.Material)
 		{
