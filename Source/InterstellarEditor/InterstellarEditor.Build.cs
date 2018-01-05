@@ -15,25 +15,12 @@ public class InterstellarEditor : ModuleRules
         //    new string[] { "InterstellarEditor/Private" });
 
         PublicDependencyModuleNames.AddRange(
-            new string[] { "Core"
-                         , "CoreUObject"
-                         , "Engine"
-                         , "EngineSettings"
-                         , "InputCore"
-                         , "Interstellar"
-                         , "RenderCore"
-                         , "Renderer"
-                         , "RHI"
-                         , "ShaderCore"
-                         , "OnlineSubsystem"
-                         , "OnlineSubsystemUtils"
-                         , "UMG"
-                         , "UnrealEd"
-                          });
+            new string[] { "UnrealEd" });
 
 		PrivateDependencyModuleNames.AddRange(
             new string[] { "Slate"
                          , "SlateCore"
-                         , "OnlineSubsystem"});
+                         , "OnlineSubsystem"
+                         , "UnrealEd" });
     }
 }

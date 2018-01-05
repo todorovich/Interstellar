@@ -37,7 +37,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-//private:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Star", Transient)
+private:
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Star", Transient)
 	UStarBillboardComponent* StarBillboard;
 };
