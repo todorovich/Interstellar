@@ -14,8 +14,8 @@ public class InterstellarEditor : ModuleRules
         //PrivateIncludePaths.AddRange(
         //    new string[] { "InterstellarEditor/Private" });
 
-        PublicDependencyModuleNames.AddRange(
-            new string[] { "UnrealEd" });
+        //PublicDependencyModuleNames.AddRange(
+        //    new string[] { "UnrealEd" });
 
 		PrivateDependencyModuleNames.AddRange(
             new string[] { "Slate"
