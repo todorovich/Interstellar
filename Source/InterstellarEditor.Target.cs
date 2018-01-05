@@ -10,7 +10,8 @@ public class InterstellarEditorTarget : TargetRules
 		Type = TargetType.Editor;
 
         ExtraModuleNames.AddRange(
-            new string[] { "Interstellar", "InterstellarEditor" });
+            new string[] { "Interstellar"
+                         , "InterstellarEditor" });
 
     }
 }

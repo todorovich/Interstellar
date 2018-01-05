@@ -44,7 +44,7 @@ DECLARE_LOG_CATEGORY_EXTERN(InterstellarLog, Log, All);
 //};
 
 
-class FInterstellarModule : public IModuleInterface
+class FInterstellarModule : public FDefaultGameModuleImpl
 {
 public:
 	virtual void StartupModule() override;

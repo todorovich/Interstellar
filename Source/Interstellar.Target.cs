@@ -10,10 +10,5 @@ public class InterstellarTarget : TargetRules
 		Type = TargetType.Game;
 
 		ExtraModuleNames.AddRange( new string[] { "Interstellar" } );
-
-        if (bBuildEditor)
-        {
-           ExtraModuleNames.Add("InterstellarEditor");
-        }
     }
 }
