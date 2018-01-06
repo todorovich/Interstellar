@@ -228,15 +228,18 @@ namespace
 					const FVector LocalCameraForward = WorldToLocal.TransformVector(CameraForward);
 
 					// Convert the size into world-space.
-					const float AssumedHFOV = 1.5708; //Radians
-					const float SinTheta = (2 * Radius) / DistanceFromCameraToUPrimitive;
-					const float AngularSize = FMath::FastAsin(SinTheta);
+					const float AspectRatio = CameraRight.Size() / CameraUp.Size();
+					const float AspectRatio2 = CameraUp.Size() / CameraRight.Size();
+
+					const float Diameter = 2 * Radius;
+					const float AngularSize = 2 * FMath::Atan2(Diameter, 2*DistanceFromCameraToUPrimitive);
+
+					const float AssumedHFOV = 1.5708 * AspectRatio2; // 90 degrees in Radians
 					const float Scale = AngularSize / AssumedHFOV;
 
 					// Bigger than a pixel to avoid twinkle
 					const float MinimumScale = AssumedHFOV / (View->UnconstrainedViewRect.Width() * .5f );
 					const float W = View->ViewMatrices.GetViewProjectionMatrix().TransformPosition(UPrimitiveLocation_WS).W;
-					const float AspectRatio = CameraRight.Size() / CameraUp.Size();
 
 					float WorldSizeX;
 					float WorldSizeY;
@@ -254,9 +257,6 @@ namespace
 						Color.A = log(1 + 9 * (Scale / MinimumScale)) / log(10);
 						DynamicMaterial->SetVectorParameterByIndex(StarColorIndex, Color);
 					}
-
-					// Evaluate the color/opacity of the sprite.
-					//StarColor = FLinearColor::White;
 
 					// Set up the sprite vertex attributes that are constant across the sprite.
 					FMaterialSpriteVertexArray& VertexArray = Collector.AllocateOneFrameResource<FMaterialSpriteVertexArray>();
