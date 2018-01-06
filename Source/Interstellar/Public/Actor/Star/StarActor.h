@@ -17,8 +17,17 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Star", meta = (DisplayName = "Star Size (Solar Radii)"))
 	float SizeSolarRadii;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Star", meta = (DisplayName = "Color Temperature °K"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Star", meta = (DisplayName = "Color Temperature °K"), meta = (ClampMin = "1000", ClampMax = "10000", UIMin = "1000", UIMax = "10000"))
 	int ColorTemperatureKelvin;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Star", meta = (DisplayName = "Sector Space X-Coordinate"))
+	int SectorX;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Star", meta = (DisplayName = "Sector Space Y-Coordinate"))
+	int SectorY;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Star", meta = (DisplayName = "Sector Space Z-Coordinate"))
+	int SectorZ;
 
 	// Sets default values for this actor's properties
 	AStarActor(const FObjectInitializer& ObjectInitializer);

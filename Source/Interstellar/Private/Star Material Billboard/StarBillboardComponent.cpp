@@ -124,6 +124,9 @@ namespace
 			StarColor			= Parameters.StarColor;
 			StarColorIndex		= Parameters.StarColorIndex;
 			Radius				= Parameters.BaseRadius;
+			SectorX				= Parameters.SectorX;
+			SectorY				= Parameters.SectorY;
+			SectorZ				= Parameters.SectorZ;
 
 			if (Material)
 			{
@@ -208,6 +211,8 @@ namespace
 
 					const bool bIsWireframe = View->Family->EngineShowFlags.Wireframe;
 					
+					const auto SectorSize = 16000.0f;
+
 					// Uprimitive's Location in World Space. 
 					const FVector UPrimitiveLocation_WS = GetLocalToWorld().GetOrigin(); 
 					// Vector from Camera to UPrimitiveLocation in World Space
@@ -338,6 +343,9 @@ namespace
 		FLinearColor				StarColor;
 		float						Radius;
 		int							StarColorIndex;
+		int							SectorX;
+		int							SectorY;
+		int							SectorZ;
 	};
 }
 
@@ -391,6 +399,17 @@ inline void UStarBillboardComponent::SetColorTemperature(int NewColorTemperature
 	StarSpriteParameters.ColorTemperature = NewColorTemperature;
 	StarSpriteParameters.StarColor = FLinearColor::MakeFromColorTemperature(StarSpriteParameters.ColorTemperature);
 	StarSpriteParameters.DynamicMaterial->SetVectorParameterByIndex(StarSpriteParameters.StarColorIndex, StarSpriteParameters.StarColor);
+	MarkRenderStateDirty();
+}
+
+inline void UStarBillboardComponent::SetSectorCoordinates(int64 x, int64 y, int64 z)
+{
+	StarSpriteParameters.SectorX = x;
+	StarSpriteParameters.SectorY = y;
+	StarSpriteParameters.SectorZ = z;
+
+	
+
 	MarkRenderStateDirty();
 }
 

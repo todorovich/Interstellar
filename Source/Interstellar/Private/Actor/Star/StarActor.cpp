@@ -55,6 +55,9 @@ void AStarActor::OnConstruction(const FTransform & Transform)
 	Super::OnConstruction(Transform);
 	StarBillboard->SetSize(SizeSolarRadii);
 	StarBillboard->SetColorTemperature(ColorTemperatureKelvin);
+	StarBillboard->SetSectorCoordinates(SectorX, SectorY, SectorZ);
+
+	GetRootComponent()->SetWorldLocation(FVector(SectorX * SectorSize, SectorY * SectorSize, SectorZ * SectorSize));
 }
 
 #if WITH_EDITOR
@@ -63,5 +66,8 @@ void AStarActor::PostEditChangeProperty(FPropertyChangedEvent & PropertyChangedE
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 	StarBillboard->SetSize(SizeSolarRadii);
 	StarBillboard->SetColorTemperature(ColorTemperatureKelvin);
+	StarBillboard->SetSectorCoordinates(SectorX, SectorY, SectorZ);
+
+	GetRootComponent()->SetWorldLocation(FVector(SectorX * SectorSize, SectorY * SectorSize, SectorZ * SectorSize));
 }
 #endif

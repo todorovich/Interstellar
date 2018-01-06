@@ -44,6 +44,15 @@ struct FStarSpriteParameters
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "StarSpriteElement|ColorTemperature", meta = (ClampMin = "1000", ClampMax = "10000", UIMin = "1000", UIMax = "10000"))
 	int ColorTemperature;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Star", meta = (DisplayName = "Sector Space X-Coordinate"))
+	int SectorX;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Star", meta = (DisplayName = "Sector Space Y-Coordinate"))
+	int SectorY;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Star", meta = (DisplayName = "Sector Space Z-Coordinate"))
+	int SectorZ;
 	
 	friend FArchive& operator<<(FArchive& Ar, FStarSpriteParameters& LODElement);
 
@@ -85,6 +94,8 @@ public:
 	void SetSize(float NewSize);
 
 	void SetColorTemperature(int NewColorTemperature);
+
+	void SetSectorCoordinates(int64 x, int64 y, int64 z);
 	
 #if WITH_EDITOR
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
