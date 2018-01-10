@@ -6,42 +6,44 @@ public class Interstellar : ModuleRules
 {
 	public Interstellar(ReadOnlyTargetRules Target) : base(Target)
 	{
-        PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-        PublicIncludePaths.AddRange(
-            new string[] { "Interstellar/Public" });
+		bEnforceIWYU = true;
 
-        PrivateIncludePaths.AddRange(
-            new string[] { "Interstellar/Private" });
+		PublicIncludePaths.AddRange(
+			new string[] { "Interstellar/Public" });
 
-        PublicDependencyModuleNames.AddRange(
-            new string[] { "Core"
-                         , "CoreUObject"
-                         , "Engine"
-                         , "EngineSettings"
-                         , "InputCore"
-                         , "RenderCore"
-                         , "Renderer"
-                         , "RHI"
-                         , "ShaderCore"
-                         , "OnlineSubsystem"
-                         , "OnlineSubsystemUtils"
-                         , "UMG" });
+		PrivateIncludePaths.AddRange(
+			new string[] { "Interstellar/Private" });
 
-        PrivateDependencyModuleNames.AddRange(
-            new string[] { "Slate"
-                         , "SlateCore"
-                         , "OnlineSubsystem"});
+		PublicDependencyModuleNames.AddRange(
+			new string[] { "Core"
+						 , "CoreUObject"
+						 , "Engine"
+						 , "EngineSettings"
+						 , "InputCore"
+						 , "RenderCore"
+						 , "Renderer"
+						 , "RHI"
+						 , "ShaderCore"
+						 , "OnlineSubsystem"
+						 , "OnlineSubsystemUtils"
+						 , "UMG" });
+
+		PrivateDependencyModuleNames.AddRange(
+			new string[] { "Slate"
+						 , "SlateCore"
+						 , "OnlineSubsystem"});
 
 
-        //PrivateIncludePathModuleNames.AddRange(
-        //    new string[]
-        //    {
-        //    });
+		//PrivateIncludePathModuleNames.AddRange(
+		//    new string[]
+		//    {
+		//    });
 
-        //DynamicallyLoadedModuleNames.AddRange(
-        //    new string[]
-        //    {
-        //    });
-    }
+		//DynamicallyLoadedModuleNames.AddRange(
+		//    new string[]
+		//    {
+		//    });
+	}
 }

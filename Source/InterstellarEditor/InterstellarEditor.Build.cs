@@ -8,6 +8,8 @@ public class InterstellarEditor : ModuleRules
 	{
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
+        bEnforceIWYU = true;
+
         PublicIncludePaths.AddRange(
             new string[] { "InterstellarEditor/Public" });
 

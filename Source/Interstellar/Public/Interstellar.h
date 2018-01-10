@@ -44,7 +44,7 @@ DECLARE_LOG_CATEGORY_EXTERN(InterstellarLog, Log, All);
 //};
 
 
-const static float SectorSize = 16000000.0f;
+const static float SectorSize = 1600000.0f;
 
 class FInterstellarModule : public FDefaultGameModuleImpl
 {
