@@ -214,7 +214,11 @@ namespace
 					
 					// Try to work in viewspace!
 
-					const FVector& ViewLocation_WorldSpace = View->ViewLocation;					
+					const FVector& ViewLocation_WorldSpace = View->ViewLocation;
+
+					const FVector CameraUp = -View->ViewMatrices.GetInvViewMatrix().GetUnitAxis(EAxis::Type::X);
+					const FVector CameraRight = -View->ViewMatrices.GetInvViewMatrix().GetUnitAxis(EAxis::Type::Y);
+					const FVector CameraForward = -View->ViewMatrices.GetInvViewMatrix().GetUnitAxis(EAxis::Type::Z);					
 
 					const FIntVector ViewLocation_SectorCoordinates{ FMath::FloorToInt((ViewLocation_WorldSpace.X + WorldOriginLocation.X) / SectorSize)
 																   , FMath::FloorToInt((ViewLocation_WorldSpace.Y + WorldOriginLocation.Y) / SectorSize)
@@ -230,23 +234,22 @@ namespace
 					const FVector		Delta_SectorOffset		{ SectorOffset - ViewLocation_SectorOffset	};
 
 					// Coordinates below are already expressed relative to the camera, this rotation puts the coordinates into Viewspace
-					const auto& ViewSpaceQuaternion	= View->ViewMatrices.GetTranslatedViewMatrix().ToQuat();
+					const auto&		ViewSpaceQuaternion	= View->ViewMatrices.GetTranslatedViewMatrix().ToQuat();
+					const FVector	ViewToPrimtive		= FVector( (SectorSize * Delta_SectorCoordinates.X) + Delta_SectorOffset.X
+																 , (SectorSize * Delta_SectorCoordinates.Y) + Delta_SectorOffset.Y
+																 , (SectorSize * Delta_SectorCoordinates.Z) + Delta_SectorOffset.Z );
 
-					// Use this to
-					const FVector PrimitiveCoordinates_ViewSpace{ ViewSpaceQuaternion *
-														   FVector( (SectorSize * Delta_SectorCoordinates.X) + Delta_SectorOffset.X
-																  , (SectorSize * Delta_SectorCoordinates.Y) + Delta_SectorOffset.Y
-																  , (SectorSize * Delta_SectorCoordinates.Z) + Delta_SectorOffset.Z )};
-				
-					// Maybe find a way to go from Viewspace to local space
-
-					const FVector CameraUp			= -View->ViewMatrices.GetInvViewMatrix().GetUnitAxis(EAxis::Type::X);
-					const FVector CameraRight		= -View->ViewMatrices.GetInvViewMatrix().GetUnitAxis(EAxis::Type::Y);
-					const FVector CameraForward		= -View->ViewMatrices.GetInvViewMatrix().GetUnitAxis(EAxis::Type::Z);
-
+					const FVector PrimitiveCoordinates_ViewSpace{ ViewSpaceQuaternion * ViewToPrimtive };
+			
 					const float DistanceToCamera = PrimitiveCoordinates_ViewSpace.Size();
-					
-					// Supposedly 90 degree HFOV, however this math doesn't work right without multiplying the aspect ratio in suggesting the VFOV is what is fixed at 90 degrees
+
+					// If  the star is behind us, dont render it.
+					if (FVector::DotProduct(FVector(0.0f,0.0f,1.0f), PrimitiveCoordinates_ViewSpace.GetSafeNormal()) < .70f)
+					{
+						//LOG("Short Circuit")
+						return;
+					}
+
 					const float SupposedHFOV = 1.5708; // 90 degrees in Radians
 
 					// Convert the size into world-space.
@@ -256,8 +259,8 @@ namespace
 					const auto tan = Radius / DistanceToCamera;
 					
 					// Used to ensure our billboard is bigger than a pixel so it will not twinkle.
-					static const float Multiplier = 1.1f;
-					const auto tanPixel = FMath::Tan((SupposedHFOV / View->UnconstrainedViewRect.Width()));// *Multiplier;
+					static const float Multiplier = 2.0f;
+					const auto tanPixel = FMath::Tan((SupposedHFOV / 1080.0f));
 					
 					FLinearColor Color = FLinearColor(StarColor.R, StarColor.G, StarColor.B, 1.0f);
 

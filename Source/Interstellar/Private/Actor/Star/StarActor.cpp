@@ -31,7 +31,7 @@ AStarActor::AStarActor(const FObjectInitializer& ObjectInitializer)
 		{
 			UE_LOG(InterstellarLog, Log, TEXT("Found M_Star"));
 			auto  asset = assetData.GetAsset();
-			StarBillboard->SetMaterial(0, Cast<UMaterialInterface>(asset));
+			StarBillboard->StarSpriteParameters.Material = Cast<UMaterialInterface>(asset);
 		}
 	}
 }
@@ -48,27 +48,28 @@ void AStarActor::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
+void AStarActor::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+}
+
 void AStarActor::OnConstruction(const FTransform & Transform)
 {
 	Super::OnConstruction(Transform);
 
 	if (StarBillboard->StarSpriteParameters.Material)
 	{
-		if (StarBillboard->StarSpriteParameters.DynamicMaterial == nullptr)
-		{
-			StarBillboard->CreateDynamicMaterial();
-		}
-
-		if (StarBillboard->StarSpriteParameters.DynamicMaterial)
+		if (StarBillboard->CreateDynamicMaterial())
 		{
 			StarBillboard->SetColorTemperature(ColorTemperatureKelvin);
 		}
 	}
-	
+
 	StarBillboard->SetSectorCoordinates(SectorCoordinates);
 	StarBillboard->SetLocalCoordinates(SectorOffset);
 	StarBillboard->SetSize(SizeSolarRadii);
-	
+
 	if (auto root = GetRootComponent())
 	{
 		root->SetWorldLocation(FVector(SectorCoordinates.X * SectorSize, SectorCoordinates.Y * SectorSize, SectorCoordinates.Z * SectorSize) + SectorOffset);

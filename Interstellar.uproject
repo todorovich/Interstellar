@@ -3,17 +3,16 @@
 	"EngineAssociation": "4.18",
 	"Category": "",
 	"Description": "",
-  "Modules": 
-  [
-    {
-      "Name": "Interstellar",
-      "Type": "Runtime",
-      "LoadingPhase": "Default"
-    },
-    {
-      "Name": "InterstellarEditor",
-      "Type": "Editor",
-      "LoadingPhase": "PostEngineInit"
-    }
-  ]
+	"Modules": [
+		{
+			"Name": "Interstellar",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "InterstellarEditor",
+			"Type": "Editor",
+			"LoadingPhase": "PostEngineInit"
+		}
+	]
 }
