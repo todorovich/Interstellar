@@ -40,34 +40,66 @@ AStarActor::AStarActor(const FObjectInitializer& ObjectInitializer)
 void AStarActor::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame
 void AStarActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 void AStarActor::OnConstruction(const FTransform & Transform)
 {
 	Super::OnConstruction(Transform);
-	StarBillboard->SetSize(SizeSolarRadii);
-	StarBillboard->SetColorTemperature(ColorTemperatureKelvin);
-	StarBillboard->SetSectorCoordinates(SectorX, SectorY, SectorZ);
 
-	GetRootComponent()->SetWorldLocation(FVector(SectorX * SectorSize, SectorY * SectorSize, SectorZ * SectorSize));
+	if (StarBillboard->StarSpriteParameters.Material)
+	{
+		if (StarBillboard->StarSpriteParameters.DynamicMaterial == nullptr)
+		{
+			StarBillboard->CreateDynamicMaterial();
+		}
+
+		if (StarBillboard->StarSpriteParameters.DynamicMaterial)
+		{
+			StarBillboard->SetColorTemperature(ColorTemperatureKelvin);
+		}
+	}
+	
+	StarBillboard->SetSectorCoordinates(SectorCoordinates);
+	StarBillboard->SetLocalCoordinates(SectorOffset);
+	StarBillboard->SetSize(SizeSolarRadii);
+	
+	if (auto root = GetRootComponent())
+	{
+		root->SetWorldLocation(FVector(SectorCoordinates.X * SectorSize, SectorCoordinates.Y * SectorSize, SectorCoordinates.Z * SectorSize) + SectorOffset);
+	}
 }
 
 #if WITH_EDITOR
 void AStarActor::PostEditChangeProperty(FPropertyChangedEvent & PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
-	StarBillboard->SetSize(SizeSolarRadii);
-	StarBillboard->SetColorTemperature(ColorTemperatureKelvin);
-	StarBillboard->SetSectorCoordinates(SectorX, SectorY, SectorZ);
+	
+	if (StarBillboard->StarSpriteParameters.Material)
+	{
+		if (StarBillboard->StarSpriteParameters.DynamicMaterial == nullptr)
+		{
+			StarBillboard->CreateDynamicMaterial();
+		}
 
-	GetRootComponent()->SetWorldLocation(FVector(SectorX * SectorSize, SectorY * SectorSize, SectorZ * SectorSize));
+		if (StarBillboard->StarSpriteParameters.DynamicMaterial)
+		{
+			StarBillboard->SetColorTemperature(ColorTemperatureKelvin);
+		}	
+	}
+
+	StarBillboard->SetSectorCoordinates(SectorCoordinates);
+	StarBillboard->SetLocalCoordinates(SectorOffset);	
+	StarBillboard->SetSize(SizeSolarRadii);
+
+	if (auto root = GetRootComponent())
+	{
+		root->SetWorldLocation(FVector(SectorCoordinates.X * SectorSize, SectorCoordinates.Y * SectorSize, SectorCoordinates.Z * SectorSize) + SectorOffset);
+	}
 }
 #endif

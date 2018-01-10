@@ -20,14 +20,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Star", meta = (DisplayName = "Color Temperature °K"), meta = (ClampMin = "1000", ClampMax = "10000", UIMin = "1000", UIMax = "10000"))
 	int ColorTemperatureKelvin;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Star", meta = (DisplayName = "Sector Space X-Coordinate"))
-	int SectorX;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Star", meta = (DisplayName = "Sector Space Coordinate"))
+	FIntVector SectorCoordinates;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Star", meta = (DisplayName = "Sector Space Y-Coordinate"))
-	int SectorY;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Star", meta = (DisplayName = "Sector Space Z-Coordinate"))
-	int SectorZ;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Star", meta = (DisplayName = "Sector Space Coordinate"))
+	FVector SectorOffset;
 
 	// Sets default values for this actor's properties
 	AStarActor(const FObjectInitializer& ObjectInitializer);
