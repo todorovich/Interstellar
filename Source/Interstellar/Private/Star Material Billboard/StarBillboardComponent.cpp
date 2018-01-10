@@ -1,6 +1,7 @@
 // Copyright 2017 Micho Todorovich, all rights reserved.
 
 #include "StarBillboardComponent.h"
+#include <math.h> 
 #include "Interstellar.h"
 #include "EngineGlobals.h"
 #include "RHI.h"
@@ -124,9 +125,9 @@ namespace
 			StarColor			= Parameters.StarColor;
 			StarColorIndex		= Parameters.StarColorIndex;
 			Radius				= Parameters.BaseRadius;
-			SectorX				= Parameters.SectorX;
-			SectorY				= Parameters.SectorY;
-			SectorZ				= Parameters.SectorZ;
+			SectorCoordinates	= Parameters.SectorCoordinates;
+			SectorOffset		= Parameters.SectorOffset;
+			WorldOriginLocation	= InComponent->GetWorld()->OriginLocation;
 
 			if (Material)
 			{
@@ -211,50 +212,64 @@ namespace
 
 					const bool bIsWireframe = View->Family->EngineShowFlags.Wireframe;
 					
-					const auto SectorSize = 16000.0f;
+					// Try to work in viewspace!
 
-					// Uprimitive's Location in World Space. 
-					const FVector UPrimitiveLocation_WS = GetLocalToWorld().GetOrigin(); 
-					// Vector from Camera to UPrimitiveLocation in World Space
-					const FVector CameraToUPrimitive = View->ViewMatrices.GetViewOrigin() - UPrimitiveLocation_WS;
-					const float DistanceFromCameraToUPrimitive = CameraToUPrimitive.Size();
+					const FVector& ViewLocation_WorldSpace = View->ViewLocation;					
 
-					const FVector CameraUp = -View->ViewMatrices.GetInvViewProjectionMatrix().TransformVector(FVector(1.0f, 0.0f, 0.0f));
-					const FVector CameraRight = -View->ViewMatrices.GetInvViewProjectionMatrix().TransformVector(FVector(0.0f, 1.0f, 0.0f));
-					const FVector CameraForward = -View->ViewMatrices.GetInvViewProjectionMatrix().TransformVector(FVector(0.0f, 0.0f, 1.0f));
-					const FMatrix WorldToLocal = GetLocalToWorld().InverseFast();
-					const FVector LocalCameraUp = WorldToLocal.TransformVector(CameraUp);
-					const FVector LocalCameraRight = WorldToLocal.TransformVector(CameraRight);
-					const FVector LocalCameraForward = WorldToLocal.TransformVector(CameraForward);
+					const FIntVector ViewLocation_SectorCoordinates{ FMath::FloorToInt((ViewLocation_WorldSpace.X + WorldOriginLocation.X) / SectorSize)
+																   , FMath::FloorToInt((ViewLocation_WorldSpace.Y + WorldOriginLocation.Y) / SectorSize)
+																   , FMath::FloorToInt((ViewLocation_WorldSpace.Z + WorldOriginLocation.Z) / SectorSize) };
+
+
+					const FVector ViewLocation_SectorOffset{ ViewLocation_WorldSpace - FVector( ViewLocation_SectorCoordinates.X * SectorSize
+																							  , ViewLocation_SectorCoordinates.Y * SectorSize
+																							  , ViewLocation_SectorCoordinates.Z * SectorSize )};
+
+					// Vector representing View to Local in sector coordinates
+					const FIntVector	Delta_SectorCoordinates	{ SectorCoordinates - ViewLocation_SectorCoordinates};
+					const FVector		Delta_SectorOffset		{ SectorOffset - ViewLocation_SectorOffset	};
+
+					// Coordinates below are already expressed relative to the camera, this rotation puts the coordinates into Viewspace
+					const auto& ViewSpaceQuaternion	= View->ViewMatrices.GetTranslatedViewMatrix().ToQuat();
+
+					// Use this to
+					const FVector PrimitiveCoordinates_ViewSpace{ ViewSpaceQuaternion *
+														   FVector( (SectorSize * Delta_SectorCoordinates.X) + Delta_SectorOffset.X
+																  , (SectorSize * Delta_SectorCoordinates.Y) + Delta_SectorOffset.Y
+																  , (SectorSize * Delta_SectorCoordinates.Z) + Delta_SectorOffset.Z )};
+				
+					// Maybe find a way to go from Viewspace to local space
+
+					const FVector CameraUp			= -View->ViewMatrices.GetInvViewMatrix().GetUnitAxis(EAxis::Type::X);
+					const FVector CameraRight		= -View->ViewMatrices.GetInvViewMatrix().GetUnitAxis(EAxis::Type::Y);
+					const FVector CameraForward		= -View->ViewMatrices.GetInvViewMatrix().GetUnitAxis(EAxis::Type::Z);
+
+					const float DistanceToCamera = PrimitiveCoordinates_ViewSpace.Size();
+					
+					// Supposedly 90 degree HFOV, however this math doesn't work right without multiplying the aspect ratio in suggesting the VFOV is what is fixed at 90 degrees
+					const float SupposedHFOV = 1.5708; // 90 degrees in Radians
 
 					// Convert the size into world-space.
-					const float AspectRatio = CameraRight.Size() / CameraUp.Size();
-					const float AspectRatio2 = CameraUp.Size() / CameraRight.Size();
+					float WorldSizeX = Radius;
+					float WorldSizeY = Radius;
 
-					const float Diameter = 2 * Radius;
-					const float AngularSize = 2 * FMath::Atan2(Diameter, 2*DistanceFromCameraToUPrimitive);
-
-					const float AssumedHFOV = 1.5708 * AspectRatio2; // 90 degrees in Radians
-					const float Scale = AngularSize / AssumedHFOV;
-
-					// Bigger than a pixel to avoid twinkle
-					const float MinimumScale = AssumedHFOV / (View->UnconstrainedViewRect.Width() * .5f );
-					const float W = View->ViewMatrices.GetViewProjectionMatrix().TransformPosition(UPrimitiveLocation_WS).W;
-
-					float WorldSizeX;
-					float WorldSizeY;
+					const auto tan = Radius / DistanceToCamera;
+					
+					// Used to ensure our billboard is bigger than a pixel so it will not twinkle.
+					static const float Multiplier = 1.1f;
+					const auto tanPixel = FMath::Tan((SupposedHFOV / View->UnconstrainedViewRect.Width()));// *Multiplier;
+					
 					FLinearColor Color = FLinearColor(StarColor.R, StarColor.G, StarColor.B, 1.0f);
 
-					if (Scale > MinimumScale)
+					if (tan < tanPixel)
 					{
-						WorldSizeX = Scale * W;
-						WorldSizeY = Scale * AspectRatio * W;
+						WorldSizeX = tanPixel * DistanceToCamera;
+						WorldSizeY = tanPixel * DistanceToCamera;
+						Color.A = log(1 + 9 * (tan / tanPixel)) / log(10);						
 					}
-					else
+
+					if (CurrentStarColor != Color)
 					{
-						WorldSizeX = MinimumScale * W;
-						WorldSizeY = MinimumScale * AspectRatio * W;			
-						Color.A = log(1 + 9 * (Scale / MinimumScale)) / log(10);
 						DynamicMaterial->SetVectorParameterByIndex(StarColorIndex, Color);
 					}
 
@@ -265,19 +280,19 @@ namespace
 
 					for (uint32 VertexIndex = 0; VertexIndex < 4; ++VertexIndex)
 					{
-						VertexArray.Vertices[VertexIndex].Color = Color.ToFColor(true);
-						VertexArray.Vertices[VertexIndex].TangentX = FPackedNormal(LocalCameraRight.GetSafeNormal());
-						VertexArray.Vertices[VertexIndex].TangentZ = FPackedNormal(-LocalCameraForward.GetSafeNormal());
+						VertexArray.Vertices[VertexIndex].Color		= Color.ToFColor(true);
+						VertexArray.Vertices[VertexIndex].TangentX	= FPackedNormal(CameraRight);
+						VertexArray.Vertices[VertexIndex].TangentZ	= FPackedNormal(-CameraForward);
 					}
 
 					// Set up the sprite vertex positions and texture coordinates.
-					VertexArray.Vertices[3].Position = -WorldSizeX * LocalCameraRight + +WorldSizeY * LocalCameraUp;
-					VertexArray.Vertices[3].TextureCoordinates = FVector2D(0, 0);
-					VertexArray.Vertices[2].Position = +WorldSizeX * LocalCameraRight + +WorldSizeY * LocalCameraUp;
-					VertexArray.Vertices[2].TextureCoordinates = FVector2D(0, 1);
-					VertexArray.Vertices[1].Position = -WorldSizeX * LocalCameraRight + -WorldSizeY * LocalCameraUp;
-					VertexArray.Vertices[1].TextureCoordinates = FVector2D(1, 0);
-					VertexArray.Vertices[0].Position = +WorldSizeX * LocalCameraRight + -WorldSizeY * LocalCameraUp;
+					VertexArray.Vertices[3].Position = -WorldSizeX * CameraRight + +WorldSizeY * CameraUp;
+					VertexArray.Vertices[3].TextureCoordinates = FVector2D(0, 0);					  
+					VertexArray.Vertices[2].Position = +WorldSizeX * CameraRight + +WorldSizeY * CameraUp;
+					VertexArray.Vertices[2].TextureCoordinates = FVector2D(0, 1);					  
+					VertexArray.Vertices[1].Position = -WorldSizeX * CameraRight + -WorldSizeY * CameraUp;
+					VertexArray.Vertices[1].TextureCoordinates = FVector2D(1, 0);					  
+					VertexArray.Vertices[0].Position = +WorldSizeX * CameraRight + -WorldSizeY * CameraUp;
 					VertexArray.Vertices[0].TextureCoordinates = FVector2D(1, 1);
 
 					// Set up the FMeshElement.
@@ -309,11 +324,6 @@ namespace
 
 
 					Collector.AddMesh(ViewIndex, Mesh);
-
-
-#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
-					//RenderBounds(Collector.GetPDI(ViewIndex), View->Family->EngineShowFlags, GetBounds(), IsSelected());
-#endif
 				}
 			}
 		}
@@ -340,12 +350,13 @@ namespace
 		FStarSpriteVertexBuffer		VertexBuffer;
 		FStarSpriteIndexBuffer		IndexBuffer;
 		FStarSpriteVertexFactory	VertexFactory;
+		FLinearColor				CurrentStarColor;
 		FLinearColor				StarColor;
+		FIntVector					WorldOriginLocation;
+		FIntVector					SectorCoordinates;
+		FVector						SectorOffset;
 		float						Radius;
 		int							StarColorIndex;
-		int							SectorX;
-		int							SectorY;
-		int							SectorZ;
 	};
 }
 
@@ -380,7 +391,7 @@ void UStarBillboardComponent::SetMaterial(int32 ElementIndex, class UMaterialInt
 void UStarBillboardComponent::GetUsedMaterials(TArray<UMaterialInterface*>& OutMaterials, bool bGetDebugMaterials) const
 {
 	OutMaterials.AddUnique(StarSpriteParameters.Material);
-	OutMaterials.AddUnique(StarSpriteParameters.GetDynamicMaterialInstance());
+	OutMaterials.AddUnique(StarSpriteParameters.DynamicMaterial);
 }
 
 int32 UStarBillboardComponent::GetNumMaterials() const
@@ -391,6 +402,7 @@ int32 UStarBillboardComponent::GetNumMaterials() const
 inline void UStarBillboardComponent::SetSize(float NewSize)
 {
 	StarSpriteParameters.BaseRadius = NewSize;
+
 	MarkRenderStateDirty();
 }
 
@@ -399,16 +411,20 @@ inline void UStarBillboardComponent::SetColorTemperature(int NewColorTemperature
 	StarSpriteParameters.ColorTemperature = NewColorTemperature;
 	StarSpriteParameters.StarColor = FLinearColor::MakeFromColorTemperature(StarSpriteParameters.ColorTemperature);
 	StarSpriteParameters.DynamicMaterial->SetVectorParameterByIndex(StarSpriteParameters.StarColorIndex, StarSpriteParameters.StarColor);
+
 	MarkRenderStateDirty();
 }
 
-inline void UStarBillboardComponent::SetSectorCoordinates(int64 x, int64 y, int64 z)
+inline void UStarBillboardComponent::SetSectorCoordinates(const FIntVector& NewCoordinates)
 {
-	StarSpriteParameters.SectorX = x;
-	StarSpriteParameters.SectorY = y;
-	StarSpriteParameters.SectorZ = z;
-
+	StarSpriteParameters.SectorCoordinates = NewCoordinates;
 	
+	MarkRenderStateDirty();
+}
+
+inline void UStarBillboardComponent::SetLocalCoordinates(const FVector& NewCoordinates)
+{
+	StarSpriteParameters.SectorOffset = NewCoordinates;
 
 	MarkRenderStateDirty();
 }
@@ -464,10 +480,21 @@ void UStarBillboardComponent::PostEditChangeProperty(FPropertyChangedEvent & Pro
 }
 #endif
 
-void UStarBillboardComponent::CreateDynamicMaterial()
+bool UStarBillboardComponent::CreateDynamicMaterial()
 {
-	StarSpriteParameters.DynamicMaterial = UMaterialInstanceDynamic::Create(StarSpriteParameters.Material, this);
-	StarSpriteParameters.DynamicMaterial->InitializeVectorParameterAndGetIndex(FName("StarColor"), StarSpriteParameters.StarColor, StarSpriteParameters.StarColorIndex);
+	if (StarSpriteParameters.Material)
+	{
+		StarSpriteParameters.DynamicMaterial = UMaterialInstanceDynamic::Create(StarSpriteParameters.Material, this);
+
+		if (StarSpriteParameters.DynamicMaterial)
+		{
+			StarSpriteParameters.DynamicMaterial->InitializeVectorParameterAndGetIndex(FName("StarColor"), StarSpriteParameters.StarColor, StarSpriteParameters.StarColorIndex);
+
+			return true;
+		}
+	}
+
+	return false;
 }
 
 inline UMaterialInstanceDynamic * const FStarSpriteParameters::GetDynamicMaterialInstance() const

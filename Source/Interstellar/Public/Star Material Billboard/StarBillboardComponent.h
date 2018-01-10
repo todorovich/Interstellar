@@ -45,15 +45,12 @@ struct FStarSpriteParameters
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "StarSpriteElement|ColorTemperature", meta = (ClampMin = "1000", ClampMax = "10000", UIMin = "1000", UIMax = "10000"))
 	int ColorTemperature;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Star", meta = (DisplayName = "Sector Space X-Coordinate"))
-	int SectorX;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Star", meta = (DisplayName = "Sector Space Y-Coordinate"))
-	int SectorY;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Star", meta = (DisplayName = "Sector Space Z-Coordinate"))
-	int SectorZ;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Star", meta = (DisplayName = "Sector Space Coordinates"))
+	FIntVector SectorCoordinates;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Star", meta = (DisplayName = "Sector Space Coordinates"))
+	FVector SectorOffset;
+
 	friend FArchive& operator<<(FArchive& Ar, FStarSpriteParameters& LODElement);
 
 	UMaterialInstanceDynamic* const GetDynamicMaterialInstance() const;
@@ -68,17 +65,17 @@ class INTERSTELLAR_API UStarBillboardComponent : public UPrimitiveComponent
 {
 	GENERATED_BODY()
 	
-	void CreateDynamicMaterial();
 
 public:
 	UStarBillboardComponent(const FObjectInitializer& ObjectInitializer);
+
 	~UStarBillboardComponent();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Star")
 	FStarSpriteParameters StarSpriteParameters;
 
 	/** Get this actor's image plates */
-	UFUNCTION(BlueprintCallable,  Category = "Game|Image Plate")
+	UFUNCTION(BlueprintCallable,  Category = "Star")
 	const FStarSpriteParameters& GetStarSpriteParameters() const
 	{
 		return StarSpriteParameters;
@@ -91,12 +88,15 @@ public:
 	virtual void GetUsedMaterials(TArray<UMaterialInterface*>& OutMaterials, bool bGetDebugMaterials = false) const override;
 	virtual int32 GetNumMaterials() const override;
 
+	bool CreateDynamicMaterial();
+	
 	void SetSize(float NewSize);
 
 	void SetColorTemperature(int NewColorTemperature);
 
-	void SetSectorCoordinates(int64 x, int64 y, int64 z);
-	
+	void SetSectorCoordinates(const FIntVector& NewCoordinates);
+
+	void SetLocalCoordinates(const FVector& NewCoordinates);
 #if WITH_EDITOR
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 	//virtual void PostEditUndo() override;
