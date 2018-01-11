@@ -7,6 +7,10 @@
 #include "Components/PrimitiveComponent.h"
 #include "StarBillboardComponent.generated.h"
 
+
+//For UE4 Profiler ~ Stat Group
+DECLARE_STATS_GROUP(TEXT("StarBillboard"), STATGROUP_StarBillboard, STATCAT_Advanced);
+
 class FPrimitiveSceneProxy;
 class UMaterialInterface;
 class UMaterialInstanceDynamic;

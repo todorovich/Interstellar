@@ -18,6 +18,10 @@
 #include "Engine/LevelStreaming.h"
 #include "LevelUtils.h"
 #include "PrimitiveSceneProxy.h"
+
+//For UE4 Profiler ~ Stat
+DECLARE_CYCLE_STAT(TEXT("StarBillboard - GetDynamicMeshElements"), STAT_StarBillboard_GetDynamicMeshElements, STATGROUP_StarBillboard);
+
 namespace
 {
 	struct FStarSpriteVertex
@@ -171,7 +175,7 @@ namespace
 		{
 			//Super::GetDynamicMeshElements(Views, ViewFamily, VisibilityMap, Collector);
 
-			//QUICK_SCOPE_CYCLE_COUNTER(STAT_MaterialSpriteSceneProxy_GetDynamicMeshElements);
+			SCOPE_CYCLE_COUNTER(STAT_StarBillboard_GetDynamicMeshElements);
 
 			UMaterialInterface* PreferredMaterial = Material;
 
@@ -216,8 +220,8 @@ namespace
 
 					const FVector& ViewLocation_WorldSpace = View->ViewLocation;
 
-					const FVector CameraUp = -View->ViewMatrices.GetInvViewMatrix().GetUnitAxis(EAxis::Type::X);
-					const FVector CameraRight = -View->ViewMatrices.GetInvViewMatrix().GetUnitAxis(EAxis::Type::Y);
+					const FVector CameraUp		= -View->ViewMatrices.GetInvViewMatrix().GetUnitAxis(EAxis::Type::X);
+					const FVector CameraRight	= -View->ViewMatrices.GetInvViewMatrix().GetUnitAxis(EAxis::Type::Y);
 					const FVector CameraForward = -View->ViewMatrices.GetInvViewMatrix().GetUnitAxis(EAxis::Type::Z);					
 
 					const FIntVector ViewLocation_SectorCoordinates{ FMath::FloorToInt((ViewLocation_WorldSpace.X + WorldOriginLocation.X) / SectorSize)
@@ -235,20 +239,20 @@ namespace
 
 					// Coordinates below are already expressed relative to the camera, this rotation puts the coordinates into Viewspace
 					const auto&		ViewSpaceQuaternion	= View->ViewMatrices.GetTranslatedViewMatrix().ToQuat();
-					const FVector	ViewToPrimtive		= FVector( (SectorSize * Delta_SectorCoordinates.X) + Delta_SectorOffset.X
+					const FVector	ViewToPrimitive		= FVector( (SectorSize * Delta_SectorCoordinates.X) + Delta_SectorOffset.X
 																 , (SectorSize * Delta_SectorCoordinates.Y) + Delta_SectorOffset.Y
 																 , (SectorSize * Delta_SectorCoordinates.Z) + Delta_SectorOffset.Z );
-
-					const FVector PrimitiveCoordinates_ViewSpace{ ViewSpaceQuaternion * ViewToPrimtive };
+					
+					const FVector PrimitiveCoordinates_ViewSpace{ ViewSpaceQuaternion * ViewToPrimitive };
+					
+					// If  the star is behind us, dont render it.
+					//if (FVector::DotProduct(FVector(0.0f,0.0f,1.0f), PrimitiveCoordinates_ViewSpace) < .70f)
+					//{
+					//	//LOG("Short Circuit")
+					//	return;
+					//}
 			
 					const float DistanceToCamera = PrimitiveCoordinates_ViewSpace.Size();
-
-					// If  the star is behind us, dont render it.
-					if (FVector::DotProduct(FVector(0.0f,0.0f,1.0f), PrimitiveCoordinates_ViewSpace.GetSafeNormal()) < .70f)
-					{
-						//LOG("Short Circuit")
-						return;
-					}
 
 					const float SupposedHFOV = 1.5708; // 90 degrees in Radians
 
@@ -259,15 +263,18 @@ namespace
 					const auto tan = Radius / DistanceToCamera;
 					
 					// Used to ensure our billboard is bigger than a pixel so it will not twinkle.
-					static const float Multiplier = 2.0f;
-					const auto tanPixel = FMath::Tan((SupposedHFOV / 1080.0f));
+					static const float Multiplier = .9f;
+					
+					const auto Divisor = ((1080.0f < View->UnconstrainedViewRect.Max.X) ? 1080.0f : View->UnconstrainedViewRect.Max.X * Multiplier);
+
+					const auto tanPixel = FMath::Tan((SupposedHFOV / View->UnconstrainedViewRect.Max.X));
 					
 					FLinearColor Color = FLinearColor(StarColor.R, StarColor.G, StarColor.B, 1.0f);
 
 					if (tan < tanPixel)
 					{
-						WorldSizeX = tanPixel * DistanceToCamera;
-						WorldSizeY = tanPixel * DistanceToCamera;
+						WorldSizeX = tanPixel * DistanceToCamera * 2.0f;
+						WorldSizeY = tanPixel * DistanceToCamera * 2.0f;
 						Color.A = log(1 + 9 * (tan / tanPixel)) / log(10);						
 					}
 
@@ -439,11 +446,13 @@ FPrimitiveSceneProxy* UStarBillboardComponent::CreateSceneProxy()
 
 FBoxSphereBounds UStarBillboardComponent::CalcBounds(const FTransform & LocalToWorld) const
 {
-	float BoundsSize = float(HALF_WORLD_MAX);
+	float BoundsSize = float(WORLD_MAX);
 	
 	BoundsSize *= LocalToWorld.GetMaximumAxisScale();
 
-	return FBoxSphereBounds(LocalToWorld.GetLocation(), FVector(BoundsSize, BoundsSize, BoundsSize), FMath::Sqrt(3.0f * FMath::Square(BoundsSize)));
+	//FMath::Sqrt(3.0f * FMath::Square(BoundsSize))
+
+	return FBoxSphereBounds(LocalToWorld.GetLocation(), FVector(BoundsSize, BoundsSize, BoundsSize), BoundsSize);
 
 }
 
