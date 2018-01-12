@@ -377,6 +377,9 @@ UStarBillboardComponent::UStarBillboardComponent(const FObjectInitializer& Objec
 	SetCollisionProfileName(UCollisionProfile::NoCollision_ProfileName);
 	//this->GetBodyInstance()->OnCalculateCustomProjection.BindLambda([](const FBodyInstance* BodyInstance, FTransform& FTransform) {});
 	//this->GetBodyInstance()->P
+	this->bAllowCullDistanceVolume	= false;
+	this->CachedMaxDrawDistance		= 0.0f;
+	this->LDMaxDrawDistance			= 0.0f;
 }
 
 UStarBillboardComponent::~UStarBillboardComponent()

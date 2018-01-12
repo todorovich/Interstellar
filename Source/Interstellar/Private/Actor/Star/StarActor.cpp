@@ -65,7 +65,7 @@ void AStarActor::OnConstruction(const FTransform & Transform)
 			StarBillboard->SetColorTemperature(ColorTemperatureKelvin);
 		}
 	}
-
+	
 	StarBillboard->SetSectorCoordinates(SectorCoordinates);
 	StarBillboard->SetLocalCoordinates(SectorOffset);
 	StarBillboard->SetSize(SizeSolarRadii);
