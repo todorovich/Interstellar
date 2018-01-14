@@ -29,7 +29,7 @@ AStarActor::AStarActor(const FObjectInitializer& ObjectInitializer)
 	{
 		if (assetData.AssetName == FName("M_Star"))
 		{
-			UE_LOG(InterstellarLog, Log, TEXT("Found M_Star"));
+			//UE_LOG(InterstellarLog, Log, TEXT("Found M_Star"));
 			auto  asset = assetData.GetAsset();
 			StarBillboard->StarSpriteParameters.Material = Cast<UMaterialInterface>(asset);
 		}
