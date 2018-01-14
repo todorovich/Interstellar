@@ -7,34 +7,27 @@ public class InterstellarEditor : ModuleRules
 	public InterstellarEditor(ReadOnlyTargetRules Target) : base(Target)
 	{
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
-
-        bEnforceIWYU = true;
-
-        PublicIncludePaths.AddRange(
-            new string[] { "InterstellarEditor/Public" });
-
-        PrivateIncludePaths.AddRange(
-            new string[] { "InterstellarEditor/Private" });
-
-        PublicDependencyModuleNames.AddRange(
+	
+		PublicDependencyModuleNames.AddRange(
             new string[] { "Core"
                          , "CoreUObject"
                          , "Engine"
                          , "EngineSettings"
                          , "InputCore"
+                         , "Interstellar"
                          , "RenderCore"
                          , "Renderer"
                          , "RHI"
                          , "ShaderCore"
                          , "OnlineSubsystem"
                          , "OnlineSubsystemUtils"
-                         , "UMG" });
+                         , "UMG"
+                         , "UnrealEd"
+                          });
 
 		PrivateDependencyModuleNames.AddRange(
-            new string[] { "Interstellar"
-                         , "Slate"
+            new string[] { "Slate"
                          , "SlateCore"
-                         , "OnlineSubsystem"
-                         , "UnrealEd" });
+                         , "OnlineSubsystem"});
     }
 }
