@@ -22,10 +22,10 @@ struct FStarSpriteParameters
 
 	FStarSpriteParameters()
 		: Material(nullptr)
-		, StarColor(1.0,1.0,1.0)
+		, StarColor(0.0f,0.0f,0.0f)
 		, DontUseColorTemperature(false)
-		, ColorTemperature(5780)
-		, BaseRadius(1.0f)
+		, ColorTemperature(1000)
+		, Radius(0.0f)
 	{}
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "StarSpriteElement")
@@ -41,7 +41,7 @@ struct FStarSpriteParameters
 	int StarColorIndex;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "StarSpriteElement")
-	float BaseRadius;
+	float Radius;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "StarSpriteElement|ColorTemperature")
 	bool DontUseColorTemperature;
@@ -84,12 +84,17 @@ public:
 	{
 		return StarSpriteParameters;
 	}
-
+	
 	virtual FPrimitiveSceneProxy* CreateSceneProxy() override;
+	
 	virtual FBoxSphereBounds CalcBounds(const FTransform& LocalToWorld) const override;
+	
 	virtual UMaterialInterface* GetMaterial(int32 Index) const override;
+	
 	virtual void SetMaterial(int32 ElementIndex, class UMaterialInterface* Material) override;	
+	
 	virtual void GetUsedMaterials(TArray<UMaterialInterface*>& OutMaterials, bool bGetDebugMaterials = false) const override;
+	
 	virtual int32 GetNumMaterials() const override;
 
 	bool CreateDynamicMaterial();

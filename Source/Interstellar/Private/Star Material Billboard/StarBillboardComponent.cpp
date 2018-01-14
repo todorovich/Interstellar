@@ -128,11 +128,16 @@ namespace
 			DynamicMaterial     = Parameters.DynamicMaterial;
 			StarColor			= Parameters.StarColor;
 			StarColorIndex		= Parameters.StarColorIndex;
-			Radius				= Parameters.BaseRadius;
+			Radius				= Parameters.Radius;
 			SectorCoordinates	= Parameters.SectorCoordinates;
 			SectorOffset		= Parameters.SectorOffset;
-			WorldOriginLocation	= InComponent->GetWorld()->OriginLocation;
-
+			WorldOriginOffset	= InComponent->GetWorld()->OriginLocation;
+			
+			Location_WS	=  FVector( SectorCoordinates.X * SectorSize - WorldOriginOffset.X
+								  , SectorCoordinates.Y * SectorSize - WorldOriginOffset.Y
+							  	  , SectorCoordinates.Z * SectorSize - WorldOriginOffset.Z );
+		
+			
 			if (Material)
 			{
 				if (DynamicMaterial)
@@ -158,23 +163,37 @@ namespace
 			VertexFactory.ReleaseResource();
 		}
 
+
+		virtual const TArray<FBoxSphereBounds>* GetOcclusionQueries(const FSceneView* View) const override
+		{
+		
+			static const float SupposedHFOV = 1.5708; // 90 degrees in Radians
+
+			const auto tanPixel = FMath::Tan((SupposedHFOV / View->UnconstrainedViewRect.Max.X));
+
+			const auto Distance = (Location_WS - View->ViewLocation).Size();
+
+			const auto Size = tanPixel * Distance * 2.0f;
+
+			return new TArray<FBoxSphereBounds>{ FBoxSphereBounds(Location_WS, FVector(Size, Size, Size), Size) };
+		}
+
+		virtual bool HasSubprimitiveOcclusionQueries() const
+		{
+			return true;
+		}
+
 		virtual void CreateRenderThreadResources() override
 		{
-			//BuildMesh();
-
 			VertexFactory.Init(&VertexBuffer);
 
 			VertexBuffer.InitResource();
 			IndexBuffer.InitResource();
 			VertexFactory.InitResource();
-
-
 		}
 
 		virtual void GetDynamicMeshElements(const TArray<const FSceneView*>& Views, const FSceneViewFamily& ViewFamily, uint32 VisibilityMap, FMeshElementCollector& Collector) const override
 		{
-			//Super::GetDynamicMeshElements(Views, ViewFamily, VisibilityMap, Collector);
-
 			SCOPE_CYCLE_COUNTER(STAT_StarBillboard_GetDynamicMeshElements);
 
 			UMaterialInterface* PreferredMaterial = Material;
@@ -224,9 +243,9 @@ namespace
 					const FVector CameraRight	= -View->ViewMatrices.GetInvViewMatrix().GetUnitAxis(EAxis::Type::Y);
 					const FVector CameraForward = -View->ViewMatrices.GetInvViewMatrix().GetUnitAxis(EAxis::Type::Z);					
 
-					const FIntVector ViewLocation_SectorCoordinates{ FMath::FloorToInt((ViewLocation_WorldSpace.X + WorldOriginLocation.X) / SectorSize)
-																   , FMath::FloorToInt((ViewLocation_WorldSpace.Y + WorldOriginLocation.Y) / SectorSize)
-																   , FMath::FloorToInt((ViewLocation_WorldSpace.Z + WorldOriginLocation.Z) / SectorSize) };
+					const FIntVector ViewLocation_SectorCoordinates{ FMath::FloorToInt((ViewLocation_WorldSpace.X + WorldOriginOffset.X) / SectorSize)
+																   , FMath::FloorToInt((ViewLocation_WorldSpace.Y + WorldOriginOffset.Y) / SectorSize)
+																   , FMath::FloorToInt((ViewLocation_WorldSpace.Z + WorldOriginOffset.Z) / SectorSize) };
 
 
 					const FVector ViewLocation_SectorOffset{ ViewLocation_WorldSpace - FVector( ViewLocation_SectorCoordinates.X * SectorSize
@@ -238,23 +257,16 @@ namespace
 					const FVector		Delta_SectorOffset		{ SectorOffset - ViewLocation_SectorOffset	};
 
 					// Coordinates below are already expressed relative to the camera, this rotation puts the coordinates into Viewspace
-					const auto&		ViewSpaceQuaternion	= View->ViewMatrices.GetTranslatedViewMatrix().ToQuat();
+					const FQuat&	ViewSpaceQuaternion	= View->ViewMatrices.GetTranslatedViewMatrix().ToQuat();
 					const FVector	ViewToPrimitive		= FVector( (SectorSize * Delta_SectorCoordinates.X) + Delta_SectorOffset.X
 																 , (SectorSize * Delta_SectorCoordinates.Y) + Delta_SectorOffset.Y
 																 , (SectorSize * Delta_SectorCoordinates.Z) + Delta_SectorOffset.Z );
 					
 					const FVector PrimitiveCoordinates_ViewSpace{ ViewSpaceQuaternion * ViewToPrimitive };
-					
-					// If  the star is behind us, dont render it.
-					//if (FVector::DotProduct(FVector(0.0f,0.0f,1.0f), PrimitiveCoordinates_ViewSpace) < .70f)
-					//{
-					//	//LOG("Short Circuit")
-					//	return;
-					//}
-			
+							
 					const float DistanceToCamera = PrimitiveCoordinates_ViewSpace.Size();
 
-					const float SupposedHFOV = 1.5708; // 90 degrees in Radians
+					static const float SupposedHFOV = 1.5708; // 90 degrees in Radians
 
 					// Convert the size into world-space.
 					float WorldSizeX = Radius;
@@ -265,7 +277,7 @@ namespace
 					// Used to ensure our billboard is bigger than a pixel so it will not twinkle.
 					static const float Multiplier = .9f;
 					
-					const auto Divisor = ((1080.0f < View->UnconstrainedViewRect.Max.X) ? 1080.0f : View->UnconstrainedViewRect.Max.X * Multiplier);
+					//const auto Divisor = ((1080.0f < View->UnconstrainedViewRect.Max.X) ? 1080.0f : View->UnconstrainedViewRect.Max.X * Multiplier);
 
 					const auto tanPixel = FMath::Tan((SupposedHFOV / View->UnconstrainedViewRect.Max.X));
 					
@@ -273,12 +285,12 @@ namespace
 
 					if (tan < tanPixel)
 					{
-						WorldSizeX = tanPixel * DistanceToCamera * 2.0f;
-						WorldSizeY = tanPixel * DistanceToCamera * 2.0f;
+						WorldSizeX = tanPixel * DistanceToCamera;// *1.1;
+						WorldSizeY = tanPixel * DistanceToCamera; //*1.1;
 						Color.A = log(1 + 9 * (tan / tanPixel)) / log(10);						
 					}
 
-					if (CurrentStarColor != Color)
+					if (CurrentStarColor != Color && DynamicMaterial)
 					{
 						DynamicMaterial->SetVectorParameterByIndex(StarColorIndex, Color);
 					}
@@ -340,17 +352,46 @@ namespace
 		
 		virtual FPrimitiveViewRelevance GetViewRelevance(const FSceneView* View) const override
 		{
-			bool bVisible = true; // View->Family->EngineShowFlags.BillboardSprites;
-			FPrimitiveViewRelevance Result;
-			Result.bDrawRelevance = true; // IsShown(View);
-			Result.bDynamicRelevance = true;
 
-			MaterialRelevance.SetPrimitiveViewRelevance(Result);
+			//const FVector& ViewLocation_WorldSpace = View->ViewMatrices.GetViewMatrix().GetOrigin();
+
+			//const FVector ViewLocation_SectorCoordinates{ FMath::FloorToFloat((ViewLocation_WorldSpace.X + WorldOriginOffset.X) / SectorSize),
+			//											  FMath::FloorToFloat((ViewLocation_WorldSpace.Y + WorldOriginOffset.Y) / SectorSize),
+			//											  FMath::FloorToFloat((ViewLocation_WorldSpace.Z + WorldOriginOffset.Z) / SectorSize) };
+
+			FPrimitiveViewRelevance Result;
+
+			//auto a = View->ViewMatrices.GetViewProjectionMatrix().TransformFVector4(FVector4(Location_WS, 1.f));
+
+			//FVector NDC = FVector(a.X / a.W, a.Y / a.W, a.Z / a.W);
+			//
+			//if (FMath::Abs(NDC.X) < 1.0f)
+			//{
+			//	// the result of this will be x and y coords in -1..1 projection space
+
+			//	// Move from projection space to normalized 0..1 UI space
+			//	//const float NormalizedX = (PosInScreenSpace.X / 2.f) + 0.5f;
+			//	//const float NormalizedY = 1.f - (PosInScreenSpace.Y / 2.f) - 0.5f;
+
+			
+				Result.bDrawRelevance = true;
+				Result.bDynamicRelevance = true;
+
+				MaterialRelevance.SetPrimitiveViewRelevance(Result);
+			//}
+			//else
+			//{
+			//	Result.bDrawRelevance = false;
+			//	Result.bDynamicRelevance = false;
+			//}
+			//
 			return Result;
 		}
 		
 		virtual bool CanBeOccluded() const override { return !MaterialRelevance.bDisableDepthTest; }
+
 		virtual uint32 GetMemoryFootprint() const override { return sizeof(*this) + GetAllocatedSize(); }
+
 		uint32 GetAllocatedSize() const { return FPrimitiveSceneProxy::GetAllocatedSize(); }
 
 	private:
@@ -362,8 +403,10 @@ namespace
 		FStarSpriteVertexFactory	VertexFactory;
 		FLinearColor				CurrentStarColor;
 		FLinearColor				StarColor;
-		FIntVector					WorldOriginLocation;
+		FIntVector					WorldOriginOffset;
 		FIntVector					SectorCoordinates;
+		FVector						Location_WS;
+		FVector						WorldPosition;
 		FVector						SectorOffset;
 		float						Radius;
 		int							StarColorIndex;
@@ -375,11 +418,10 @@ UStarBillboardComponent::UStarBillboardComponent(const FObjectInitializer& Objec
 	: Super(ObjectInitializer)
 {
 	SetCollisionProfileName(UCollisionProfile::NoCollision_ProfileName);
-	//this->GetBodyInstance()->OnCalculateCustomProjection.BindLambda([](const FBodyInstance* BodyInstance, FTransform& FTransform) {});
-	//this->GetBodyInstance()->P
 	this->bAllowCullDistanceVolume	= false;
 	this->CachedMaxDrawDistance		= 0.0f;
 	this->LDMaxDrawDistance			= 0.0f;
+
 }
 
 UStarBillboardComponent::~UStarBillboardComponent()
@@ -414,7 +456,9 @@ int32 UStarBillboardComponent::GetNumMaterials() const
 
 inline void UStarBillboardComponent::SetSize(float NewSize)
 {
-	StarSpriteParameters.BaseRadius = NewSize;
+	StarSpriteParameters.Radius = NewSize;
+
+	//this->LDMaxDrawDistance = StarSpriteParameters.Radius * 10000;
 
 	MarkRenderStateDirty();
 }
@@ -449,14 +493,15 @@ FPrimitiveSceneProxy* UStarBillboardComponent::CreateSceneProxy()
 
 FBoxSphereBounds UStarBillboardComponent::CalcBounds(const FTransform & LocalToWorld) const
 {
-	float BoundsSize = float(WORLD_MAX);
-	
-	BoundsSize *= LocalToWorld.GetMaximumAxisScale();
 
-	//FMath::Sqrt(3.0f * FMath::Square(BoundsSize))
-
-	return FBoxSphereBounds(LocalToWorld.GetLocation(), FVector(BoundsSize, BoundsSize, BoundsSize), BoundsSize);
-
+	if (StarSpriteParameters.Radius)
+	{
+		return FBoxSphereBounds(LocalToWorld.GetLocation(), FVector(StarSpriteParameters.Radius, StarSpriteParameters.Radius, StarSpriteParameters.Radius), StarSpriteParameters.Radius);
+	}
+	else
+	{
+		return FBoxSphereBounds(LocalToWorld.GetLocation(), FVector(FLT_MAX, FLT_MAX, FLT_MAX), FLT_MAX);
+	}
 }
 
 UMaterialInterface* UStarBillboardComponent::GetMaterial(int32 Index) const
