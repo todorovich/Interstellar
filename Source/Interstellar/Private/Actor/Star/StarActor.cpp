@@ -1,7 +1,7 @@
 // Copyright 2017 Micho Todorovich, all rights reserved.
 
 #include "StarActor.h"
-#include "StarBillboardComponent.h"
+#include "Star Material Billboard/StarBillboardComponent.h"
 #include "AssetRegistryModule.h"
 #include "ARFilter.h"
 #include "DataSingleton.h"
@@ -51,7 +51,28 @@ void AStarActor::Tick(float DeltaTime)
 void AStarActor::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
+}
 
+void AStarActor::PostInitProperties()
+{
+	Super::PostInitProperties();
+
+	if (StarBillboard->StarSpriteParameters.Material)
+	{
+		if (StarBillboard->CreateDynamicMaterial())
+		{
+			StarBillboard->SetColorTemperature(ColorTemperatureKelvin);
+		}
+	}
+
+	StarBillboard->SetSectorCoordinates(SectorCoordinates);
+	StarBillboard->SetLocalCoordinates(SectorOffset);
+	StarBillboard->SetSize(SizeSolarRadii);
+
+	if (auto root = GetRootComponent())
+	{
+		root->SetWorldLocation(FVector(SectorCoordinates.X * SectorSize, SectorCoordinates.Y * SectorSize, SectorCoordinates.Z * SectorSize) + SectorOffset);
+	}
 }
 
 void AStarActor::OnConstruction(const FTransform & Transform)
