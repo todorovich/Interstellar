@@ -5,6 +5,8 @@
 #include "Engine.h"
 #include "Net/UnrealNetwork.h"
 #include "CoreOnline.h"
+#include "CoreMinimal.h"
+#include "InterstellarClasses.h"
 
 //General Log
 DECLARE_LOG_CATEGORY_EXTERN(InterstellarLog, Log, All);
