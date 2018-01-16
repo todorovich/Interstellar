@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "StarActor.generated.h"
 
+
 UCLASS()
 class INTERSTELLAR_API AStarActor : public AActor
 {
