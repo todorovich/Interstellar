@@ -11,39 +11,47 @@ public class Interstellar : ModuleRules
 		bEnforceIWYU = true;
 
 		PublicIncludePaths.AddRange(
-			new string[] { "Interstellar/Public" });
+			new string[] 
+            { "Interstellar/Public" });
 
 		PrivateIncludePaths.AddRange(
-			new string[] { "Interstellar/Private" });
+			new string[] 
+            { "Interstellar/Private" });
 
 		PublicDependencyModuleNames.AddRange(
-			new string[] { "Core"
-						 , "CoreUObject"
-						 , "Engine"
-						 , "EngineSettings"
-						 , "InputCore"
-						 , "RenderCore"
-						 , "Renderer"
-						 , "RHI"
-						 , "ShaderCore"
-						 , "OnlineSubsystem"
-						 , "OnlineSubsystemUtils"
-						 , "UMG" });
+			new string[] 
+            { "Core"
+			, "CoreUObject"
+			, "Engine"
+			, "EngineSettings"
+			, "InputCore"
+			, "RenderCore"
+			, "Renderer"
+			, "RHI"
+			, "ShaderCore"
+			, "OnlineSubsystem"
+			, "OnlineSubsystemUtils"
+			, "UMG"
+            //, "UnrealEd"
+            });
 
 		PrivateDependencyModuleNames.AddRange(
-			new string[] { "Slate"
-						 , "SlateCore"
-						 , "OnlineSubsystem"});
+			new string[] 
+            { "Slate"
+			, "SlateCore"
+			, "OnlineSubsystem"
+            });
 
 
-		//PrivateIncludePathModuleNames.AddRange(
-		//    new string[]
-		//    {
-		//    });
+        //PrivateIncludePathModuleNames.AddRange(
+        //    new string[]
+        //    {
+        //        "Interstellar"
+        //    });
 
-		//DynamicallyLoadedModuleNames.AddRange(
-		//    new string[]
-		//    {
-		//    });
-	}
+        //DynamicallyLoadedModuleNames.AddRange(
+        //    new string[]
+        //    {
+        //    });
+    }
 }
