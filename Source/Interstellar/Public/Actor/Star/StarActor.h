@@ -2,11 +2,9 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "Interstellar.h"
 #include "GameFramework/Actor.h"
 #include "StarActor.generated.h"
-
-class UStarBillboardComponent;
 
 UCLASS()
 class INTERSTELLAR_API AStarActor : public AActor
@@ -36,6 +34,8 @@ public:
 
 	virtual void PostInitializeComponents() override;
 
+	virtual void PostInitProperties() override;
+
 #if WITH_EDITOR
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 #endif
@@ -46,5 +46,5 @@ protected:
 
 private:
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Star", Transient)
-	UStarBillboardComponent* StarBillboard;
+	class UStarBillboardComponent* StarBillboard;
 };
