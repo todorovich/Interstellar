@@ -166,10 +166,9 @@ namespace
 
 		virtual const TArray<FBoxSphereBounds>* GetOcclusionQueries(const FSceneView* View) const override
 		{
-		
 			static const float SupposedHFOV = 1.5708; // 90 degrees in Radians
 
-			const auto tanPixel = FMath::Tan((SupposedHFOV / View->UnconstrainedViewRect.Max.X));
+			const auto tanPixel = FMath::Tan((SupposedHFOV / ((View->UnconstrainedViewRect.Max.X < 1080.0f) ? View->UnconstrainedViewRect.Max.X : 1080.0f)));
 
 			const auto Distance = (Location_WS - View->ViewLocation).Size();
 
@@ -277,9 +276,7 @@ namespace
 					// Used to ensure our billboard is bigger than a pixel so it will not twinkle.
 					static const float Multiplier = .9f;
 					
-					//const auto Divisor = ((1080.0f < View->UnconstrainedViewRect.Max.X) ? 1080.0f : View->UnconstrainedViewRect.Max.X * Multiplier);
-
-					const auto tanPixel = FMath::Tan((SupposedHFOV / View->UnconstrainedViewRect.Max.X));
+					const auto tanPixel = FMath::Tan((SupposedHFOV / ((View->UnconstrainedViewRect.Max.X < 1080.0f) ? View->UnconstrainedViewRect.Max.X : 1080.0f)));
 					
 					FLinearColor Color = FLinearColor(StarColor.R, StarColor.G, StarColor.B, 1.0f);
 
