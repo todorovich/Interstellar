@@ -16,7 +16,7 @@ class UMaterialInterface;
 class UMaterialInstanceDynamic;
 
 USTRUCT(BlueprintType)
-struct FStarSpriteParameters
+struct INTERSTELLAR_API FStarSpriteParameters
 {
 	GENERATED_BODY()
 
@@ -69,11 +69,10 @@ class INTERSTELLAR_API UStarBillboardComponent : public UPrimitiveComponent
 {
 	GENERATED_BODY()
 	
-
 public:
 	UStarBillboardComponent(const FObjectInitializer& ObjectInitializer);
 
-	~UStarBillboardComponent();
+	virtual ~UStarBillboardComponent();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Star")
 	FStarSpriteParameters StarSpriteParameters;
@@ -100,14 +99,16 @@ public:
 	bool CreateDynamicMaterial();
 	
 	void SetSize(float NewSize);
-
+	
 	void SetColorTemperature(int NewColorTemperature);
-
+	
 	void SetSectorCoordinates(const FIntVector& NewCoordinates);
-
+	
 	void SetLocalCoordinates(const FVector& NewCoordinates);
+
 #if WITH_EDITOR
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 	//virtual void PostEditUndo() override;
 #endif
+
 };

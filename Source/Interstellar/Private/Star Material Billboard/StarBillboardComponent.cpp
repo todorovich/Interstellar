@@ -1,8 +1,8 @@
 // Copyright 2017 Micho Todorovich, all rights reserved.
 
 #include "StarBillboardComponent.h"
-#include <math.h> 
 #include "Interstellar.h"
+#include <math.h> 
 #include "EngineGlobals.h"
 #include "RHI.h"
 #include "RenderResource.h"
@@ -430,15 +430,12 @@ UStarBillboardComponent::~UStarBillboardComponent()
 
 void UStarBillboardComponent::SetMaterial(int32 ElementIndex, class UMaterialInterface* Material)
 {
-	if (ElementIndex == 0)
+	if (ElementIndex == 0 && Material)
 	{
 		StarSpriteParameters.Material = Material; 
 
-		if (StarSpriteParameters.Material)
-		{
-			CreateDynamicMaterial();
-		}
-
+		CreateDynamicMaterial();
+		
 		MarkRenderStateDirty();
 	}
 }
@@ -454,7 +451,7 @@ int32 UStarBillboardComponent::GetNumMaterials() const
 	return 2;
 }
 
-inline void UStarBillboardComponent::SetSize(float NewSize)
+void UStarBillboardComponent::SetSize(float NewSize)
 {
 	StarSpriteParameters.Radius = NewSize;
 
@@ -463,7 +460,7 @@ inline void UStarBillboardComponent::SetSize(float NewSize)
 	MarkRenderStateDirty();
 }
 
-inline void UStarBillboardComponent::SetColorTemperature(int NewColorTemperature)
+void UStarBillboardComponent::SetColorTemperature(int NewColorTemperature)
 {
 	StarSpriteParameters.ColorTemperature = NewColorTemperature;
 	StarSpriteParameters.StarColor = FLinearColor::MakeFromColorTemperature(StarSpriteParameters.ColorTemperature);
@@ -472,14 +469,14 @@ inline void UStarBillboardComponent::SetColorTemperature(int NewColorTemperature
 	MarkRenderStateDirty();
 }
 
-inline void UStarBillboardComponent::SetSectorCoordinates(const FIntVector& NewCoordinates)
+void UStarBillboardComponent::SetSectorCoordinates(const FIntVector& NewCoordinates)
 {
 	StarSpriteParameters.SectorCoordinates = NewCoordinates;
 	
 	MarkRenderStateDirty();
 }
 
-inline void UStarBillboardComponent::SetLocalCoordinates(const FVector& NewCoordinates)
+void UStarBillboardComponent::SetLocalCoordinates(const FVector& NewCoordinates)
 {
 	StarSpriteParameters.SectorOffset = NewCoordinates;
 
