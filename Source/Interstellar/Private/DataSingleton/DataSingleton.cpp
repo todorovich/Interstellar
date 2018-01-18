@@ -6,10 +6,6 @@
 
 UDataSingleton* UDataSingleton::_instance = nullptr;
 
-//UDataSingleton::UDataSingleton(const FObjectInitializer& ObjectInitializer)
-//{
-//};
-
 UDataSingleton* UDataSingleton::Instance() 
 {
  	if (_instance == nullptr)
@@ -32,9 +28,33 @@ IAssetRegistry* UDataSingleton::GetAssetRegistry()
 		asset_registry = &FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry").Get();
 		TArray<FString> PathsToScan;
 		PathsToScan.Add(TEXT("/Game"));
-
-		asset_registry->ScanPathsSynchronous(PathsToScan);
+		if (!asset_registry->IsLoadingAssets())
+		{
+			asset_registry->ScanPathsSynchronous(PathsToScan);
+		}
 	}
 
 	return asset_registry;
 }
+
+//FARFilter filter;
+//TArray<FAssetData> assetArray;
+//auto assetRegistry = UDataSingleton::GetAssetRegistry();
+
+//// Set up filter to find materials
+//filter.PackagePaths.Add("/Game/Materials");
+//filter.ClassNames.Add(UMaterial::StaticClass()->GetFName());
+//filter.bRecursiveClasses = true;
+
+//assetRegistry->GetAssets(filter, assetArray);
+
+//// Iterate over the materials until the one we want is found.
+//for (auto& assetData : assetArray)
+//{
+//	if (assetData.AssetName == FName("M_Star"))
+//	{
+//		//UE_LOG(InterstellarLog, Log, TEXT("Found M_Star"));
+//		auto  asset = assetData.GetAsset();
+//		StarBillboard->StarSpriteParameters.Material = Cast<UMaterialInterface>(asset);
+//	}
+//}
