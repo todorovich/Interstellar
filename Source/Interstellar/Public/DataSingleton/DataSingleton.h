@@ -8,9 +8,6 @@
 
 class IAssetRegistry;
 
-/**
- * 
- */
 UCLASS()
 class INTERSTELLAR_API UDataSingleton : public UObject
 {
