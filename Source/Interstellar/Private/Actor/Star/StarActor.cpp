@@ -12,28 +12,11 @@ AStarActor::AStarActor(const FObjectInitializer& ObjectInitializer)
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	StarBillboard = ObjectInitializer.CreateDefaultSubobject<UStarBillboardComponent>(this, FName("Star Billboard Component"));
+	RootComponent = StarBillboard;
 
-	FARFilter filter;
-	TArray<FAssetData> assetArray;
-	auto assetRegistry = UDataSingleton::GetAssetRegistry();
+	static ConstructorHelpers::FObjectFinder<UMaterialInterface> staticAsset(TEXT("Material'/Game/Materials/M_Star.M_Star'"));
 
-	// Set up filter to find materials
-	filter.PackagePaths.Add("/Game/Materials");
-	filter.ClassNames.Add(UMaterial::StaticClass()->GetFName());
-	filter.bRecursiveClasses = true;
-
-	assetRegistry->GetAssets(filter, assetArray);
-
-	// Iterate over the materials until the one we want is found.
-	for (auto& assetData : assetArray)
-	{
-		if (assetData.AssetName == FName("M_Star"))
-		{
-			//UE_LOG(InterstellarLog, Log, TEXT("Found M_Star"));
-			auto  asset = assetData.GetAsset();
-			StarBillboard->StarSpriteParameters.Material = Cast<UMaterialInterface>(asset);
-		}
-	}
+	StarBillboard->StarSpriteParameters.Material = staticAsset.Object;
 }
 
 // Called when the game starts or when spawned
@@ -51,11 +34,6 @@ void AStarActor::Tick(float DeltaTime)
 void AStarActor::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-}
-
-void AStarActor::PostInitProperties()
-{
-	Super::PostInitProperties();
 
 	if (StarBillboard->StarSpriteParameters.Material)
 	{
@@ -73,6 +51,13 @@ void AStarActor::PostInitProperties()
 	{
 		root->SetWorldLocation(FVector(SectorCoordinates.X * SectorSize, SectorCoordinates.Y * SectorSize, SectorCoordinates.Z * SectorSize) + SectorOffset);
 	}
+}
+
+void AStarActor::PostInitProperties()
+{
+	Super::PostInitProperties();
+
+
 }
 
 void AStarActor::OnConstruction(const FTransform & Transform)
