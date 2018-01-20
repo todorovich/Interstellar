@@ -138,9 +138,9 @@ namespace
 							  	  , SectorCoordinates.Z * SectorSize - WorldOriginOffset.Z );
 		
 			
-			if (Material)
+			if (Material->IsValidLowLevel())
 			{
-				if (DynamicMaterial)
+				if (DynamicMaterial->IsValidLowLevel())
 				{
 					
 					MaterialRelevance |= DynamicMaterial->GetRelevance(GetScene().GetFeatureLevel());
@@ -278,13 +278,13 @@ namespace
 					
 					const auto tanPixel = FMath::Tan((SupposedHFOV / ((View->UnconstrainedViewRect.Max.X < 1080.0f) ? View->UnconstrainedViewRect.Max.X : 1080.0f)));
 					
-					FLinearColor Color = FLinearColor(StarColor.R, StarColor.G, StarColor.B, 1.0f);
+					FLinearColor Color = FLinearColor(StarColor.R, StarColor.G, StarColor.B, 0.1f);
 
 					if (tan < tanPixel)
 					{
 						WorldSizeX = tanPixel * DistanceToCamera;// *1.1;
 						WorldSizeY = tanPixel * DistanceToCamera; //*1.1;
-						Color.A = log(1 + 9 * (tan / tanPixel)) / log(10);						
+						//Color.A = log(1 + 9 * (tan / tanPixel)) / log(10);						
 					}
 
 					if (CurrentStarColor != Color && DynamicMaterial)
