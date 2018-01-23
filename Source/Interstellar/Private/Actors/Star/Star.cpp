@@ -1,6 +1,6 @@
 // Copyright 2017 Micho Todorovich, all rights reserved.
 
-#include "StarActor.h"
+#include "Star.h"
 #include "Star Material Billboard/StarBillboardComponent.h"
 #include "AssetRegistryModule.h"
 #include "ARFilter.h"

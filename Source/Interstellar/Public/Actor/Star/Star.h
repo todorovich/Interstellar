@@ -4,7 +4,7 @@
 
 #include "Interstellar.h"
 #include "GameFramework/Actor.h"
-#include "StarActor.generated.h"
+#include "Star.generated.h"
 
 
 UCLASS()
