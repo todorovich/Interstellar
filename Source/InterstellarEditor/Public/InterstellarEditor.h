@@ -2,10 +2,14 @@
 
 #pragma once
 
-#include "Engine.h"
+//#include "Engine.h"
+#include "CoreOnline.h"
+#include "CoreMinimal.h"
 #include "Modules/ModuleInterface.h"
 #include "Modules/ModuleManager.h"
+#include "Net/UnrealNetwork.h"
 #include "UnrealEd.h"
+#include "InterstellarEditorClasses.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(InterstellarEditorLog, All, All)
 
