@@ -10,10 +10,10 @@ DEFINE_LOG_CATEGORY(InterstellarLog);
 
 void FInterstellarModule::StartupModule()
 {
-	LOG("Interstellar Module Started.");   
+	WARNING("Interstellar Module Started.");
 }
 
 void FInterstellarModule::ShutdownModule()
 {
-	LOG("Interstellar Module Shutdown.");
+	WARNING("Interstellar Module Shutdown.");
 }
