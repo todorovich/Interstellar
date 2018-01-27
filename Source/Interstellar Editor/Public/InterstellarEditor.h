@@ -35,6 +35,19 @@ DECLARE_LOG_CATEGORY_EXTERN(InterstellarEditorLog, All, All)
 	UE_LOG(InterstellarEditorLog, Log, TEXT("%s():\t%s: Line: %d:\n\t%s"), FUNC_NAME, FILE, __LINE__,  *message);\
 };
 
+#define WARNING(Format, ...) \
+{\
+	const FString message = FString::Printf(TEXT(Format), __VA_ARGS__); \
+	UE_LOG(InterstellarEditorLog, Warning, TEXT("%s():\t%s: Line: %d:\n\t%s"), FUNC_NAME, FILE, __LINE__,  *message);\
+};
+
+#define ERROR(Format, ...) \
+{\
+	const FString message = FString::Printf(TEXT(Format), __VA_ARGS__); \
+	UE_LOG(InterstellarEditorLog, Error, TEXT("%s():\t%s: Line: %d:\n\t%s"), FUNC_NAME, FILE, __LINE__,  *message);\
+};
+
+
 
 class FInterstellarEditorModule : public IModuleInterface
 {
