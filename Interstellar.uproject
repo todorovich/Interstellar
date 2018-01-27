@@ -1,6 +1,6 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "4.18",
+	"EngineAssociation": "{9EB6AACF-4252-C87F-6EDA-F4BA63B33BBA}",
 	"Category": "",
 	"Description": "",
 	"Modules": [
@@ -12,6 +12,11 @@
 		{
 			"Name": "InterstellarEditor",
 			"Type": "Editor",
+			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "InterstellarTestModule",
+			"Type": "Developer",
 			"LoadingPhase": "Default"
 		}
 	],
