@@ -9,7 +9,11 @@ public class InterstellarTarget : TargetRules
 	{
 		Type = TargetType.Game;
 
-		ExtraModuleNames.AddRange( new string[] { "Interstellar" } );
+		ExtraModuleNames.AddRange( 
+            new string[] 
+            { "Interstellar"
+            , "InterstellarTestModule"
+            });
 
         if (bBuildEditor)
         {
