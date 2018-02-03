@@ -16,7 +16,6 @@ class INTERSTELLAREDITOR_API UInterstellarEditorEngine : public UUnrealEdEngine
 	
 	UInterstellarEditorEngine(const FObjectInitializer& ObjectInitializer)
 	{
-		LOG("Interstellar Editor Engine Started.");
-		
+		WARNING("Interstellar Editor Engine Started.");
 	}
 };
