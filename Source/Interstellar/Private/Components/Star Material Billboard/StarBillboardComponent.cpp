@@ -140,7 +140,7 @@ namespace
 			
 			if (Material->IsValidLowLevel())
 			{
-				if (DynamicMaterial->IsValidLowLevel())
+				if (DynamicMaterial && DynamicMaterial->IsValidLowLevel())
 				{
 					
 					MaterialRelevance |= DynamicMaterial->GetRelevance(GetScene().GetFeatureLevel());
