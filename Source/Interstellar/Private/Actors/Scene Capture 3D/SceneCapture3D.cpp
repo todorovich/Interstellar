@@ -55,7 +55,7 @@ ASceneCapture3D::ASceneCapture3D(const FObjectInitializer& ObjectInitializer)
 
 	}
 	
-	UpdateDrawFrustums();
+	//UpdateDrawFrustums();
 }
 
 void ASceneCapture3D::OnInterpToggle(bool bEnable)
@@ -68,7 +68,7 @@ void ASceneCapture3D::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
-	//UpdateDrawFrustums();
+	UpdateDrawFrustums();
 }
 
 void ASceneCapture3D::UpdateDrawFrustums()
