@@ -12,12 +12,15 @@ public class InterstellarTarget : TargetRules
 		ExtraModuleNames.AddRange( 
             new string[] 
             { "Interstellar"
-            , "InterstellarTestModule"
             });
 
         if (bBuildEditor)
         {
-            ExtraModuleNames.AddRange(new string[] { "InterstellarEditor" });
+            ExtraModuleNames.AddRange(
+                new string[] 
+                { "InterstellarEditor"
+                , "InterstellarTestModule"
+                });
         }
     }
 }
