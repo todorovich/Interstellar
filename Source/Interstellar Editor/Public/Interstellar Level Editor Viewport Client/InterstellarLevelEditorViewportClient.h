@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "Interstellar.h"
 #include "CoreMinimal.h"
 #include "UObject/ObjectMacros.h"
 #include "SharedPointer.h"

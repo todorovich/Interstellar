@@ -16,24 +16,64 @@
 
 class INTERSTELLAREDITOR_API FInterstellarLevelEditorViewportClient : public FLevelEditorViewportClient
 {
+	using FEditorViewportClient::MaxCameraSpeeds;
+
+	FVector CurrentLocation = FVector::ZeroVector;
+
+	FIntVector CurrentSectorCoordinates = FIntVector::ZeroValue;
+	FIntVector PreviousSectorCoordinates = FIntVector::ZeroValue;
+
+	bool differentLocation = false;
+
 public:
 	FInterstellarLevelEditorViewportClient(const TSharedPtr<class SLevelViewport>& InLevelViewport)
 		: FLevelEditorViewportClient(InLevelViewport)
 	{
+		MaxCameraSpeeds = 32.0f;
+		CameraController->GetConfig().bUsePhysicsBasedFOV = false;
+		CameraController->GetConfig().bUsePhysicsBasedMovement = false;
+		CameraController->GetConfig().MaximumMovementSpeed = FLT_MAX;
+		
+		DrawHelper.bDrawGrid = false;
+
+		bIsRealtime = true;
 	}
 
 	virtual void Tick(float deltaTime) override
 	{
 		FLevelEditorViewportClient::Tick(deltaTime);
+
+		if (CurrentLocation != GetViewLocation())
+		{
+			differentLocation = true;
+		}
+		else
+		{
+			differentLocation = false;
+		}
+		//FLongIntVector Offset = FLongIntVector(CurrentLocation.X, CurrentLocation.Y, CurrentLocation.Z);
+
+		//if (CurrentLocation.SizeSquared() >= FMath::Pow(800000, 2))
+		//{
+		//	GetWorld()->RequestNewWorldOrigin(Offset);
+		//	
+		//	ViewTransformPerspective.SetLocation(FVector::ZeroVector);		
+		//}
 	}
 
 	virtual void UpdateCameraMovement(float DeltaTime) override
 	{
 		//FEditorViewportClient::UpdateCameraMovement(DeltaTime);
 
+		PreviousSectorCoordinates = CurrentSectorCoordinates;
+		
+		CurrentLocation = ViewTransformPerspective.GetLocation();
+
 		// We only want to move perspective cameras around like this
 		if (Viewport != NULL && IsPerspective() && !ShouldOrbitCamera())
 		{
+			//bShouldInvalidateViewportWidget = true;
+
 			const bool bEnable = false;
 			ToggleOrbitCamera(bEnable);
 
@@ -166,7 +206,7 @@ public:
 			}
 
 			bool bIgnoreJoystickControls = false;
-			//if we're playing back (without recording), stop input from being processed
+			//if we're playing back (without recording), differentLocation input from being processed
 			if (RecordingInterpEd && RecordingInterpEd->GetMatineeActor())
 			{
 				if (RecordingInterpEd->GetMatineeActor()->bIsPlaying && !RecordingInterpEd->IsRecordingInterpValues())
@@ -190,18 +230,19 @@ public:
 				}
 			}
 
-			FVector NewViewLocation = GetViewLocation();
+			FVector NewViewLocation = GetViewLocation();//GetViewLocation();
 			FRotator NewViewRotation = GetViewRotation();
 			FVector NewViewEuler = GetViewRotation().Euler();
 			float NewViewFOV = ViewFOV;
 
 			// We'll combine the regular camera speed scale (controlled by viewport toolbar setting) with
 			// the flight camera speed scale (controlled by mouse wheel).
-			const float CameraSpeed = GetCameraSpeed();
+			const float CameraSpeed = FEditorViewportClient::GetCameraSpeed();
 			const float FinalCameraSpeedScale = FlightCameraSpeedScale * CameraSpeed;
 
 			// Only allow FOV recoil if flight camera mode is currently inactive.
-			const bool bAllowRecoilIfNoImpulse = (!bUsingFlightInput) && (!IsMatineeRecordingWindow());
+			//const bool bAllowRecoilIfNoImpulse = (!bUsingFlightInput) && (!IsMatineeRecordingWindow());
+			const bool bAllowRecoilIfNoImpulse = false;
 
 			// Update the camera's position, rotation and FOV
 			float EditorMovementDeltaUpperBound = 1.0f;	// Never "teleport" the camera further than a reasonable amount after a large quantum
@@ -257,6 +298,7 @@ public:
 				NewViewRotation = FRotator::MakeFromEuler(NewViewEuler);
 			}
 
+
 			// See if translation/rotation have changed
 			const bool bTransformDifferent = !NewViewLocation.Equals(GetViewLocation(), SMALL_NUMBER) || NewViewRotation != GetViewRotation();
 			// See if FOV has changed
@@ -271,6 +313,7 @@ public:
 				// When flying the camera around the hit proxies dont need to be invalidated since we are flying around and not clicking on anything
 				const bool bInvalidateHitProxies = !IsFlightCameraActive();
 				Invalidate(bInvalidateChildViews, bInvalidateHitProxies);
+				//Invalidate(bInvalidateChildViews, true);
 
 				// Update the FOV
 				ViewFOV = NewViewFOV;
@@ -278,9 +321,13 @@ public:
 				// Actually move/rotate the camera
 				if (bTransformDifferent)
 				{
-					MoveViewportPerspectiveCamera(
-						NewViewLocation - GetViewLocation(),
-						NewViewRotation - GetViewRotation());
+					FLongIntVector Offset = FLongIntVector(NewViewLocation.X, NewViewLocation.Y, NewViewLocation.Z);
+
+					GetWorld()->RequestNewWorldOrigin(GetWorld()->OriginLocation + Offset);
+						
+					ViewTransformPerspective.SetLocation(FVector::ZeroVector);		
+
+					SetViewRotation(NewViewRotation);
 				}
 
 				// Invalidate the viewport widget
@@ -291,6 +338,21 @@ public:
 			}
 		}
 	}
+
+	virtual void Draw(const FSceneView* View, FPrimitiveDrawInterface* PDI) override
+	{
+		FLevelEditorViewportClient::Draw(View, PDI);
+	}
+
+	virtual void Draw(FViewport* Viewport, FCanvas* Canvas) override
+	{
+		FEditorViewportClient::Draw(Viewport, Canvas);	
+	}
+
+	virtual float GetCameraSpeed(int32 SpeedSetting) const override
+	{
+		return FMath::Pow(2.0, SpeedSetting - 4);
+	}
 };
 
 UInterstellarLevelEditorViewportClient::UInterstellarLevelEditorViewportClient(const FObjectInitializer& ObjectInitializer)
@@ -299,9 +361,10 @@ UInterstellarLevelEditorViewportClient::UInterstellarLevelEditorViewportClient(c
 
 }
 
-#undef LOCTEXT_NAMESPACE
-
 TSharedPtr<class FLevelEditorViewportClient> UInterstellarLevelEditorViewportClient::Construct(TSharedPtr<class SLevelViewport> LevelViewport)
 {
 	return MakeShareable(new FInterstellarLevelEditorViewportClient(LevelViewport));
 }
+
+#undef LOCTEXT_NAMESPACE
+
