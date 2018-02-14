@@ -10,12 +10,14 @@ public class InterstellarEditor : ModuleRules
 
         PublicIncludePaths.AddRange(
             new string[] 
-            { "Interstellar Editor/Public"
+            { "Interstellar/Public"
+            , "Interstellar Editor/Public"
             });
 
         PrivateIncludePaths.AddRange(
             new string[]
-            { "Interstellar Editor/Private"
+            { "Interstellar/Private"
+            , "Interstellar Editor/Private"
             });
 
 
