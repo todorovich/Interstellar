@@ -6,8 +6,19 @@
 #include "ARFilter.h"
 #include "DataSingleton.h"
 
+
+void AStar::UpdateWorldLocation()
+{
+	if (auto root = GetRootComponent())
+	{
+		auto newlocation = SectorCoordinates - GetWorld()->OriginLocation;
+
+		root->SetWorldLocation(SectorCoordinates, SectorOffset);
+	}
+}
+
 // Sets default values
-AStarActor::AStarActor(const FObjectInitializer& ObjectInitializer)
+AStar::AStar(const FObjectInitializer& ObjectInitializer)
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -20,18 +31,18 @@ AStarActor::AStarActor(const FObjectInitializer& ObjectInitializer)
 }
 
 // Called when the game starts or when spawned
-void AStarActor::BeginPlay()
+void AStar::BeginPlay()
 {
 	Super::BeginPlay();
 }
 
 // Called every frame
-void AStarActor::Tick(float DeltaTime)
+void AStar::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
 
-void AStarActor::PostInitializeComponents()
+void AStar::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
@@ -47,20 +58,15 @@ void AStarActor::PostInitializeComponents()
 	StarBillboard->SetLocalCoordinates(SectorOffset);
 	StarBillboard->SetSize(SizeSolarRadii);
 
-	if (auto root = GetRootComponent())
-	{
-		root->SetWorldLocation(FVector(SectorCoordinates.X * SectorSize, SectorCoordinates.Y * SectorSize, SectorCoordinates.Z * SectorSize) + SectorOffset);
-	}
+	UpdateWorldLocation();
 }
 
-void AStarActor::PostInitProperties()
+void AStar::PostInitProperties()
 {
 	Super::PostInitProperties();
-
-
 }
 
-void AStarActor::OnConstruction(const FTransform & Transform)
+void AStar::OnConstruction(const FTransform & Transform)
 {
 	Super::OnConstruction(Transform);
 
@@ -71,19 +77,24 @@ void AStarActor::OnConstruction(const FTransform & Transform)
 			StarBillboard->SetColorTemperature(ColorTemperatureKelvin);
 		}
 	}
-	
+
 	StarBillboard->SetSectorCoordinates(SectorCoordinates);
 	StarBillboard->SetLocalCoordinates(SectorOffset);
 	StarBillboard->SetSize(SizeSolarRadii);
 
-	if (auto root = GetRootComponent())
-	{
-		root->SetWorldLocation(FVector(SectorCoordinates.X * SectorSize, SectorCoordinates.Y * SectorSize, SectorCoordinates.Z * SectorSize) + SectorOffset);
-	}
+	UpdateWorldLocation();
 }
 
+//void AStar::ApplyWorldOffset(const FLongIntVector& InOffset, bool bWorldShift)
+//{
+//	AActor::ApplyWorldOffset(InOffset, bWorldShift);
+//
+//	UpdateWorldLocation();
+//}
+
+
 #if WITH_EDITOR
-void AStarActor::PostEditChangeProperty(FPropertyChangedEvent & PropertyChangedEvent)
+void AStar::PostEditChangeProperty(FPropertyChangedEvent & PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 	
@@ -104,9 +115,7 @@ void AStarActor::PostEditChangeProperty(FPropertyChangedEvent & PropertyChangedE
 	StarBillboard->SetLocalCoordinates(SectorOffset);	
 	StarBillboard->SetSize(SizeSolarRadii);
 
-	if (auto root = GetRootComponent())
-	{
-		root->SetWorldLocation(FVector(SectorCoordinates.X * SectorSize, SectorCoordinates.Y * SectorSize, SectorCoordinates.Z * SectorSize) + SectorOffset);
-	}
+	UpdateWorldLocation();
 }
 #endif
+
