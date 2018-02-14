@@ -8,7 +8,7 @@
 
 
 UCLASS()
-class INTERSTELLAR_API AStarActor : public AActor
+class INTERSTELLAR_API AStar : public AActor
 {
 	GENERATED_BODY()
 	
@@ -20,13 +20,13 @@ public:
 	int ColorTemperatureKelvin;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Star", meta = (DisplayName = "Sector Space Coordinate"))
-	FIntVector SectorCoordinates;
+	FLongIntVector SectorCoordinates;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Star", meta = (DisplayName = "Sector Space Coordinate"))
 	FVector SectorOffset;
 
 	// Sets default values for this actor's properties
-	AStarActor(const FObjectInitializer& ObjectInitializer);
+	AStar(const FObjectInitializer& ObjectInitializer);
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -37,6 +37,8 @@ public:
 
 	virtual void PostInitProperties() override;
 
+	//virtual void ApplyWorldOffset(const FLongIntVector& InOffset, bool bWorldShift) override;
+
 #if WITH_EDITOR
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 #endif
@@ -44,6 +46,8 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	virtual void UpdateWorldLocation() ;
 
 private:
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Star", Transient)
