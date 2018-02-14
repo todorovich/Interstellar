@@ -6,7 +6,6 @@
 #include "Net/UnrealNetwork.h"
 #include "CoreOnline.h"
 #include "CoreMinimal.h"
-#include "InterstellarClasses.h"
 
 //General Log
 DECLARE_LOG_CATEGORY_EXTERN(InterstellarLog, Log, All);
@@ -44,9 +43,6 @@ DECLARE_LOG_CATEGORY_EXTERN(InterstellarLog, Log, All);
 	const FString message = FString::Printf(TEXT(Format), __VA_ARGS__); \
 	UE_LOG(InterstellarLog, Error, TEXT("%s():\t%s: Line: %d:\n\t%s"), FUNC_NAME, FILE, __LINE__,  *message);\
 };
-
-
-const static float SectorSize = 1600000.0f;
 
 class FInterstellarModule : public FDefaultGameModuleImpl
 {
