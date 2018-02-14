@@ -2,7 +2,6 @@
 
 #include "StarBillboardComponent.h"
 #include "Interstellar.h"
-#include <math.h> 
 #include "EngineGlobals.h"
 #include "RHI.h"
 #include "RenderResource.h"
@@ -133,9 +132,9 @@ namespace
 			SectorOffset		= Parameters.SectorOffset;
 			WorldOriginOffset	= InComponent->GetWorld()->OriginLocation;
 			
-			Location_WS	=  FVector( SectorCoordinates.X * SectorSize - WorldOriginOffset.X
-								  , SectorCoordinates.Y * SectorSize - WorldOriginOffset.Y
-							  	  , SectorCoordinates.Z * SectorSize - WorldOriginOffset.Z );
+			Location_WS	=  FVector( (SectorCoordinates.X  - WorldOriginOffset.X) + SectorOffset.X
+								  , (SectorCoordinates.Y  - WorldOriginOffset.Y) + SectorOffset.Y
+							  	  , (SectorCoordinates.Z  - WorldOriginOffset.Z) + SectorOffset.Z);
 		
 			
 			if (Material->IsValidLowLevel())
@@ -242,24 +241,15 @@ namespace
 					const FVector CameraRight	= -View->ViewMatrices.GetInvViewMatrix().GetUnitAxis(EAxis::Type::Y);
 					const FVector CameraForward = -View->ViewMatrices.GetInvViewMatrix().GetUnitAxis(EAxis::Type::Z);					
 
-					const FIntVector ViewLocation_SectorCoordinates{ FMath::FloorToInt((ViewLocation_WorldSpace.X + WorldOriginOffset.X) / SectorSize)
-																   , FMath::FloorToInt((ViewLocation_WorldSpace.Y + WorldOriginOffset.Y) / SectorSize)
-																   , FMath::FloorToInt((ViewLocation_WorldSpace.Z + WorldOriginOffset.Z) / SectorSize) };
-
-
-					const FVector ViewLocation_SectorOffset{ ViewLocation_WorldSpace - FVector( ViewLocation_SectorCoordinates.X * SectorSize
-																							  , ViewLocation_SectorCoordinates.Y * SectorSize
-																							  , ViewLocation_SectorCoordinates.Z * SectorSize )};
-
 					// Vector representing View to Local in sector coordinates
-					const FIntVector	Delta_SectorCoordinates	{ SectorCoordinates - ViewLocation_SectorCoordinates};
-					const FVector		Delta_SectorOffset		{ SectorOffset - ViewLocation_SectorOffset	};
+					const FLongIntVector	Delta_SectorCoordinates	{ SectorCoordinates - WorldOriginOffset };
+					const FVector			Delta_SectorOffset		{ SectorOffset - ViewLocation_WorldSpace };
 
 					// Coordinates below are already expressed relative to the camera, this rotation puts the coordinates into Viewspace
 					const FQuat&	ViewSpaceQuaternion	= View->ViewMatrices.GetTranslatedViewMatrix().ToQuat();
-					const FVector	ViewToPrimitive		= FVector( (SectorSize * Delta_SectorCoordinates.X) + Delta_SectorOffset.X
-																 , (SectorSize * Delta_SectorCoordinates.Y) + Delta_SectorOffset.Y
-																 , (SectorSize * Delta_SectorCoordinates.Z) + Delta_SectorOffset.Z );
+					const FVector	ViewToPrimitive		= FVector( Delta_SectorCoordinates.X + Delta_SectorOffset.X
+																 , Delta_SectorCoordinates.Y + Delta_SectorOffset.Y
+																 , Delta_SectorCoordinates.Z + Delta_SectorOffset.Z );
 					
 					const FVector PrimitiveCoordinates_ViewSpace{ ViewSpaceQuaternion * ViewToPrimitive };
 							
@@ -389,6 +379,11 @@ namespace
 
 		virtual uint32 GetMemoryFootprint() const override { return sizeof(*this) + GetAllocatedSize(); }
 
+		virtual void ApplyWorldOffset(const FLongIntVector& InOffset) override
+		{
+			FPrimitiveSceneProxy::ApplyWorldOffset(InOffset);
+		}
+
 		uint32 GetAllocatedSize() const { return FPrimitiveSceneProxy::GetAllocatedSize(); }
 
 	private:
@@ -400,8 +395,8 @@ namespace
 		FStarSpriteVertexFactory	VertexFactory;
 		FLinearColor				CurrentStarColor;
 		FLinearColor				StarColor;
-		FIntVector					WorldOriginOffset;
-		FIntVector					SectorCoordinates;
+		FLongIntVector				WorldOriginOffset;
+		FLongIntVector				SectorCoordinates;
 		FVector						Location_WS;
 		FVector						WorldPosition;
 		FVector						SectorOffset;
@@ -466,7 +461,7 @@ void UStarBillboardComponent::SetColorTemperature(int NewColorTemperature)
 	MarkRenderStateDirty();
 }
 
-void UStarBillboardComponent::SetSectorCoordinates(const FIntVector& NewCoordinates)
+void UStarBillboardComponent::SetSectorCoordinates(const FLongIntVector& NewCoordinates)
 {
 	StarSpriteParameters.SectorCoordinates = NewCoordinates;
 	
