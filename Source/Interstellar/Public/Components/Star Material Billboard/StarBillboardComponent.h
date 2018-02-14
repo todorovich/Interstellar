@@ -50,7 +50,7 @@ struct INTERSTELLAR_API FStarSpriteParameters
 	int ColorTemperature;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Star", meta = (DisplayName = "Sector Space Coordinates"))
-	FIntVector SectorCoordinates;
+	FLongIntVector SectorCoordinates;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Star", meta = (DisplayName = "Sector Space Coordinates"))
 	FVector SectorOffset;
@@ -102,7 +102,7 @@ public:
 	
 	void SetColorTemperature(int NewColorTemperature);
 	
-	void SetSectorCoordinates(const FIntVector& NewCoordinates);
+	void SetSectorCoordinates(const FLongIntVector& NewCoordinates);
 	
 	void SetLocalCoordinates(const FVector& NewCoordinates);
 
